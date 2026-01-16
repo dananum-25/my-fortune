@@ -1,1 +1,82 @@
+body {
+  margin: 0;
+  font-family: Pretendard, sans-serif;
+  background: linear-gradient(180deg, #1e1e2f, #0f0f18);
+  color: #fff;
+}
+
+.hero {
+  text-align: center;
+  padding: 24px 16px;
+}
+
+.container {
+  max-width: 480px;
+  margin: auto;
+  padding: 16px;
+}
+
+.card {
+  background: rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 18px;
+  margin-top: 14px;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  margin-top: 10px;
+}
+
+button {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 999px;
+  border: none;
+  background: #6b4fd6;
+  color: white;
+  font-size: 1.1rem;
+}
+
+.hidden { display: none; }
+
+.tarot-back {
+  width: 160px;
+  height: 260px;
+  background: url("/assets/tarot/back.png") center/cover;
+  margin: 12px auto;
+  animation: shake 0.6s infinite;
+}
+
+@keyframes shake {
+  0% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+  100% { transform: rotate(-2deg); }
+}
+
+.ad {
+  border: 2px solid #ff9f43;
+}
+
+.cta {
+  display: block;
+  margin-top: 10px;
+  padding: 12px;
+  background: #ff9f43;
+  color: #000;
+  text-align: center;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.share {
+  margin-top: 20px;
+  background: #ffd166;
+  color: #000;
+}
 
