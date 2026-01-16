@@ -1,1 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://fortune2.netlify.app/sitemap.xml
 
