@@ -1,1 +1,21 @@
+const BASE = "https://fortune2.netlify.app";
+const zodiac = ["rat","ox","tiger","rabbit","dragon","snake","horse","goat","monkey","rooster","dog","pig"];
+const mbti = ["intj","intp","entj","entp","infj","infp","enfj","enfp","istj","isfj","estj","esfj","istp","isfp","estp","esfp"];
+const category = ["love","money","job"];
+
+let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+xml += `<url><loc>${BASE}/</loc></url>\n`;
+xml += `<url><loc>${BASE}/year/2026</loc></url>\n`;
+
+zodiac.forEach(z => {
+  mbti.forEach(m => {
+    category.forEach(c => {
+      xml += `<url><loc>${BASE}/zodiac/${z}/mbti/${m}/${c}</loc></url>\n`;
+    });
+  });
+});
+
+xml += `</urlset>`;
+console.log(xml);
 
