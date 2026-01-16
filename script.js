@@ -1,86 +1,75 @@
-const ZODIAC = ["rat","ox","tiger","rabbit","dragon","snake","horse","goat","monkey","rooster","dog","pig"];
-const ZODIAC_KO = {
-  rat:"쥐띠",ox:"소띠",tiger:"호랑이띠",rabbit:"토끼띠",
-  dragon:"용띠",snake:"뱀띠",horse:"말띠",goat:"양띠",
-  monkey:"원숭이띠",rooster:"닭띠",dog:"개띠",pig:"돼지띠"
+// ===============================
+// SEO TITLE / META AUTO GENERATOR
+// ===============================
+
+// 1. 한글 매핑
+const ZODIAC_MAP = {
+  rat: "쥐띠",
+  ox: "소띠",
+  tiger: "호랑이띠",
+  rabbit: "토끼띠",
+  dragon: "용띠",
+  snake: "뱀띠",
+  horse: "말띠",
+  goat: "양띠",
+  monkey: "원숭이띠",
+  rooster: "닭띠",
+  dog: "개띠",
+  pig: "돼지띠"
 };
-const MBTI = ["INTJ","INTP","ENTJ","ENTP","INFJ","INFP","ENFJ","ENFP","ISTJ","ISFJ","ESTJ","ESFJ","ISTP","ISFP","ESTP","ESFP"];
+
 const CATEGORY_MAP = {
-  love: "💖 연애운",
-  money: "💰 금전운",
-  job: "💼 직업운"
+  love: {
+    title: "연애운",
+    desc: "연애·궁합·감정 흐름을 확인해보세요."
+  },
+  money: {
+    title: "금전운",
+    desc: "재물·돈·수입 흐름을 확인해보세요."
+  },
+  job: {
+    title: "직업운",
+    desc: "직장·커리어·이직 운세를 확인해보세요."
+  }
 };
 
-let tarotDB, yearDB;
+// 2. URL 파싱
+const path = window.location.pathname.split("/").filter(Boolean);
 
-fetch("/data/tarot_db_ko.json").then(r=>r.json()).then(d=>tarotDB=d);
-fetch("/data/year_2026.json").then(r=>r.json()).then(d=>yearDB=d);
+// 기대 구조:
+// zodiac / rat / mbti / intj / love
+if (path.length === 5 && path[0] === "zodiac" && path[2] === "mbti") {
+  const zodiacKey = path[1];
+  const mbti = path[3].toUpperCase();
+  const categoryKey = path[4];
 
-window.onload = () => {
-  ZODIAC.forEach(z => {
-    zodiac.innerHTML += `<option value="${z}">${ZODIAC_KO[z]}</option>`;
-  });
-  MBTI.forEach(m => {
-    mbti.innerHTML += `<option value="${m}">${m}</option>`;
-  });
+  const zodiacKo = ZODIAC_MAP[zodiacKey];
+  const category = CATEGORY_MAP[categoryKey];
 
-  routeByURL();
-};
+  if (zodiacKo && category) {
+    // 3. TITLE 생성
+    const title = `${zodiacKo} ${mbti} ${category.title} | 성향별 운세`;
+    document.title = title;
 
-function seed(str){
-  let h=0; for(let c of str) h=(h*31+c.charCodeAt(0))|0;
-  return Math.abs(Math.sin(h))*10000;
-}
+    // 4. META DESCRIPTION
+    let metaDesc = document.querySelector("meta[name='description']");
+    if (!metaDesc) {
+      metaDesc = document.createElement("meta");
+      metaDesc.setAttribute("name", "description");
+      document.head.appendChild(metaDesc);
+    }
 
-function routeByURL(){
-  const path = location.pathname.split("/").filter(Boolean);
-  const category = path[path.length-1];
-  if(CATEGORY_MAP[category]){
-    document.getElementById("categoryTitle").innerText = CATEGORY_MAP[category];
+    metaDesc.setAttribute(
+      "content",
+      `${zodiacKo} ${mbti} ${category.title}을 확인하세요. ${category.desc}`
+    );
+
+    // 5. H1 자동 삽입 (없을 때만)
+    if (!document.querySelector("h1")) {
+      const h1 = document.createElement("h1");
+      h1.innerText = title;
+      h1.style.display = "none"; // SEO용, 화면에는 숨김
+      document.body.prepend(h1);
+    }
   }
 }
-
-function startFortune(){
-  const nameVal=name.value, birthVal=birth.value;
-  const zodiacVal=zodiac.value, mbtiVal=mbti.value;
-  if(!nameVal||!birthVal) return alert("정보를 입력하세요");
-
-  result.classList.remove("hidden");
-
-  const today=new Date().toISOString().slice(0,10);
-  const seedKey=nameVal+birthVal+zodiacVal+mbtiVal+today;
-
-  todayTitle.innerText = `${nameVal}님의 오늘 운세`;
-  todayText.innerText = "오늘은 작은 선택이 큰 변화를 만듭니다.";
-
-  const categoryKey=location.pathname.split("/").pop();
-  categoryText.innerText =
-    categoryKey==="love" ? "솔직한 대화가 중요합니다." :
-    categoryKey==="money" ? "지출 관리가 행운을 부릅니다." :
-    categoryKey==="job" ? "노력한 만큼 기회가 옵니다." :
-    "균형 잡힌 하루가 됩니다.";
-
-  drawTarot(seedKey);
-}
-
-function drawTarot(seedKey){
-  tarotText.innerText="카드를 뽑는 중...";
-  tarotCard.className="tarot-back";
-
-  setTimeout(()=>{
-    const cards=[...tarotDB.majors,...Object.values(tarotDB.minors).flat()];
-    const idx=Math.floor(seed(seedKey)%cards.length);
-    const card=cards[idx];
-    tarotCard.style.animation="none";
-    tarotCard.style.backgroundImage=`url(${card.image})`;
-    tarotText.innerText=`${card.name_ko} : ${card.upright.summary}`;
-  },5000);
-}
-
-function share(){
-  const url=location.href;
-  navigator.share
-    ? navigator.share({title:"오늘의 운세",url})
-    : prompt("복사해서 공유하세요",url);
-}
-
