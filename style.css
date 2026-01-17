@@ -23,7 +23,7 @@ body {
   margin-top: 14px;
 }
 
-input, select {
+input, select, textarea {
   width: 100%;
   padding: 10px;
   border-radius: 8px;
@@ -42,21 +42,28 @@ button {
   font-size: 1.1rem;
 }
 
-.hidden {
-  display: none;
-}
+.hidden { display: none; }
 
-.tarot-card-wrapper {
+.tarot img {
   width: 100%;
-  max-width: 260px;
-  margin: 16px auto;
-}
-
-.tarot-card-wrapper img {
-  width: 100%;
-  height: auto;
+  max-width: 220px;
   display: block;
-  object-fit: contain;
+  margin: 12px auto;
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.ad {
+  border: 2px solid #ff9f43;
+}
+
+.cta {
+  display: block;
+  margin-top: 10px;
+  padding: 12px;
+  background: #ff9f43;
+  color: #000;
+  text-align: center;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: bold;
 }
