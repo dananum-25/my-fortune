@@ -73,7 +73,6 @@ function startFortune(){
   // SEO
   const title = `${ZODIAC_KO[zodiacSel.selectedIndex]} ${mbti} ${category === "love" ? "연애운" : category === "money" ? "금전운" : "직업운"}`;
   document.title = title;
-  document.getElementById("seoH1").innerText = title;
 
   // 오늘 / 내일 / 연간
   document.getElementById("todayTitle").innerText = "🌞 오늘의 운세";
@@ -90,8 +89,11 @@ function startFortune(){
   const seed = new Date().toISOString().slice(0,10);
   const idx = Math.abs(hash(seed)) % tarotDB.length;
   const card = tarotDB[idx];
-  document.getElementById("tarotImg").src = card.image;
-  document.getElementById("tarotText").innerText = card.meaning;
+const tarotDiv = document.getElementById("tarotCard");
+tarotDiv.className = "tarot-front";
+tarotDiv.style.backgroundImage = `url('${card.image}')`;
+document.getElementById("tarotText").innerText = card.meaning;
+
 }
 
 /* ===============================
@@ -120,6 +122,39 @@ function detectCategory(question){
   return Object.entries(score).sort((a,b)=>b[1]-a[1])[0][0];
 }
 
+
+
+/* ===============================
+   UTIL
+================================ */
+function pick(arr){
+  if(!arr || !arr.length) return "";
+  return arr[Math.floor(Math.random()*arr.length)];
+}
+
+function hash(s){
+  let h=0; for(let i=0;i<s.length;i++) h=(h<<5)-h+s.charCodeAt(i);
+  return h;
+}
+/* ===============================
+   AI DB CONSULT (FIXED)
+================================ */
+const CATEGORY_KEYWORDS = {
+  love: ["연애","사랑","재회","썸","이별","남자","여자","연락"],
+  money: ["돈","금전","재물","수입","지출","투자","사업"],
+  job: ["직업","회사","이직","취업","퇴사","상사","직장"]
+};
+
+function detectCategory(question){
+  let score = { love:0, money:0, job:0 };
+  Object.entries(CATEGORY_KEYWORDS).forEach(([cat, words])=>{
+    words.forEach(w=>{
+      if(question.includes(w)) score[cat]++;
+    });
+  });
+  return Object.entries(score).sort((a,b)=>b[1]-a[1])[0][0];
+}
+
 function askAI(){
   const qInput = document.getElementById("aiQuestion");
   const answerBox = document.getElementById("aiAnswer");
@@ -143,30 +178,13 @@ function askAI(){
     selected = {
       id: Date.now(),
       category,
-      question,
       keywords: [question],
-      answer: "지금은 흐름을 지켜보는 것이 중요해 보입니다. 조급함보다는 한 박자 쉬어가는 선택이 좋겠습니다.",
-      count: 1,
-      created_at: new Date().toISOString().slice(0,10)
+      answer: "지금은 흐름을 지켜보는 것이 중요해 보입니다.",
+      count: 1
     };
     aiDB.push(selected);
   }
 
   answerBox.innerText = selected.answer;
   qInput.value = "";
-}
-
-}
-
-/* ===============================
-   UTIL
-================================ */
-function pick(arr){
-  if(!arr || !arr.length) return "";
-  return arr[Math.floor(Math.random()*arr.length)];
-}
-
-function hash(s){
-  let h=0; for(let i=0;i<s.length;i++) h=(h<<5)-h+s.charCodeAt(i);
-  return h;
 }
