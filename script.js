@@ -1,94 +1,38 @@
 function startFortune() {
+  const name = document.getElementById("name").value.trim();
+  const birth = document.getElementById("birth").value.trim();
+  const zodiac = document.getElementById("zodiac").value;
+  const mbti = document.getElementById("mbti").value;
+
+  if (!name || !birth || !zodiac || !mbti) {
+    alert("정보를 모두 입력하세요");
+    return;
+  }
+
   document.getElementById("result").classList.remove("hidden");
+
+  // 오늘의 운세
   document.getElementById("todayText").innerText =
     "오늘은 조급해하지 말고 흐름을 지켜보는 것이 좋습니다.";
-  document.getElementById("tarotText").innerText =
-    "지금은 준비의 카드가 나왔습니다.";
+
+  // 타로 카드 (임시 1장 고정)
+  const card = {
+    name: "The Fool",
+    img: "/assets/tarot/majors/00_the_fool.png",
+    desc: "새로운 시작과 자유로운 선택을 의미하는 카드입니다."
+  };
+
+  const tarotImg = document.getElementById("tarotCardImg");
+  tarotImg.src = card.img;
+  tarotImg.alt = card.name;
+
+  document.getElementById("tarotText").innerText = card.desc;
 }
 
-// ================= AI 상담 =================
-
-async function askAI() {
+function askAI() {
   const q = document.getElementById("aiQuestion").value.trim();
   if (!q) return;
 
-  document.getElementById("aiAnswer").innerText = "🤔 상담 중입니다...";
-
-  const category = classifyCategory(q);
-  const db = await loadDB(category);
-
-  const matched = findAnswer(db, q);
-
-  if (matched) {
-    document.getElementById("aiAnswer").innerText = matched;
-  } else {
-    const temp = fallbackAnswer(q);
-    document.getElementById("aiAnswer").innerText = temp;
-    savePending(q, category);
-  }
-}
-
-function classifyCategory(q) {
-  if (q.match(/돈|재물|금전|월급|수입/)) return "money";
-  if (q.match(/회사|직장|이직|상사/)) return "job";
-  return "love";
-}
-
-async function loadDB(category) {
-  try {
-    const res = await fetch(`/data/${category}.json`);
-    return await res.json();
-  } catch {
-    return [];
-  }
-}
-
-function findAnswer(db, q) {
-  for (const item of db) {
-    for (const key of item.intent) {
-      if (q.includes(key)) {
-        return item.answers[Math.floor(Math.random() * item.answers.length)];
-      }
-    }
-  }
-  return null;
-}
-
-function fallbackAnswer() {
-  return "아직 명확한 답이 없는 질문이에요. 지금은 상황을 조금 더 지켜보는 것이 좋아 보입니다.";
-}
-
-function savePending(question, category) {
-  const pending = JSON.parse(localStorage.getItem("pending") || "[]");
-  pending.push({ question, category, date: new Date().toISOString() });
-  localStorage.setItem("pending", JSON.stringify(pending));
-}
-const TAROT_CARDS = [
-  {
-    img: "/assets/tarot/majors/00_the_fool.png",
-    text: "새로운 시작과 자유로운 선택의 카드입니다."
-  },
-  {
-    img: "/assets/tarot/majors/01_the_magician.png",
-    text: "지금은 능력을 발휘할 수 있는 시기입니다."
-  },
-  {
-    img: "/assets/tarot/majors/02_the_high_priestess.png",
-    text: "직관과 내면의 목소리에 귀 기울이세요."
-  }
-];
-
-function openTarot() {
-  const card = TAROT_CARDS[Math.floor(Math.random() * TAROT_CARDS.length)];
-
-  const tarotDiv = document.getElementById("tarotCard");
-const tarotImg = document.getElementById("tarotCardImg");
-tarotImg.src = card.img;
-tarotImg.alt = card.name || "오늘의 타로 카드";
-
-const tarotText = document.getElementById("tarotText");
-tarotText.innerText = card.desc;
-
-
-  document.getElementById("tarotText").innerText = card.text;
+  document.getElementById("aiAnswer").innerText =
+    "지금은 스스로의 선택을 믿는 것이 중요합니다.";
 }
