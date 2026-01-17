@@ -142,3 +142,10 @@
   });
 
 })();
+  function askAI() {
+  const q = document.getElementById("aiQuestion").value.trim();
+  if (!q) return;
+
+  const answer = handleQuestion(q, "love"); // 처음엔 love로 고정
+  document.getElementById("aiAnswer").innerText = answer;
+}
