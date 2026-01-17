@@ -3,6 +3,11 @@ body {
   font-family: Pretendard, sans-serif;
   background: linear-gradient(180deg, #1e1e2f, #0f0f18);
   color: #fff;
+
+  /* ✅ 모바일 스크롤 보장 */
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .hero {
@@ -14,6 +19,9 @@ body {
   max-width: 480px;
   margin: auto;
   padding: 16px;
+
+  /* ✅ 모바일 하단 잘림 방지 */
+  padding-bottom: 120px;
 }
 
 .card {
@@ -42,7 +50,9 @@ button {
   font-size: 1.1rem;
 }
 
-.hidden { display: none; }
+.hidden {
+  display: none;
+}
 
 .tarot-back {
   width: 160px;
@@ -79,4 +89,3 @@ button {
   background: #ffd166;
   color: #000;
 }
-
