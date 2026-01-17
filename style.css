@@ -23,6 +23,10 @@ body {
   margin-top: 14px;
 }
 
+.highlight {
+  border: 2px solid #ff9f43;
+}
+
 input, select, textarea {
   width: 100%;
   padding: 10px;
@@ -46,18 +50,24 @@ button.secondary {
   background: #444;
 }
 
-.hidden { display: none; }
+.link-btn {
+  background: transparent;
+  border: none;
+  color: #bbb;
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+
+.hidden {
+  display: none;
+}
 
 .tarot img {
   width: 100%;
   max-width: 220px;
-  display: block;
   margin: 12px auto;
+  display: block;
   border-radius: 14px;
-}
-
-.ad {
-  border: 2px solid #ff9f43;
 }
 
 .cta {
@@ -75,16 +85,15 @@ button.secondary {
 .notice {
   font-size: 0.8rem;
   opacity: 0.7;
-  margin-top: 10px;
 }
 
 #chatLog {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .chat-ai {
-  background: rgba(255,255,255,0.12);
-  padding: 10px;
+  background: rgba(255,255,255,0.15);
+  padding: 8px;
   border-radius: 8px;
   margin-top: 6px;
 }
@@ -92,4 +101,8 @@ button.secondary {
 .chat-user {
   text-align: right;
   margin-top: 6px;
+}
+
+.game {
+  border: 2px dashed #6bffb8;
 }
