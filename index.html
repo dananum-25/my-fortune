@@ -7,19 +7,9 @@
   <title>오늘의 운세 | 띠 · MBTI · 연애 · 금전 · 직업 · 타로</title>
   <meta name="description" content="띠별 MBTI 운세, 연애운·금전운·직업운과 타로카드 78장을 무료로 확인하세요." />
 
-  <!-- 네이버 / 구글 인증 -->
-  <meta name="naver-site-verification" content="de5c011fc9d51a1e07798819f40394f5bde8de87" />
-  <meta name="google-site-verification" content="5FKwm4_bVWL9skvm5olmNjvPSIzR_tW75VT_0NpJ9VA" />
-
-  <!-- Open Graph -->
-  <meta property="og:title" content="오늘의 운세 · 타로" />
-  <meta property="og:description" content="하루 1회 고정 운세 · 연애 · 금전 · 직업 · 타로" />
-  <meta property="og:image" content="/assets/tarot/majors/00_the_fool.png" />
-
   <!-- AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7356591276029815"
     crossorigin="anonymous"></script>
-  <meta name="google-adsense-account" content="ca-pub-7356591276029815">
 
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -27,22 +17,20 @@
 <body>
 
 <header class="hero">
-  <h1 id="seoH1">오늘의 운세</h1>
+  <h1>오늘의 운세</h1>
   <p>띠 · MBTI · 연애 · 금전 · 직업 · 타로</p>
 </header>
 
 <main class="container">
 
-  <!-- 입력 -->
   <section class="card">
-    <input id="name" placeholder="이름" />
+    <input id="name" placeholder="이름 (선택)" />
     <input id="birth" type="date" />
     <select id="zodiac"></select>
     <select id="mbti"></select>
     <button onclick="startFortune()">운세 보기</button>
   </section>
 
-  <!-- 결과 -->
   <section id="result" class="hidden">
 
     <div class="card">
@@ -59,33 +47,26 @@
 
     <div class="card tarot">
       <h3>🃏 오늘의 타로</h3>
-      <img id="tarotImg" />
+      <img id="tarotImg" alt="오늘의 타로 카드"/>
       <p id="tarotText"></p>
     </div>
 
     <!-- AI 상담 -->
-<div class="card">
-  <h3>🧠 AI에게 운세 상담하기</h3>
+    <div class="card">
+      <h3>🧠 AI 상담</h3>
 
-  <textarea
-    id="aiQuestion"
-    placeholder="예: 올해 결혼해도 괜찮을까요?"
-    style="width:100%; padding:12px; border-radius:8px; margin-top:10px;"
-  ></textarea>
+      <div id="chatLog"></div>
 
-  <button
-    style="margin-top:12px;"
-    onclick="askAI()"
-  >
-    상담 받기
-  </button>
+      <textarea id="aiQuestion" placeholder="고민을 입력하세요"></textarea>
 
-  <div
-    id="aiAnswer"
-    style="margin-top:14px; line-height:1.6;"
-  ></div>
-</div>
+      <button onclick="askAI()">상담 받기</button>
+      <button class="secondary" onclick="resetAI()">처음부터 다시</button>
 
+      <div id="aiFooter" class="notice">
+        ※ 본 AI 상담은 개인정보를 수집·저장하지 않습니다.<br/>
+        성적·정치·위험한 질문은 제한될 수 있습니다.
+      </div>
+    </div>
 
     <!-- 광고 -->
     <div class="card ad">

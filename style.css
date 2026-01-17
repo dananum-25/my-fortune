@@ -39,14 +39,18 @@ button {
   border: none;
   background: #6b4fd6;
   color: white;
-  font-size: 1.05rem;
+  font-size: 1rem;
+}
+
+button.secondary {
+  background: #444;
 }
 
 .hidden { display: none; }
 
 .tarot img {
   width: 100%;
-  max-width: 240px;
+  max-width: 220px;
   display: block;
   margin: 12px auto;
   border-radius: 14px;
@@ -66,4 +70,26 @@ button {
   border-radius: 999px;
   text-decoration: none;
   font-weight: bold;
+}
+
+.notice {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-top: 10px;
+}
+
+#chatLog {
+  margin-bottom: 10px;
+}
+
+.chat-ai {
+  background: rgba(255,255,255,0.12);
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 6px;
+}
+
+.chat-user {
+  text-align: right;
+  margin-top: 6px;
 }
