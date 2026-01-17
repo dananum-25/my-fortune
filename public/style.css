@@ -10,15 +10,6 @@ body {
   padding: 20px;
 }
 
-.share-btn {
-  margin-top: 10px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: none;
-  background: #444;
-  color: #fff;
-}
-
 .container {
   max-width: 520px;
   margin: auto;
@@ -93,15 +84,16 @@ button {
 }
 
 .game { border: 2px dashed #6bffb8; }
-/* 기존 button 영향 제거 */
+
+/* ✅ 공유 버튼만 작게 (과도하게 큰 문제 해결) */
 .share-btn {
   width: auto;
   display: inline-block;
   padding: 8px 14px;
-  margin-top: 10px;
   border-radius: 999px;
   border: none;
   background: #444;
   color: #fff;
   font-size: 0.9rem;
+  margin-top: 10px;
 }
