@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>오늘의 운세 | 띠 · MBTI · 연애 · 금전 · 직업 · 타로</title>
-  <meta name="description" content="띠별 MBTI 운세, 연애운·금전운·직업운과 오늘의 타로를 무료로 확인하세요." />
+  <title>MBTI · 띠 · 사주 · 연애 · 금전 · 직업 · 타로 | 오늘의 운세</title>
+  <meta name="description" content="MBTI, 띠, 사주 기반 오늘의 운세와 연애·금전·직업·타로 상담을 무료로 확인하세요." />
 
   <!-- AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7356591276029815"
@@ -13,17 +13,16 @@
 
   <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
 
 <header class="hero">
   <h1>오늘의 운세</h1>
-  <p>띠 · MBTI · 연애 · 금전 · 직업 · 타로</p>
+  <p>MBTI · 띠 · 사주 · 연애 · 금전 · 직업 · 타로</p>
 </header>
 
 <main class="container">
 
-  <!-- 광고 상단 -->
+  <!-- 상단 광고 -->
   <section class="card ad highlight">
     <h3>🚰 정수기 렌탈 혜택</h3>
     <p>
@@ -35,32 +34,32 @@
     </a>
   </section>
 
-  <!-- 기본 입력 -->
+  <!-- 기본 정보 -->
   <section class="card">
+    <label>생년월일</label>
     <input id="birth" type="date" />
+
+    <label>띠</label>
     <select id="zodiac"></select>
 
+    <label>MBTI</label>
     <select id="mbti">
-      <option value="">MBTI를 선택하세요</option>
+      <option value="">선택하세요</option>
     </select>
-
     <button class="link-btn" onclick="openMbtiTest()">MBTI 잘 모르겠어요</button>
 
     <button onclick="startFortune()">운세 보기</button>
   </section>
 
-  <!-- AI 상담 (운세보기 바로 아래) -->
+  <!-- AI 상담 -->
   <section class="card">
     <h3>🧠 AI 상담</h3>
     <div id="chatLog"></div>
-
     <textarea id="aiQuestion" placeholder="고민을 입력하세요"></textarea>
     <button onclick="askAI()">상담 받기</button>
     <button class="secondary" onclick="resetAI()">처음부터 다시</button>
-
     <p class="notice">
-      ※ 본 AI 상담은 개인정보를 수집·저장하지 않습니다.<br>
-      성적·정치·위험한 질문은 제한될 수 있습니다.
+      ※ 개인정보를 수집·저장하지 않습니다.
     </p>
   </section>
 
@@ -81,11 +80,16 @@
 
     <div class="card tarot">
       <h3>🃏 오늘의 타로</h3>
-      <img id="tarotImg" />
+      <img id="tarotImg" alt="타로 카드" />
       <p id="tarotText"></p>
     </div>
 
-    <!-- 미니게임 홍보 -->
+    <!-- 공유 -->
+    <div class="card">
+      <button onclick="shareApp()">📤 친구에게 공유하기</button>
+    </div>
+
+    <!-- 미니게임 -->
     <div class="card game">
       <h3>🎮 미니게임 하고 커피쿠폰 받기</h3>
       <p>잠깐 즐기고 쿠폰 받아가세요 ☕</p>
@@ -98,6 +102,6 @@
 
 </main>
 
-<script src="script.js" defer></script>
+<script src="script.js"></script>
 </body>
 </html>

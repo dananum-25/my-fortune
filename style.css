@@ -32,7 +32,7 @@ input, select, textarea {
   padding: 10px;
   border-radius: 8px;
   border: none;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 button {
@@ -51,11 +51,10 @@ button.secondary {
 }
 
 .link-btn {
-  background: transparent;
+  background: none;
   border: none;
-  color: #bbb;
+  color: #ccc;
   font-size: 0.9rem;
-  margin-top: 8px;
 }
 
 .hidden {
@@ -65,8 +64,8 @@ button.secondary {
 .tarot img {
   width: 100%;
   max-width: 220px;
-  margin: 12px auto;
   display: block;
+  margin: 12px auto;
   border-radius: 14px;
 }
 
@@ -85,10 +84,6 @@ button.secondary {
 .notice {
   font-size: 0.8rem;
   opacity: 0.7;
-}
-
-#chatLog {
-  margin-bottom: 8px;
 }
 
 .chat-ai {
