@@ -3,11 +3,6 @@ body {
   font-family: Pretendard, sans-serif;
   background: linear-gradient(180deg, #1e1e2f, #0f0f18);
   color: #fff;
-
-  /* ✅ 모바일 스크롤 보장 */
-  min-height: 100vh;
-  overflow-x: hidden;
-  overflow-y: auto;
 }
 
 .hero {
@@ -19,9 +14,6 @@ body {
   max-width: 480px;
   margin: auto;
   padding: 16px;
-
-  /* ✅ 모바일 하단 잘림 방지 */
-  padding-bottom: 120px;
 }
 
 .card {
@@ -47,12 +39,10 @@ button {
   border: none;
   background: #6b4fd6;
   color: white;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
 }
 
-.hidden {
-  display: none;
-}
+.hidden { display: none; }
 
 .tarot-back {
   width: 160px;
@@ -66,6 +56,11 @@ button {
   0% { transform: rotate(-2deg); }
   50% { transform: rotate(2deg); }
   100% { transform: rotate(-2deg); }
+}
+
+.ai p {
+  margin-top: 12px;
+  line-height: 1.6;
 }
 
 .ad {
@@ -82,10 +77,4 @@ button {
   border-radius: 999px;
   text-decoration: none;
   font-weight: bold;
-}
-
-.share {
-  margin-top: 20px;
-  background: #ffd166;
-  color: #000;
 }
