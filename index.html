@@ -3,16 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="naver-site-verification" content="de5c011fc9d51a1e07798819f40394f5bde8de87" />
 
   <title>오늘의 운세 | 연애 · 금전 · 직업 · 타로</title>
-  <meta name="description" content="오늘의 운세, 연애운, 금전운, 직업운, 타로카드 78장을 무료로 확인하세요." />
+  <meta name="description" content="띠별 MBTI 운세, 연애운·금전운·직업운과 타로카드 78장을 무료로 확인하세요." />
+
+  <!-- SEO / Verification -->
+  <meta name="naver-site-verification" content="de5c011fc9d51a1e07798819f40394f5bde8de87" />
+  <meta name="google-site-verification" content="5FKwm4_bVWL9skvm5olmNjvPSIzR_tW75VT_0NpJ9VA" />
 
   <!-- Open Graph -->
   <meta property="og:title" content="오늘의 운세 · 타로" />
   <meta property="og:description" content="하루 1회 고정 운세 · 연애 · 금전 · 직업 · 타로" />
-  <meta property="og:url" content="https://my-fortune-lake.vercel.app/" />
-  <meta property="og:image" content="https://my-fortune-lake.vercel.app/assets/tarot/majors/00_the_fool.png" />
+  <meta property="og:image" content="/assets/tarot/majors/00_the_fool.png" />
 
   <!-- AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7356591276029815"
@@ -25,57 +27,59 @@
 <body>
 
 <header class="hero">
-  <h1>오늘의 운세</h1>
-  <p>연애 · 금전 · 직업 · 타로 78장</p>
+  <h1>🔮 오늘의 운세</h1>
+  <p>띠 · MBTI · 연애 · 금전 · 직업 · 타로</p>
 </header>
 
 <main class="container">
 
+  <!-- 입력 -->
   <section class="card">
     <input id="name" placeholder="이름" />
-    <input id="birth" placeholder="생년월일 (YYYYMMDD)" />
-    <select id="zodiac">
-      <option value="">띠 선택</option>
-      <option value="rat">쥐띠</option>
-      <option value="ox">소띠</option>
-    </select>
-    <select id="mbti">
-      <option value="">MBTI 선택</option>
-      <option value="ENFP">ENFP</option>
-      <option value="INTJ">INTJ</option>
-    </select>
+    <input id="birth" type="date" />
+    <select id="zodiac"></select>
+    <select id="mbti"></select>
     <button onclick="startFortune()">운세 보기</button>
   </section>
 
+  <!-- 결과 -->
   <section id="result" class="hidden">
 
     <div class="card">
-      <h2>🌞 오늘의 운세</h2>
+      <h2 id="todayTitle"></h2>
       <p id="todayText"></p>
     </div>
 
-    <div class="card">
-      <h2>🃏 오늘의 타로</h2>
-
-      <div class="tarot-card-wrapper">
-        <img id="tarotCardImg" src="" alt="오늘의 타로 카드">
-      </div>
-
+    <div class="card tarot">
+      <h3>🃏 오늘의 타로</h3>
+      <img id="tarotImg" />
       <p id="tarotText"></p>
     </div>
 
+    <!-- AI 상담 -->
     <div class="card">
-      <h2>💬 AI 운세 상담</h2>
-      <input id="aiQuestion" placeholder="궁금한 점을 입력하세요" />
-      <button onclick="askAI()">상담하기</button>
+      <h3>🔮 AI에게 운세 상담하기</h3>
+      <textarea id="aiQuestion" placeholder="궁금한 걸 물어보세요"></textarea>
+      <button onclick="askAI()">상담 받기</button>
       <p id="aiAnswer"></p>
+    </div>
+
+    <!-- 광고 -->
+    <div class="card ad">
+      <h3>🚰 정수기 렌탈 혜택</h3>
+      <p>
+        제휴카드 사용 시 <b>월 렌탈료 0원</b><br/>
+        설치 당일 <b>최대 50만원 페이백</b>
+      </p>
+      <a class="cta" href="https://capable-kataifi-46f1ad.netlify.app/" target="_blank">
+        👉 무료 상담 신청
+      </a>
     </div>
 
   </section>
 
 </main>
 
-<script src="/script.js" defer></script>
-
+<script src="script.js" defer></script>
 </body>
 </html>
