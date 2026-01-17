@@ -5,36 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>MBTI · 띠 · 사주 · 연애 · 금전 · 직업 · 타로 | 오늘의 운세</title>
-  <meta name="description" content="MBTI, 띠, 사주 기반 오늘의 운세와 연애·금전·직업·타로 상담을 무료로 확인하세요." />
+
+  <link rel="stylesheet" href="/style.css" />
+  <script defer src="/script.js"></script>
 
   <!-- AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7356591276029815"
     crossorigin="anonymous"></script>
-
-  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
 <header class="hero">
   <h1>오늘의 운세</h1>
   <p>MBTI · 띠 · 사주 · 연애 · 금전 · 직업 · 타로</p>
+  <button class="share-btn" onclick="shareApp()">🔗 친구에게 공유</button>
 </header>
 
 <main class="container">
 
-  <!-- 상단 광고 -->
-  <section class="card ad highlight">
+  <!-- 광고 -->
+  <section class="card ad">
     <h3>🚰 정수기 렌탈 혜택</h3>
-    <p>
-      제휴카드 사용 시 <b>월 렌탈료 0원</b><br>
-      설치 당일 <b>최대 50만원 페이백</b>
-    </p>
+    <p>제휴카드 사용 시 <b>월 렌탈료 0원</b><br>설치 당일 <b>최대 50만원 페이백</b></p>
     <a class="cta" href="https://capable-kataifi-46f1ad.netlify.app/" target="_blank">
       👉 무료 상담 신청
     </a>
   </section>
 
-  <!-- 기본 정보 -->
+  <!-- 기본 입력 -->
   <section class="card">
     <label>생년월일</label>
     <input id="birth" type="date" />
@@ -43,10 +42,7 @@
     <select id="zodiac"></select>
 
     <label>MBTI</label>
-    <select id="mbti">
-      <option value="">선택하세요</option>
-    </select>
-    <button class="link-btn" onclick="openMbtiTest()">MBTI 잘 모르겠어요</button>
+    <select id="mbti"></select>
 
     <button onclick="startFortune()">운세 보기</button>
   </section>
@@ -58,41 +54,34 @@
     <textarea id="aiQuestion" placeholder="고민을 입력하세요"></textarea>
     <button onclick="askAI()">상담 받기</button>
     <button class="secondary" onclick="resetAI()">처음부터 다시</button>
-    <p class="notice">
-      ※ 개인정보를 수집·저장하지 않습니다.
-    </p>
+    <p class="notice">※ 개인정보를 수집·저장하지 않습니다.</p>
   </section>
 
   <!-- 결과 -->
   <section id="result" class="hidden">
 
     <div class="card">
-      <h3>🌞 오늘의 운세</h3>
+      <h3>🌞 오늘</h3>
       <p id="todayText"></p>
+      <h4>🌙 내일</h4>
       <p id="tomorrowText"></p>
+      <h4>📅 올해</h4>
       <p id="yearText"></p>
     </div>
 
     <div class="card">
-      <h3 id="categoryTitle"></h3>
-      <p id="categoryText"></p>
+      <h3>띠별 운세</h3>
+      <p id="zodiacText"></p>
     </div>
 
     <div class="card tarot">
       <h3>🃏 오늘의 타로</h3>
-      <img id="tarotImg" alt="타로 카드" />
+      <img id="tarotImg" />
       <p id="tarotText"></p>
     </div>
 
-    <!-- 공유 -->
-    <div class="card">
-      <button onclick="shareApp()">📤 친구에게 공유하기</button>
-    </div>
-
-    <!-- 미니게임 -->
     <div class="card game">
       <h3>🎮 미니게임 하고 커피쿠폰 받기</h3>
-      <p>잠깐 즐기고 쿠폰 받아가세요 ☕</p>
       <a class="cta" href="https://chipper-biscuit-1c9ec3.netlify.app/" target="_blank">
         👉 게임하러 가기
       </a>
@@ -102,6 +91,5 @@
 
 </main>
 
-<script src="script.js"></script>
 </body>
 </html>

@@ -7,7 +7,16 @@ body {
 
 .hero {
   text-align: center;
-  padding: 24px 16px;
+  padding: 20px;
+}
+
+.share-btn {
+  margin-top: 10px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: none;
+  background: #444;
+  color: #fff;
 }
 
 .container {
@@ -23,60 +32,45 @@ body {
   margin-top: 14px;
 }
 
-.highlight {
-  border: 2px solid #ff9f43;
-}
+.ad { border: 2px solid #ff9f43; }
 
 input, select, textarea {
   width: 100%;
   padding: 10px;
+  margin-top: 6px;
   border-radius: 8px;
   border: none;
-  margin-top: 8px;
 }
 
 button {
   width: 100%;
-  margin-top: 12px;
+  margin-top: 10px;
   padding: 12px;
   border-radius: 999px;
   border: none;
   background: #6b4fd6;
   color: white;
-  font-size: 1rem;
 }
 
-button.secondary {
-  background: #444;
-}
+.secondary { background: #444; }
 
-.link-btn {
-  background: none;
-  border: none;
-  color: #ccc;
-  font-size: 0.9rem;
-}
-
-.hidden {
-  display: none;
-}
+.hidden { display: none; }
 
 .tarot img {
   width: 100%;
   max-width: 220px;
   display: block;
-  margin: 12px auto;
-  border-radius: 14px;
+  margin: 10px auto;
+  border-radius: 12px;
 }
 
 .cta {
   display: block;
-  margin-top: 10px;
   padding: 12px;
   background: #ff9f43;
   color: #000;
-  text-align: center;
   border-radius: 999px;
+  text-align: center;
   text-decoration: none;
   font-weight: bold;
 }
@@ -98,6 +92,4 @@ button.secondary {
   margin-top: 6px;
 }
 
-.game {
-  border: 2px dashed #6bffb8;
-}
+.game { border: 2px dashed #6bffb8; }
