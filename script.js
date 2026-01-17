@@ -98,18 +98,64 @@ function startFortune(){
    AI DB CONSULT
 ================================ */
 function askAI(){
-  const q = document.getElementById("aiQuestion").value;
-  if(!q) return;
+// ===============================
+// AI QUESTION ENGINE (STABLE)
+// ===============================
 
-  const found = aiDB.find(x=>x.keywords.some(k=>q.includes(k)));
-  if(found){
-    found.count++;
-    document.getElementById("aiAnswer").innerText = found.answer;
-  }else{
-    const ans = "지금은 기운의 흐름이 흔들리는 시기입니다. 조급해하지 말고 상황을 관찰하세요. 선택은 조금 뒤에 해도 늦지 않습니다.";
-    aiDB.push({keywords:[q],answer:ans,count:1});
-    document.getElementById("aiAnswer").innerText = ans;
+const CATEGORY_KEYWORDS = {
+  love: ["연애","사랑","재회","썸","이별","남자","여자","연락"],
+  money: ["돈","금전","재물","수입","지출","투자","사업"],
+  job: ["직업","회사","이직","취업","퇴사","상사","직장"]
+};
+
+function detectCategory(question){
+  let score = { love:0, money:0, job:0 };
+
+  Object.entries(CATEGORY_KEYWORDS).forEach(([cat, words])=>{
+    words.forEach(w=>{
+      if(question.includes(w)) score[cat]++;
+    });
+  });
+
+  return Object.entries(score).sort((a,b)=>b[1]-a[1])[0][0];
+}
+
+function askAI(){
+  const qInput = document.getElementById("aiQuestion");
+  const answerBox = document.getElementById("aiAnswer");
+  const question = qInput.value.trim();
+  if(!question) return;
+
+  const category = detectCategory(question);
+
+  let matched = aiDB.filter(item =>
+    item.category === category &&
+    item.keywords.some(k => question.includes(k))
+  );
+
+  let selected;
+
+  if(matched.length){
+    matched.sort((a,b)=>b.count - a.count);
+    selected = matched[0];
+    selected.count++;
+  } else {
+    selected = {
+      id: Date.now(),
+      category,
+      question,
+      keywords: [question],
+      answer: "지금은 흐름을 지켜보는 것이 중요해 보입니다. 조급함보다는 한 박자 쉬어가는 선택이 좋겠습니다.",
+      count: 1,
+      created_at: new Date().toISOString().slice(0,10)
+    };
+    aiDB.push(selected);
   }
+
+  answerBox.innerText = selected.answer;
+  qInput.value = "";
+}
+
 }
 
 /* ===============================
