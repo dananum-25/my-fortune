@@ -11,7 +11,7 @@ body {
 }
 
 .container {
-  max-width: 480px;
+  max-width: 520px;
   margin: auto;
   padding: 16px;
 }
@@ -39,17 +39,17 @@ button {
   border: none;
   background: #6b4fd6;
   color: white;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
 }
 
 .hidden { display: none; }
 
 .tarot img {
   width: 100%;
-  max-width: 220px;
+  max-width: 240px;
   display: block;
   margin: 12px auto;
-  border-radius: 12px;
+  border-radius: 14px;
 }
 
 .ad {
