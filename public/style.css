@@ -93,3 +93,15 @@ button {
 }
 
 .game { border: 2px dashed #6bffb8; }
+/* 기존 button 영향 제거 */
+.share-btn {
+  width: auto;
+  display: inline-block;
+  padding: 8px 14px;
+  margin-top: 10px;
+  border-radius: 999px;
+  border: none;
+  background: #444;
+  color: #fff;
+  font-size: 0.9rem;
+}

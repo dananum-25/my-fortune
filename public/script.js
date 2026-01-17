@@ -28,7 +28,7 @@ const birthInput = document.getElementById("birth");
   initSelectors();
 })();
 
-/* selectors */
+/* ===== selectors ===== */
 function initSelectors() {
   ZODIAC_KO.forEach(z => {
     const o = document.createElement("option");
@@ -36,7 +36,9 @@ function initSelectors() {
     zodiacSel.appendChild(o);
   });
 
-  Object.keys(DB["mbti_traits_ko.json"]).forEach(m => {
+  // ✅ 실제 MBTI 위치: traits 하위
+  const traits = DB["mbti_traits_ko.json"].traits;
+  Object.keys(traits).forEach(m => {
     const o = document.createElement("option");
     o.value = m;
     o.textContent = m;
@@ -44,47 +46,74 @@ function initSelectors() {
   });
 }
 
-/* 음력 띠 자동 */
+/* ===== 음력 띠 자동 ===== */
 birthInput.addEventListener("change", () => {
   const d = new Date(birthInput.value);
   const y = d.getFullYear();
   const lunar = DB["lunar_new_year_1920_2026.json"][y];
   if (!lunar) return;
   const zodiacYear = d < new Date(lunar) ? y - 1 : y;
-  zodiacSel.selectedIndex = (zodiacYear - 4) % 12;
+  zodiacSel.selectedIndex = (zodiacYear - 4 + 1200) % 12;
 });
 
-/* 운세 */
+/* ===== 운세 ===== */
 function startFortune() {
-  document.getElementById("result").classList.remove("hidden");
+  try {
+    document.getElementById("result").classList.remove("hidden");
 
-  document.getElementById("todayText").innerText =
-    pick(DB["fortunes_ko_today.json"].pools.today);
+    document.getElementById("todayText").innerText =
+      pick(DB["fortunes_ko_today.json"].pools.today);
 
-  document.getElementById("tomorrowText").innerText =
-    pick(DB["fortunes_ko_tomorrow.json"].pools.tomorrow);
+    document.getElementById("tomorrowText").innerText =
+      pick(DB["fortunes_ko_tomorrow.json"].pools.tomorrow);
 
-  document.getElementById("yearText").innerText =
-    pick(DB["fortunes_ko_2026.json"].pools.year);
+    document.getElementById("yearText").innerText =
+      pick(DB["fortunes_ko_2026.json"].pools.year);
 
-  const key = ZODIAC_KEY[zodiacSel.selectedIndex];
-  document.getElementById("zodiacText").innerText =
-    pick(DB["zodiac_fortunes_ko_2026.json"][key]);
+    const key = ZODIAC_KEY[zodiacSel.selectedIndex];
+    document.getElementById("zodiacText").innerText =
+      pick(DB["zodiac_fortunes_ko_2026.json"][key]);
 
-  drawTarot();
+    drawTarot();
+  } catch (e) {
+    console.error(e);
+    alert("운세 데이터를 불러오는 중 문제가 발생했습니다.");
+  }
 }
 
-/* 타로 */
+/* ===== 타로 ===== */
 function drawTarot() {
   const cards = DB["tarot_db_ko.json"].cards;
+  if (!Array.isArray(cards) || cards.length === 0) return;
+
   const idx = Math.abs(hash(new Date().toDateString())) % cards.length;
   const c = cards[idx];
+
   document.getElementById("tarotImg").src = c.image;
   document.getElementById("tarotText").innerText = c.meaning;
 }
 
-/* AI 상담 */
+/* ===== AI 상담 ===== */
 let aiSession = { id: Date.now()+"" };
+
+async function askAI() {
+  const q = document.getElementById("aiQuestion").value.trim();
+  if (!q) return;
+
+  appendChat(q, "user");
+  document.getElementById("aiQuestion").value = "";
+
+  try {
+    const r = await fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify({ question: q, session_id: aiSession.id })
+    }).then(r => r.json());
+
+    appendChat(r.answer || r.message, "ai");
+  } catch (e) {
+    appendChat("현재 상담 서버와 연결할 수 없습니다.", "ai");
+  }
+}
 
 function appendChat(t, who) {
   const d = document.createElement("div");
@@ -98,21 +127,7 @@ function resetAI() {
   document.getElementById("chatLog").innerHTML = "";
 }
 
-async function askAI() {
-  const q = document.getElementById("aiQuestion").value.trim();
-  if (!q) return;
-  appendChat(q, "user");
-  document.getElementById("aiQuestion").value = "";
-
-  const r = await fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({ question: q, session_id: aiSession.id })
-  }).then(r => r.json());
-
-  appendChat(r.answer || r.message, "ai");
-}
-
-/* 공유 */
+/* ===== 공유 ===== */
 function shareApp() {
   if (navigator.share) {
     navigator.share({
@@ -128,6 +143,7 @@ function shareApp() {
 
 /* util */
 function pick(arr) {
+  if (!Array.isArray(arr) || arr.length === 0) throw new Error("빈 배열");
   return arr[Math.floor(Math.random() * arr.length)];
 }
 function hash(s) {
