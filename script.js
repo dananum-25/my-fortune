@@ -63,3 +63,27 @@ function savePending(question, category) {
   pending.push({ question, category, date: new Date().toISOString() });
   localStorage.setItem("pending", JSON.stringify(pending));
 }
+const TAROT_CARDS = [
+  {
+    img: "/assets/tarot/majors/00_the_fool.png",
+    text: "새로운 시작과 자유로운 선택의 카드입니다."
+  },
+  {
+    img: "/assets/tarot/majors/01_the_magician.png",
+    text: "지금은 능력을 발휘할 수 있는 시기입니다."
+  },
+  {
+    img: "/assets/tarot/majors/02_the_high_priestess.png",
+    text: "직관과 내면의 목소리에 귀 기울이세요."
+  }
+];
+
+function openTarot() {
+  const card = TAROT_CARDS[Math.floor(Math.random() * TAROT_CARDS.length)];
+
+  const tarotDiv = document.getElementById("tarotCard");
+  tarotDiv.className = "tarot-front";
+  tarotDiv.style.backgroundImage = `url('${card.img}')`;
+
+  document.getElementById("tarotText").innerText = card.text;
+}
