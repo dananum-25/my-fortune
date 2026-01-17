@@ -1,160 +1,126 @@
-// ===============================
-// 기본 데이터
-// ===============================
+/* ===============================
+   GLOBAL DB LOAD
+================================ */
+let aiDB = [];
+let lunarMap = {};
+let zodiacDB = {};
+let todayDB = [];
+let tomorrowDB = [];
+let yearDB = [];
+let mbtiDB = {};
+let sajuDB = {};
+let tarotDB = [];
 
-const ZODIAC_LIST = [
-  "rat","ox","tiger","rabbit","dragon","snake",
-  "horse","goat","monkey","rooster","dog","pig"
-];
-
-const ZODIAC_KO = {
-  rat:"쥐띠", ox:"소띠", tiger:"호랑이띠", rabbit:"토끼띠",
-  dragon:"용띠", snake:"뱀띠", horse:"말띠", goat:"양띠",
-  monkey:"원숭이띠", rooster:"닭띠", dog:"개띠", pig:"돼지띠"
-};
-
-const MBTI_LIST = [
-  "INTJ","INTP","ENTJ","ENTP","INFJ","INFP","ENFJ","ENFP",
-  "ISTJ","ISFJ","ESTJ","ESFJ","ISTP","ISFP","ESTP","ESFP"
-];
-
-// ===============================
-// 초기 셀렉트 채우기
-// ===============================
-
-document.addEventListener("DOMContentLoaded", () => {
-  const zodiacSel = document.getElementById("zodiac");
-  const mbtiSel = document.getElementById("mbti");
-
-  ZODIAC_LIST.forEach(z => {
-    const opt = document.createElement("option");
-    opt.value = z;
-    opt.textContent = ZODIAC_KO[z];
-    zodiacSel.appendChild(opt);
-  });
-
-  MBTI_LIST.forEach(m => {
-    const opt = document.createElement("option");
-    opt.value = m;
-    opt.textContent = m;
-    mbtiSel.appendChild(opt);
-  });
+Promise.all([
+  fetch("/data/ai_qa.json").then(r=>r.json()),
+  fetch("/data/lunar_new_year_1920_2026.json").then(r=>r.json()),
+  fetch("/data/zodiac_fortunes_ko_2026.json").then(r=>r.json()),
+  fetch("/data/fortunes_ko_today.json").then(r=>r.json()),
+  fetch("/data/fortunes_ko_tomorrow.json").then(r=>r.json()),
+  fetch("/data/fortunes_ko_2026.json").then(r=>r.json()),
+  fetch("/data/mbti_traits_ko.json").then(r=>r.json()),
+  fetch("/data/saju_ko.json").then(r=>r.json()),
+  fetch("/data/tarot_db_ko.json").then(r=>r.json())
+]).then(d=>{
+  [aiDB,lunarMap,zodiacDB,todayDB,tomorrowDB,yearDB,mbtiDB,sajuDB,tarotDB] = d;
 });
 
-// ===============================
-// 운세 보기
-// ===============================
+/* ===============================
+   CONSTANTS
+================================ */
+const ZODIAC = ["rat","ox","tiger","rabbit","dragon","snake","horse","goat","monkey","rooster","dog","pig"];
+const ZODIAC_KO = ["쥐띠","소띠","호랑이띠","토끼띠","용띠","뱀띠","말띠","양띠","원숭이띠","닭띠","개띠","돼지띠"];
+const MBTI = ["INTJ","INTP","ENTJ","ENTP","INFJ","INFP","ENFJ","ENFP","ISTJ","ISFJ","ESTJ","ESFJ","ISTP","ISFP","ESTP","ESFP"];
 
-function startFortune() {
-  const name = document.getElementById("name").value.trim();
-  const birth = document.getElementById("birth").value.trim();
-  const zodiac = document.getElementById("zodiac").value;
-  const mbti = document.getElementById("mbti").value;
+const zodiacSel = document.getElementById("zodiac");
+const mbtiSel = document.getElementById("mbti");
 
-  if (!name || !birth || !zodiac || !mbti) {
-    alert("정보를 모두 입력해주세요");
-    return;
-  }
+ZODIAC_KO.forEach(z=>zodiacSel.innerHTML+=`<option>${z}</option>`);
+MBTI.forEach(m=>mbtiSel.innerHTML+=`<option>${m}</option>`);
 
+/* ===============================
+   LUNAR ZODIAC AUTO
+================================ */
+document.getElementById("birth").addEventListener("change", e=>{
+  const d = new Date(e.target.value);
+  const y = d.getFullYear();
+  if(!lunarMap[y]) return;
+  const lny = new Date(lunarMap[y]);
+  const zy = d < lny ? y-1 : y;
+  zodiacSel.selectedIndex = (zy - 4) % 12;
+});
+
+/* ===============================
+   URL CATEGORY (LOVE/MONEY/JOB)
+================================ */
+function getCategory(){
+  const p = location.pathname.split("/");
+  if(p.includes("money")) return "money";
+  if(p.includes("job")) return "job";
+  return "love";
+}
+
+/* ===============================
+   MAIN START
+================================ */
+function startFortune(){
   document.getElementById("result").classList.remove("hidden");
 
-  // 오늘의 운세
+  const zodiacKey = ZODIAC[zodiacSel.selectedIndex];
+  const mbti = mbtiSel.value;
+  const category = getCategory();
+
+  // SEO
+  const title = `${ZODIAC_KO[zodiacSel.selectedIndex]} ${mbti} ${category === "love" ? "연애운" : category === "money" ? "금전운" : "직업운"}`;
+  document.title = title;
+  document.getElementById("seoH1").innerText = title;
+
+  // 오늘 / 내일 / 연간
   document.getElementById("todayTitle").innerText = "🌞 오늘의 운세";
-  document.getElementById("todayText").innerText =
-    "오늘은 흐름을 억지로 바꾸기보다 자연스럽게 흘려보내는 것이 좋습니다.";
+  document.getElementById("todayText").innerText = pick(todayDB);
+  document.getElementById("tomorrowText").innerText = "🌙 내일: " + pick(tomorrowDB);
+  document.getElementById("yearText").innerText = "📅 올해: " + pick(yearDB);
 
-  // 타로
-  drawTarot();
+  // 카테고리 운세
+  const zList = zodiacDB[zodiacKey] || [];
+  document.getElementById("categoryTitle").innerText = category === "love" ? "💖 연애운" : category === "money" ? "💰 금전운" : "💼 직업운";
+  document.getElementById("categoryText").innerText = pick(zList);
 
-  // SEO URL 반영
-  history.replaceState(
-    null,
-    "",
-    `/zodiac/${zodiac}/mbti/${mbti.toLowerCase()}/love`
-  );
+  // 타로 하루 고정
+  const seed = new Date().toISOString().slice(0,10);
+  const idx = Math.abs(hash(seed)) % tarotDB.length;
+  const card = tarotDB[idx];
+  document.getElementById("tarotImg").src = card.image;
+  document.getElementById("tarotText").innerText = card.meaning;
 }
 
-// ===============================
-// 타로 카드
-// ===============================
+/* ===============================
+   AI DB CONSULT
+================================ */
+function askAI(){
+  const q = document.getElementById("aiQuestion").value;
+  if(!q) return;
 
-const TAROT_CARDS = [
-  {
-    name: "The Fool",
-    img: "/assets/tarot/majors/00_the_fool.png",
-    text: "새로운 시작과 자유로운 선택의 카드입니다."
-  }
-];
-
-function drawTarot() {
-  const card = TAROT_CARDS[Math.floor(Math.random() * TAROT_CARDS.length)];
-  const tarotDiv = document.getElementById("tarotCard");
-
-  tarotDiv.className = "tarot-front";
-  tarotDiv.style.backgroundImage = `url('${card.img}')`;
-  tarotDiv.style.backgroundSize = "contain";
-  tarotDiv.style.backgroundRepeat = "no-repeat";
-  tarotDiv.style.backgroundPosition = "center";
-
-  document.getElementById("tarotText").innerText = card.text;
-}
-
-// ===============================
-// AI 상담 (DB 기반)
-// ===============================
-
-let AI_DB = [];
-
-fetch("/data/ai_qa.json")
-  .then(res => res.json())
-  .then(data => {
-    AI_DB = data;
-  });
-
-function askAI() {
-  const input = document.getElementById("aiQuestion");
-  const question = input.value.trim();
-
-  if (!question) {
-    alert("질문을 입력해주세요");
-    return;
-  }
-
-  const answerBox = document.getElementById("aiAnswer");
-  answerBox.innerText = "🔮 상담 중입니다...";
-
-  const found = AI_DB.find(item =>
-    item.keywords.some(k => question.includes(k))
-  );
-
-  if (found) {
+  const found = aiDB.find(x=>x.keywords.some(k=>q.includes(k)));
+  if(found){
     found.count++;
-    answerBox.innerText = found.answer;
-  } else {
-    const newItem = {
-      id: AI_DB.length + 1,
-      question,
-      keywords: question.split(" ").slice(0, 3),
-      category: "general",
-      answer:
-        "아직 명확한 답변 데이터가 없습니다. 이 질문은 저장되어 다음에 더 나은 답변으로 발전됩니다.",
-      count: 1
-    };
-
-    AI_DB.push(newItem);
-    answerBox.innerText = newItem.answer;
+    document.getElementById("aiAnswer").innerText = found.answer;
+  }else{
+    const ans = "지금은 기운의 흐름이 흔들리는 시기입니다. 조급해하지 말고 상황을 관찰하세요. 선택은 조금 뒤에 해도 늦지 않습니다.";
+    aiDB.push({keywords:[q],answer:ans,count:1});
+    document.getElementById("aiAnswer").innerText = ans;
   }
-
-  input.value = "";
 }
 
-// ===============================
-// 공유
-// ===============================
+/* ===============================
+   UTIL
+================================ */
+function pick(arr){
+  if(!arr || !arr.length) return "";
+  return arr[Math.floor(Math.random()*arr.length)];
+}
 
-function share() {
-  navigator.share?.({
-    title: "오늘의 운세",
-    url: location.href
-  });
+function hash(s){
+  let h=0; for(let i=0;i<s.length;i++) h=(h<<5)-h+s.charCodeAt(i);
+  return h;
 }
