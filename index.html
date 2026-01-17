@@ -64,12 +64,28 @@
     </div>
 
     <!-- AI 상담 -->
-    <div class="card">
-      <h3>🔮 AI에게 운세 상담하기</h3>
-      <textarea id="aiQuestion" placeholder="궁금한 걸 물어보세요"></textarea>
-      <button onclick="askAI()">상담 받기</button>
-      <p id="aiAnswer"></p>
-    </div>
+<div class="card">
+  <h3>🧠 AI에게 운세 상담하기</h3>
+
+  <textarea
+    id="aiQuestion"
+    placeholder="예: 올해 결혼해도 괜찮을까요?"
+    style="width:100%; padding:12px; border-radius:8px; margin-top:10px;"
+  ></textarea>
+
+  <button
+    style="margin-top:12px;"
+    onclick="askAI()"
+  >
+    상담 받기
+  </button>
+
+  <div
+    id="aiAnswer"
+    style="margin-top:14px; line-height:1.6;"
+  ></div>
+</div>
+
 
     <!-- 광고 -->
     <div class="card ad">
