@@ -82,8 +82,13 @@ function openTarot() {
   const card = TAROT_CARDS[Math.floor(Math.random() * TAROT_CARDS.length)];
 
   const tarotDiv = document.getElementById("tarotCard");
-  tarotDiv.className = "tarot-front";
-  tarotDiv.style.backgroundImage = `url('${card.img}')`;
+const tarotImg = document.getElementById("tarotCardImg");
+tarotImg.src = card.img;
+tarotImg.alt = card.name || "오늘의 타로 카드";
+
+const tarotText = document.getElementById("tarotText");
+tarotText.innerText = card.desc;
+
 
   document.getElementById("tarotText").innerText = card.text;
 }
