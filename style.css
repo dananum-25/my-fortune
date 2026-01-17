@@ -86,3 +86,17 @@ button {
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.4);
 }
+.tarot-card-wrapper {
+  width: 100%;
+  max-width: 260px;
+  margin: 16px auto;
+}
+
+.tarot-card-wrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+  object-fit: contain;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
