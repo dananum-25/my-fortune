@@ -30,10 +30,34 @@ body {
 .card {
   background: rgba(255, 255, 255, 0.08);
   border-radius: 16px;
-  padding: 18px;
   margin-top: 14px;
+  overflow: hidden; /* 🔥 중요 */
 }
 
+.card:not(.cat-card) {
+  padding: 18px;
+}
+
+/* 🐱 고양이 카드 전용 */
+.cat-card {
+  padding: 0;
+}
+
+.cat-full {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.cat-msg {
+  padding: 14px 16px 18px;
+  text-align: center;
+  line-height: 1.4;
+  opacity: 0.9;
+}
+
+/* 입력 */
 label {
   display: block;
   margin-top: 8px;
@@ -73,21 +97,6 @@ button:hover {
 
 .hidden {
   display: none;
-}
-
-.cat-box {
-  text-align: center;
-}
-
-.cat-box img {
-  width: 180px;
-  max-width: 100%;
-  margin-bottom: 10px;
-}
-
-.cat-msg {
-  opacity: 0.9;
-  line-height: 1.4;
 }
 
 .answer {

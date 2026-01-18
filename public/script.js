@@ -1,11 +1,11 @@
 /* ===============================
-   GAS URL (여기만 관리)
+   GAS URL
 ================================ */
 const GAS_URL =
   "https://script.google.com/macros/s/AKfycbwPAEMT74SQGF0H2aUymPWwslS-QNYe8jV_Sgp5n2dbyqVGGysLfbuK3Gdcpth_nsBQ/exec";
 
 /* ===============================
-   오늘 운세 DB 로드
+   오늘 운세 DB
 ================================ */
 let todayDB = [];
 
@@ -16,7 +16,7 @@ fetch("/data/fortunes_ko_today.json")
   });
 
 /* ===============================
-   오늘의 운세 (하루 고정)
+   오늘 운세 (하루 고정)
 ================================ */
 function showTodayFortune() {
   const birth = document.getElementById("birth").value;
@@ -45,12 +45,10 @@ function askAI() {
   const q = document.getElementById("aiQuestion").value.trim();
   if (!q) return;
 
-  // 임시 응답 (추후 DB/AI 확장)
   const answer =
     "지금은 결과보다 과정이 중요해 보여. 마음이 흔들린다면 잠시 호흡을 고르고, 스스로에게 친절해져도 괜찮아.";
   document.getElementById("aiAnswer").innerText = answer;
 
-  // GAS로 로그 전송 (CORS 무시)
   fetch(GAS_URL, {
     method: "POST",
     mode: "no-cors",
