@@ -1,5 +1,5 @@
 /* ===============================
-   GLOBAL DB LOAD (구조 맞춤)
+   GLOBAL DB LOAD
 ================================ */
 let aiDB = [];
 let lunarMap = {};
@@ -40,17 +40,16 @@ Promise.all([
   lunarMap = _lunarMap || {};
   zodiacDB = _zodiacDB || {};
 
-  todayDB = (_todayJSON?.pools?.today) || [];
-  tomorrowDB = (_tomorrowJSON?.pools?.tomorrow) || [];
-  yearDB = (_yearJSON?.pools?.year_all) || [];
+  todayDB = _todayJSON?.pools?.today || [];
+  tomorrowDB = _tomorrowJSON?.pools?.tomorrow || [];
+  yearDB = _yearJSON?.pools?.year_all || [];
 
-  mbtiDB = (_mbtiJSON?.traits) || {};
+  mbtiDB = _mbtiJSON?.traits || {};
   sajuDB = _sajuDB || {};
   tarotDB = _tarotDB || {};
 
   initSelectsOnce();
   autoSetZodiacFromBirth();
-
   DB_READY = true;
 }).catch(err => {
   console.error("DB load failed:", err);
@@ -69,14 +68,14 @@ const MBTI_ORDER = [
 ];
 
 /* ===============================
-   DOM ELEMENTS
+   DOM
 ================================ */
 const zodiacSel = document.getElementById("zodiac");
 const mbtiSel = document.getElementById("mbti");
 const birthInput = document.getElementById("birth");
 
 /* ===============================
-   SELECT INIT (DB 로딩 후 1회)
+   SELECT INIT
 ================================ */
 let SELECT_INIT_DONE = false;
 function initSelectsOnce() {
@@ -96,8 +95,7 @@ function initSelectsOnce() {
   unknown.textContent = "모르겠어요";
   mbtiSel.appendChild(unknown);
 
-  const keys = Object.keys(mbtiDB);
-  const list = keys.length ? keys : MBTI_ORDER;
+  const list = Object.keys(mbtiDB).length ? Object.keys(mbtiDB) : MBTI_ORDER;
   list.forEach(m => {
     const opt = document.createElement("option");
     opt.value = m;
@@ -110,11 +108,11 @@ function initSelectsOnce() {
    LUNAR ZODIAC AUTO
 ================================ */
 if (birthInput) {
-  birthInput.addEventListener("change", () => autoSetZodiacFromBirth());
+  birthInput.addEventListener("change", autoSetZodiacFromBirth);
 }
 
 function autoSetZodiacFromBirth() {
-  if (!birthInput || !birthInput.value) return;
+  if (!birthInput?.value) return;
   const d = new Date(birthInput.value);
   if (isNaN(d)) return;
 
@@ -124,12 +122,11 @@ function autoSetZodiacFromBirth() {
 
   const lny = new Date(lnyStr);
   const zodiacYear = d < lny ? y - 1 : y;
-  const idx = ((zodiacYear - 4) % 12 + 12) % 12;
-  zodiacSel.selectedIndex = idx;
+  zodiacSel.selectedIndex = ((zodiacYear - 4) % 12 + 12) % 12;
 }
 
 /* ===============================
-   URL CATEGORY
+   CATEGORY
 ================================ */
 function getCategory(){
   const p = location.pathname;
@@ -139,16 +136,15 @@ function getCategory(){
 }
 
 /* ===============================
-   MAIN START
+   MAIN
 ================================ */
 function startFortune(){
   if (!DB_READY) {
-    alert("데이터 로딩 중입니다. 1~2초 후 다시 눌러주세요.");
+    alert("데이터 로딩 중입니다. 잠시 후 다시 시도해주세요.");
     return;
   }
 
-  const result = document.getElementById("result");
-  if (result) result.classList.remove("hidden");
+  document.getElementById("result")?.classList.remove("hidden");
 
   const zodiacIndex = zodiacSel.selectedIndex;
   const zodiacKey = ZODIAC[zodiacIndex];
@@ -156,62 +152,53 @@ function startFortune(){
   const mbti = mbtiSel.value;
   const category = getCategory();
 
-  const catKo = (category === "love" ? "연애운" : category === "money" ? "금전운" : "직업운");
-  document.title = `${zodiacKo} ${mbti !== "UNKNOWN" ? mbti : ""} ${catKo} | 오늘의 운세`.replace(/\s+/g, " ").trim();
+  const catKo = category === "love" ? "연애운" : category === "money" ? "금전운" : "직업운";
+  document.title = `${zodiacKo} ${mbti !== "UNKNOWN" ? mbti : ""} ${catKo} | 오늘의 운세`.trim();
 
-  setText("todayTitle", "🌞 오늘의 운세");
   setText("todayText", pick(todayDB));
-  setText("tomorrowText", "🌙 내일의 운세: " + pick(tomorrowDB));
-  setText("yearText", "📅 올해의 운세: " + pick(yearDB));
+  setText("tomorrowText", pick(tomorrowDB));
+  setText("yearText", pick(yearDB));
 
   const zObj = zodiacDB[zodiacKey];
-  const zToday = (zObj && Array.isArray(zObj.today)) ? zObj.today : [];
-  setText("categoryTitle", catKo);
-  setText("categoryText", pick(zToday));
+  const zList = Array.isArray(zObj?.today) ? zObj.today : [];
+  setText("categoryTitle", `🐲 ${catKo}`);
+  setText("categoryText", pick(zList));
 
   drawTarot();
 }
 
 /* ===============================
-   TAROT (FINAL / majors + minors)
+   TAROT (FINAL)
 ================================ */
 function drawTarot() {
-  if (!DB_READY) return;
-
   const majors = Array.isArray(tarotDB.majors) ? tarotDB.majors : [];
   const minors = Array.isArray(tarotDB.minors) ? tarotDB.minors : [];
-  const allCards = [...majors, ...minors];
-  if (!allCards.length) return;
+  const all = [...majors, ...minors];
+  if (!all.length) return;
 
   const seed = new Date().toISOString().slice(0,10);
-  const idx = Math.abs(hash(seed)) % allCards.length;
-  const card = allCards[idx];
-
-  const upright = Math.abs(hash(seed + "_u")) % 2 === 0;
+  const card = all[Math.abs(hash(seed)) % all.length];
+  const upright = Math.abs(hash(seed + "u")) % 2 === 0;
 
   const imgEl = document.getElementById("tarotImg");
-  const textEl = document.getElementById("tarotText");
-  if (!imgEl || !textEl) return;
+  const txtEl = document.getElementById("tarotText");
+  if (!imgEl || !txtEl) return;
 
-  imgEl.src = card.image;
-  imgEl.alt = card.name_ko || "Tarot Card";
-  imgEl.onerror = () => console.error("Tarot image 404:", card.image);
+  const imgPath = card.image?.startsWith("/") ? card.image : "/" + card.image;
+  imgEl.src = imgPath;
+  imgEl.onerror = () => console.error("Tarot image 404:", imgPath);
 
   if (card.type === "major") {
     const summary = upright ? card.upright?.summary : card.reversed?.summary;
-    textEl.innerText =
-      `${card.name_ko} (${upright ? "정방향" : "역방향"})\n` +
-      (summary || "");
+    txtEl.innerText = `${card.name_ko} (${upright ? "정방향" : "역방향"})\n${summary || ""}`;
   } else {
-    const suitKo = { cups:"컵", wands:"완드", swords:"소드", pentacles:"펜타클" }[card.suit] || card.suit;
-    textEl.innerText =
-      `${suitKo} ${card.number}\n` +
-      (Array.isArray(card.keywords) ? card.keywords.join(", ") : "");
+    const suitMap = { cups:"컵", wands:"완드", swords:"소드", pentacles:"펜타클" };
+    txtEl.innerText = `${suitMap[card.suit] || card.suit} ${card.number}\n${(card.keywords||[]).join(", ")}`;
   }
 }
 
 /* ===============================
-   AI QUESTION ENGINE
+   AI 상담
 ================================ */
 const CATEGORY_KEYWORDS = {
   love: ["연애","사랑","재회","썸","이별","연락"],
@@ -219,56 +206,27 @@ const CATEGORY_KEYWORDS = {
   job: ["직업","회사","이직","취업","퇴사","직장"]
 };
 
-function detectCategory(q){
-  let score = { love:0, money:0, job:0 };
-  Object.entries(CATEGORY_KEYWORDS).forEach(([cat, words])=>{
-    words.forEach(w => { if (q.includes(w)) score[cat]++; });
-  });
-  return Object.entries(score).sort((a,b)=>b[1]-a[1])[0][0];
-}
-
 function askAI(){
-  const qInput = document.getElementById("aiQuestion");
-  const aBox = document.getElementById("aiAnswer");
-  if (!qInput || !aBox) return;
+  const q = document.getElementById("aiQuestion")?.value.trim();
+  const out = document.getElementById("aiAnswer");
+  if (!q || !out) return;
 
-  const q = qInput.value.trim();
-  if (!q) return;
+  const cat = Object.entries(CATEGORY_KEYWORDS)
+    .map(([k,v])=>[k,v.filter(w=>q.includes(w)).length])
+    .sort((a,b)=>b[1]-a[1])[0][0];
 
-  const category = detectCategory(q);
+  const pool = aiDB.filter(x=>x.category===cat && x.keywords?.some(k=>q.includes(k)));
+  const sel = pool.sort((a,b)=>(b.count||0)-(a.count||0))[0] ||
+    { answer:"지금은 흐름을 지켜보는 것이 좋아 보입니다." };
 
-  let matched = aiDB.filter(
-    x => x.category === category &&
-    Array.isArray(x.keywords) &&
-    x.keywords.some(k => q.includes(k))
-  );
-
-  let selected;
-  if (matched.length) {
-    matched.sort((a,b)=>(b.count||0) - (a.count||0));
-    selected = matched[0];
-    selected.count = (selected.count||0) + 1;
-  } else {
-    selected = {
-      id: Date.now(),
-      category,
-      keywords: [q],
-      answer: "지금은 흐름을 지켜보는 것이 가장 좋아 보입니다.",
-      count: 1
-    };
-    aiDB.push(selected);
-  }
-
-  aBox.innerText = selected.answer;
-  qInput.value = "";
+  out.innerText = sel.answer;
 }
 
 /* ===============================
    UTIL
 ================================ */
 function pick(arr){
-  if (!Array.isArray(arr) || arr.length === 0) return "";
-  return arr[Math.floor(Math.random() * arr.length)];
+  return Array.isArray(arr) && arr.length ? arr[Math.floor(Math.random()*arr.length)] : "";
 }
 
 function setText(id, text){
@@ -277,10 +235,5 @@ function setText(id, text){
 }
 
 function hash(s){
-  let h = 0;
-  for (let i=0;i<s.length;i++){
-    h = (h<<5) - h + s.charCodeAt(i);
-    h |= 0;
-  }
-  return h;
+  let h=0; for(let i=0;i<s.length;i++){ h=(h<<5)-h+s.charCodeAt(i); h|=0; } return h;
 }
