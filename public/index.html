@@ -11,7 +11,7 @@
   <meta name="description" content="생년월일 기반 오늘의 운세와 AI 고양이 상담사가 함께하는 심리 타로 상담" />
 
   <!-- Google Search Console -->
-  <meta name="google-site-verification" content="여기에_SearchConsole_에서_받은_코드" />
+  <meta name="google-site-verification" content="여기에_SearchConsole_에서_받은_컨텐트값" />
 
   <!-- Google AdSense -->
   <meta name="google-adsense-account" content="ca-pub-7356591276029815">
@@ -30,7 +30,32 @@
 
 <main class="container">
 
-  <!-- 입력 -->
+  <!-- 🐱 고양이 AI 상담사 (초기 노출) -->
+  <section class="card">
+    <div class="cat-box">
+      <img src="/assets/cat_ai.webp" alt="AI 고양이 상담사" />
+      <p class="cat-msg">
+        나는 오늘의 마음을 함께 살펴보는<br />
+        AI 고양이 상담사야 🐾
+      </p>
+    </div>
+  </section>
+
+  <!-- 💬 AI 상담 채팅 (초기 노출) -->
+  <section class="card">
+    <textarea
+      id="aiQuestion"
+      placeholder="궁금한 걸 편하게 물어보라냥 🐱&#10;예: 오늘 연애운이 왜 이런가요?"
+    ></textarea>
+
+    <button class="btn primary" onclick="askAI()">
+      💬 AI 상담하기
+    </button>
+
+    <div id="aiAnswer" class="answer"></div>
+  </section>
+
+  <!-- 🌞 오늘의 운세 입력 -->
   <section class="card">
     <label>이름</label>
     <input id="name" placeholder="선택 입력" />
@@ -43,23 +68,10 @@
     </button>
   </section>
 
-  <!-- 오늘 운세 -->
+  <!-- 🌞 오늘 운세 결과 -->
   <section id="todaySection" class="card hidden">
     <h2>🌞 오늘의 운세</h2>
     <p id="todayText"></p>
-  </section>
-
-  <!-- 고양이 AI 상담 -->
-  <section id="aiSection" class="card hidden">
-    <div class="cat-box">
-      <img src="/assets/cat_ai.png" alt="AI 고양이 상담사" />
-      <p class="cat-msg">궁금한 걸 편하게 물어보라냥 🐾</p>
-    </div>
-
-    <textarea id="aiQuestion" placeholder="예: 오늘 연애운이 왜 이런가요?"></textarea>
-    <button class="btn primary" onclick="askAI()">AI 상담하기</button>
-
-    <div id="aiAnswer" class="answer"></div>
   </section>
 
 </main>

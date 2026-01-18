@@ -1,21 +1,22 @@
 /* ===============================
-   GAS URL (🔥 이것만 관리)
+   GAS URL (여기만 관리)
 ================================ */
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwPAEMT74SQGF0H2aUymPWwslS-QNYe8jV_Sgp5n2dbyqVGGysLfbuK3Gdcpth_nsBQ/exec";
+const GAS_URL =
+  "https://script.google.com/macros/s/AKfycbwPAEMT74SQGF0H2aUymPWwslS-QNYe8jV_Sgp5n2dbyqVGGysLfbuK3Gdcpth_nsBQ/exec";
 
 /* ===============================
-   DB
+   오늘 운세 DB 로드
 ================================ */
 let todayDB = [];
 
 fetch("/data/fortunes_ko_today.json")
-  .then(r => r.json())
-  .then(d => {
-    todayDB = d.pools.today || [];
+  .then((r) => r.json())
+  .then((d) => {
+    todayDB = d.pools?.today || [];
   });
 
 /* ===============================
-   오늘 운세 (생년월일 해시 고정)
+   오늘의 운세 (하루 고정)
 ================================ */
 function showTodayFortune() {
   const birth = document.getElementById("birth").value;
@@ -24,12 +25,17 @@ function showTodayFortune() {
     return;
   }
 
-  const idx = Math.abs(hash(birth)) % todayDB.length;
+  if (!todayDB.length) {
+    alert("운세 데이터를 불러오지 못했습니다.");
+    return;
+  }
+
+  const seed = `${birth}_${new Date().toISOString().slice(0, 10)}`;
+  const idx = Math.abs(hash(seed)) % todayDB.length;
   const fortune = todayDB[idx];
 
   document.getElementById("todayText").innerText = fortune;
   document.getElementById("todaySection").classList.remove("hidden");
-  document.getElementById("aiSection").classList.remove("hidden");
 }
 
 /* ===============================
@@ -39,18 +45,23 @@ function askAI() {
   const q = document.getElementById("aiQuestion").value.trim();
   if (!q) return;
 
-  const answer = "지금은 조급해하지 말고, 자신의 감정을 먼저 정리해보세요.";
+  // 임시 응답 (추후 DB/AI 확장)
+  const answer =
+    "지금은 결과보다 과정이 중요해 보여. 마음이 흔들린다면 잠시 호흡을 고르고, 스스로에게 친절해져도 괜찮아.";
   document.getElementById("aiAnswer").innerText = answer;
 
+  // GAS로 로그 전송 (CORS 무시)
   fetch(GAS_URL, {
     method: "POST",
     mode: "no-cors",
     body: JSON.stringify({
       type: "ai",
       session_id: getSession(),
-      question: q,
-      entry_point: "ai_chat"
-    })
+      user_question_raw: q,
+      entry_point: "ai_chat_initial",
+      device: navigator.userAgent,
+      timestamp: new Date().toISOString(),
+    }),
   });
 }
 
