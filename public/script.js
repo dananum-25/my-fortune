@@ -1,4 +1,9 @@
 /* ===============================
+   GAS WEB APP URL (🔥 이것만 관리)
+================================ */
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwPAEMT74SQGF0H2aUymPWwslS-QNYe8jV_Sgp5n2dbyqVGGysLfbuK3Gdcpth_nsBQ/exec";
+
+/* ===============================
    GLOBAL DB LOAD
 ================================ */
 let aiDB = [];
@@ -126,79 +131,7 @@ function autoSetZodiacFromBirth() {
 }
 
 /* ===============================
-   CATEGORY
-================================ */
-function getCategory(){
-  const p = location.pathname;
-  if (p.includes("money")) return "money";
-  if (p.includes("job")) return "job";
-  return "love";
-}
-
-/* ===============================
-   MAIN
-================================ */
-function startFortune(){
-  if (!DB_READY) {
-    alert("데이터 로딩 중입니다. 잠시 후 다시 시도해주세요.");
-    return;
-  }
-
-  document.getElementById("result")?.classList.remove("hidden");
-
-  const zodiacIndex = zodiacSel.selectedIndex;
-  const zodiacKey = ZODIAC[zodiacIndex];
-  const zodiacKo = ZODIAC_KO[zodiacIndex];
-  const mbti = mbtiSel.value;
-  const category = getCategory();
-
-  const catKo = category === "love" ? "연애운" : category === "money" ? "금전운" : "직업운";
-  document.title = `${zodiacKo} ${mbti !== "UNKNOWN" ? mbti : ""} ${catKo} | 오늘의 운세`.trim();
-
-  setText("todayText", pick(todayDB));
-  setText("tomorrowText", pick(tomorrowDB));
-  setText("yearText", pick(yearDB));
-
-  const zObj = zodiacDB[zodiacKey];
-  const zList = Array.isArray(zObj?.today) ? zObj.today : [];
-  setText("categoryTitle", `🐲 ${catKo}`);
-  setText("categoryText", pick(zList));
-
-  drawTarot();
-}
-
-/* ===============================
-   TAROT (FINAL)
-================================ */
-function drawTarot() {
-  const majors = Array.isArray(tarotDB.majors) ? tarotDB.majors : [];
-  const minors = Array.isArray(tarotDB.minors) ? tarotDB.minors : [];
-  const all = [...majors, ...minors];
-  if (!all.length) return;
-
-  const seed = new Date().toISOString().slice(0,10);
-  const card = all[Math.abs(hash(seed)) % all.length];
-  const upright = Math.abs(hash(seed + "u")) % 2 === 0;
-
-  const imgEl = document.getElementById("tarotImg");
-  const txtEl = document.getElementById("tarotText");
-  if (!imgEl || !txtEl) return;
-
-  const imgPath = card.image?.startsWith("/") ? card.image : "/" + card.image;
-  imgEl.src = imgPath;
-  imgEl.onerror = () => console.error("Tarot image 404:", imgPath);
-
-  if (card.type === "major") {
-    const summary = upright ? card.upright?.summary : card.reversed?.summary;
-    txtEl.innerText = `${card.name_ko} (${upright ? "정방향" : "역방향"})\n${summary || ""}`;
-  } else {
-    const suitMap = { cups:"컵", wands:"완드", swords:"소드", pentacles:"펜타클" };
-    txtEl.innerText = `${suitMap[card.suit] || card.suit} ${card.number}\n${(card.keywords||[]).join(", ")}`;
-  }
-}
-
-/* ===============================
-   AI 상담
+   AI 상담 (🔥 여기서 GAS로 저장됨)
 ================================ */
 const CATEGORY_KEYWORDS = {
   love: ["연애","사랑","재회","썸","이별","연락"],
@@ -211,6 +144,7 @@ function askAI(){
   const out = document.getElementById("aiAnswer");
   if (!q || !out) return;
 
+  /* 1️⃣ 기존 AI 답변 로직 (유지) */
   const cat = Object.entries(CATEGORY_KEYWORDS)
     .map(([k,v])=>[k,v.filter(w=>q.includes(w)).length])
     .sort((a,b)=>b[1]-a[1])[0][0];
@@ -220,6 +154,24 @@ function askAI(){
     { answer:"지금은 흐름을 지켜보는 것이 좋아 보입니다." };
 
   out.innerText = sel.answer;
+
+  /* 2️⃣ GAS로 상담 로그 전송 (저장 전용) */
+  fetch(GAS_URL, {
+    method: "POST",
+    mode: "no-cors",
+    body: JSON.stringify({
+      type: "ai",
+      session_id: localStorage.getItem("session_id") || (() => {
+        const s = crypto.randomUUID();
+        localStorage.setItem("session_id", s);
+        return s;
+      })(),
+      question: q,
+      category: cat,
+      device: /Mobi/i.test(navigator.userAgent) ? "mobile" : "desktop",
+      entry_point: "ai_consult"
+    })
+  });
 }
 
 /* ===============================
