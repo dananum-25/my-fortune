@@ -1,79 +1,39 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <!-- 네이버 서치어드바이저 (최상단 고정) -->
-  <meta name="naver-site-verification" content="20b0cc209520048d7c651297a28b316fe1de7cd8" />
-
   <meta charset="UTF-8" />
+  <title>AI 고양이 타로 상담</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>오늘의 운세 · AI 고양이 상담</title>
-  <meta name="description" content="생년월일 기반 오늘의 운세와 AI 고양이 상담사가 함께하는 심리 타로 상담" />
-
-  <!-- Google Search Console -->
-  <meta name="google-site-verification" content="여기에_SearchConsole_에서_받은_컨텐트값" />
 
   <!-- Google AdSense -->
   <meta name="google-adsense-account" content="ca-pub-7356591276029815">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7356591276029815"
     crossorigin="anonymous"></script>
 
+  <!-- Naver Search -->
+  <meta name="naver-site-verification" content="20b0cc209520048d7c651297a28b316fe1de7cd8" />
+
   <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
 
-<header class="hero">
-  <h1>오늘의 운세</h1>
-  <p>AI 고양이 상담사와 함께하는 하루 운세</p>
-</header>
+  <!-- Sound Toggle -->
+  <button id="soundToggle" class="sound-btn">🔊</button>
 
-<main class="container">
+  <!-- Cat Card -->
+  <div class="cat-card">
+    <img id="catImage" src="/assets/cat_ai.webp" alt="AI Cat" />
+  </div>
 
-  <!-- 🐱 고양이 AI 상담사 카드 (이미지 꽉 채움) -->
-  <section class="card cat-card">
-    <img src="/assets/cat_ai.webp" alt="AI 고양이 상담사" class="cat-full" />
-    <p class="cat-msg">
-      나는 오늘의 마음을 함께 살펴보는<br />
-      AI 고양이 상담사야 🐾
-    </p>
-  </section>
+  <!-- Chat Area -->
+  <div id="chatContainer" class="chat-container"></div>
 
-  <!-- 💬 AI 상담 채팅 -->
-  <section class="card">
-    <textarea
-      id="aiQuestion"
-      placeholder="궁금한 걸 편하게 물어보라냥 🐱&#10;예: 오늘 연애운이 왜 이런가요?"
-    ></textarea>
+  <!-- Input Area -->
+  <div class="chat-input">
+    <input type="text" id="userInput" placeholder="편하게 이야기해도 돼…" />
+    <button id="sendBtn">전송</button>
+  </div>
 
-    <button class="btn primary" onclick="askAI()">
-      💬 AI 상담하기
-    </button>
-
-    <div id="aiAnswer" class="answer"></div>
-  </section>
-
-  <!-- 🌞 오늘의 운세 입력 -->
-  <section class="card">
-    <label>이름</label>
-    <input id="name" placeholder="선택 입력" />
-
-    <label>생년월일</label>
-    <input id="birth" type="date" />
-
-    <button class="btn primary" onclick="showTodayFortune()">
-      🌞 오늘의 운세 보기
-    </button>
-  </section>
-
-  <!-- 🌞 오늘 운세 결과 -->
-  <section id="todaySection" class="card hidden">
-    <h2>🌞 오늘의 운세</h2>
-    <p id="todayText"></p>
-  </section>
-
-</main>
-
-<script src="script.js" defer></script>
+  <script src="script.js"></script>
 </body>
 </html>
