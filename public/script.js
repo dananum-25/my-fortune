@@ -1,108 +1,286 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbxNCHMfA6MXRb5EpRHpy43JLc1Cym7aTLUIw_Aij9QXtglIUApoaX7KvF2eRWciYRGu/exec";
+/* ===============================
+   GLOBAL DB LOAD (구조 맞춤)
+================================ */
+let aiDB = [];
+let lunarMap = {};
+let zodiacDB = {};
+let todayDB = [];
+let tomorrowDB = [];
+let yearDB = [];
+let mbtiDB = {};
+let sajuDB = {};
+let tarotDB = {};
 
-const DB = {};
+let DB_READY = false;
+
+Promise.all([
+  fetch("/data/ai_qa.json").then(r => r.json()),
+  fetch("/data/lunar_new_year_1920_2026.json").then(r => r.json()),
+  fetch("/data/zodiac_fortunes_ko_2026.json").then(r => r.json()),
+  fetch("/data/fortunes_ko_today.json").then(r => r.json()),
+  fetch("/data/fortunes_ko_tomorrow.json").then(r => r.json()),
+  fetch("/data/fortunes_ko_2026.json").then(r => r.json()),
+  fetch("/data/mbti_traits_ko.json").then(r => r.json()),
+  fetch("/data/saju_ko.json").then(r => r.json()),
+  fetch("/data/tarot_db_ko.json").then(r => r.json())
+]).then(d => {
+  const [
+    _aiDB,
+    _lunarMap,
+    _zodiacDB,
+    _todayJSON,
+    _tomorrowJSON,
+    _yearJSON,
+    _mbtiJSON,
+    _sajuDB,
+    _tarotDB
+  ] = d;
+
+  aiDB = Array.isArray(_aiDB) ? _aiDB : [];
+  lunarMap = _lunarMap || {};
+  zodiacDB = _zodiacDB || {};
+
+  todayDB = (_todayJSON?.pools?.today) || [];
+  tomorrowDB = (_tomorrowJSON?.pools?.tomorrow) || [];
+  yearDB = (_yearJSON?.pools?.year_all) || [];
+
+  mbtiDB = (_mbtiJSON?.traits) || {};
+  sajuDB = _sajuDB || {};
+  tarotDB = _tarotDB || {};
+
+  initSelectsOnce();
+  autoSetZodiacFromBirth();
+
+  DB_READY = true;
+}).catch(err => {
+  console.error("DB load failed:", err);
+});
+
+/* ===============================
+   CONSTANTS
+================================ */
+const ZODIAC = ["rat","ox","tiger","rabbit","dragon","snake","horse","goat","monkey","rooster","dog","pig"];
 const ZODIAC_KO = ["쥐띠","소띠","호랑이띠","토끼띠","용띠","뱀띠","말띠","양띠","원숭이띠","닭띠","개띠","돼지띠"];
-const ZODIAC_KEY = ["rat","ox","tiger","rabbit","dragon","snake","horse","goat","monkey","rooster","dog","pig"];
+const MBTI_ORDER = [
+  "INTJ","INTP","ENTJ","ENTP",
+  "INFJ","INFP","ENFJ","ENFP",
+  "ISTJ","ISFJ","ESTJ","ESFJ",
+  "ISTP","ISFP","ESTP","ESFP"
+];
 
+/* ===============================
+   DOM ELEMENTS
+================================ */
 const zodiacSel = document.getElementById("zodiac");
 const mbtiSel = document.getElementById("mbti");
 const birthInput = document.getElementById("birth");
 
-(async function loadDB() {
-  const files = [
-    "fortunes_ko_today.json",
-    "fortunes_ko_tomorrow.json",
-    "fortunes_ko_2026.json",
-    "zodiac_fortunes_ko_2026.json",
-    "lunar_new_year_1920_2026.json",
-    "tarot_db_ko.json",
-    "mbti_traits_ko.json"
-  ];
+/* ===============================
+   SELECT INIT (DB 로딩 후 1회)
+================================ */
+let SELECT_INIT_DONE = false;
+function initSelectsOnce() {
+  if (SELECT_INIT_DONE) return;
+  SELECT_INIT_DONE = true;
 
-  for (const f of files) {
-    const res = await fetch(`/data/${f}`);
-    DB[f] = await res.json();
-  }
+  zodiacSel.innerHTML = "";
+  ZODIAC_KO.forEach(z => {
+    const opt = document.createElement("option");
+    opt.textContent = z;
+    zodiacSel.appendChild(opt);
+  });
 
-  initSelectors();
-})();
+  mbtiSel.innerHTML = "";
+  const unknown = document.createElement("option");
+  unknown.value = "UNKNOWN";
+  unknown.textContent = "모르겠어요";
+  mbtiSel.appendChild(unknown);
 
-/* selectors */
-function initSelectors() {
-  ZODIAC_KO.forEach(z => zodiacSel.add(new Option(z, z)));
-
-  mbtiSel.add(new Option("모르겠어요", "UNKNOWN"));
-
-  Object.keys(DB["mbti_traits_ko.json"].traits)
-    .forEach(m => mbtiSel.add(new Option(m, m)));
+  const keys = Object.keys(mbtiDB);
+  const list = keys.length ? keys : MBTI_ORDER;
+  list.forEach(m => {
+    const opt = document.createElement("option");
+    opt.value = m;
+    opt.textContent = m;
+    mbtiSel.appendChild(opt);
+  });
 }
 
-/* 운세 */
-function startFortune() {
-  document.getElementById("result").classList.remove("hidden");
+/* ===============================
+   LUNAR ZODIAC AUTO
+================================ */
+if (birthInput) {
+  birthInput.addEventListener("change", () => autoSetZodiacFromBirth());
+}
 
-  document.getElementById("todayText").innerText =
-    pick(DB["fortunes_ko_today.json"].pools.today);
+function autoSetZodiacFromBirth() {
+  if (!birthInput || !birthInput.value) return;
+  const d = new Date(birthInput.value);
+  if (isNaN(d)) return;
 
-  document.getElementById("tomorrowText").innerText =
-    pick(DB["fortunes_ko_tomorrow.json"].pools.tomorrow);
+  const y = d.getFullYear();
+  const lnyStr = lunarMap[String(y)] || lunarMap[y];
+  if (!lnyStr) return;
 
-  document.getElementById("yearText").innerText =
-    pick(DB["fortunes_ko_2026.json"].pools.year_all);
+  const lny = new Date(lnyStr);
+  const zodiacYear = d < lny ? y - 1 : y;
+  const idx = ((zodiacYear - 4) % 12 + 12) % 12;
+  zodiacSel.selectedIndex = idx;
+}
 
-  const key = ZODIAC_KEY[zodiacSel.selectedIndex];
-  document.getElementById("zodiacText").innerText =
-    pick(DB["zodiac_fortunes_ko_2026.json"][key].today);
+/* ===============================
+   URL CATEGORY
+================================ */
+function getCategory(){
+  const p = location.pathname;
+  if (p.includes("money")) return "money";
+  if (p.includes("job")) return "job";
+  return "love";
+}
+
+/* ===============================
+   MAIN START
+================================ */
+function startFortune(){
+  if (!DB_READY) {
+    alert("데이터 로딩 중입니다. 1~2초 후 다시 눌러주세요.");
+    return;
+  }
+
+  const result = document.getElementById("result");
+  if (result) result.classList.remove("hidden");
+
+  const zodiacIndex = zodiacSel.selectedIndex;
+  const zodiacKey = ZODIAC[zodiacIndex];
+  const zodiacKo = ZODIAC_KO[zodiacIndex];
+  const mbti = mbtiSel.value;
+  const category = getCategory();
+
+  const catKo = (category === "love" ? "연애운" : category === "money" ? "금전운" : "직업운");
+  document.title = `${zodiacKo} ${mbti !== "UNKNOWN" ? mbti : ""} ${catKo} | 오늘의 운세`.replace(/\s+/g, " ").trim();
+
+  setText("todayTitle", "🌞 오늘의 운세");
+  setText("todayText", pick(todayDB));
+  setText("tomorrowText", "🌙 내일의 운세: " + pick(tomorrowDB));
+  setText("yearText", "📅 올해의 운세: " + pick(yearDB));
+
+  const zObj = zodiacDB[zodiacKey];
+  const zToday = (zObj && Array.isArray(zObj.today)) ? zObj.today : [];
+  setText("categoryTitle", catKo);
+  setText("categoryText", pick(zToday));
 
   drawTarot();
 }
 
-/* 타로 – 이미지 경로 절대 수정 안 함 */
+/* ===============================
+   TAROT (FINAL / majors + minors)
+================================ */
 function drawTarot() {
-  const majors = DB["tarot_db_ko.json"].majors;
-  const card = majors[Math.floor(Math.random() * majors.length)];
+  if (!DB_READY) return;
 
-  const upright = Math.random() > 0.5;
-  const text = upright ? card.upright.summary : card.reversed.summary;
+  const majors = Array.isArray(tarotDB.majors) ? tarotDB.majors : [];
+  const minors = Array.isArray(tarotDB.minors) ? tarotDB.minors : [];
+  const allCards = [...majors, ...minors];
+  if (!allCards.length) return;
 
-  const img = card.image.startsWith("/")
-    ? card.image
-    : "/" + card.image;
+  const seed = new Date().toISOString().slice(0,10);
+  const idx = Math.abs(hash(seed)) % allCards.length;
+  const card = allCards[idx];
 
-  document.getElementById("tarotImg").src = img;
-  document.getElementById("tarotText").innerText =
-    `${card.name_ko} (${upright ? "정방향" : "역방향"}) – ${text}`;
-}
+  const upright = Math.abs(hash(seed + "_u")) % 2 === 0;
 
-/* AI 상담 */
-async function askAI() {
-  const q = document.getElementById("aiQuestion").value.trim();
-  if (!q) return;
+  const imgEl = document.getElementById("tarotImg");
+  const textEl = document.getElementById("tarotText");
+  if (!imgEl || !textEl) return;
 
-  appendChat(q, "user");
+  imgEl.src = card.image;
+  imgEl.alt = card.name_ko || "Tarot Card";
+  imgEl.onerror = () => console.error("Tarot image 404:", card.image);
 
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({ question: q }),
-      headers: { "Content-Type": "text/plain;charset=utf-8" }
-    });
-
-    const data = await res.json();
-    appendChat(data.answer, "ai");
-
-  } catch {
-    appendChat("현재 상담 서버와 연결할 수 없습니다.", "ai");
+  if (card.type === "major") {
+    const summary = upright ? card.upright?.summary : card.reversed?.summary;
+    textEl.innerText =
+      `${card.name_ko} (${upright ? "정방향" : "역방향"})\n` +
+      (summary || "");
+  } else {
+    const suitKo = { cups:"컵", wands:"완드", swords:"소드", pentacles:"펜타클" }[card.suit] || card.suit;
+    textEl.innerText =
+      `${suitKo} ${card.number}\n` +
+      (Array.isArray(card.keywords) ? card.keywords.join(", ") : "");
   }
 }
 
-/* utils */
-function pick(arr) {
+/* ===============================
+   AI QUESTION ENGINE
+================================ */
+const CATEGORY_KEYWORDS = {
+  love: ["연애","사랑","재회","썸","이별","연락"],
+  money: ["돈","금전","재물","수입","투자","사업"],
+  job: ["직업","회사","이직","취업","퇴사","직장"]
+};
+
+function detectCategory(q){
+  let score = { love:0, money:0, job:0 };
+  Object.entries(CATEGORY_KEYWORDS).forEach(([cat, words])=>{
+    words.forEach(w => { if (q.includes(w)) score[cat]++; });
+  });
+  return Object.entries(score).sort((a,b)=>b[1]-a[1])[0][0];
+}
+
+function askAI(){
+  const qInput = document.getElementById("aiQuestion");
+  const aBox = document.getElementById("aiAnswer");
+  if (!qInput || !aBox) return;
+
+  const q = qInput.value.trim();
+  if (!q) return;
+
+  const category = detectCategory(q);
+
+  let matched = aiDB.filter(
+    x => x.category === category &&
+    Array.isArray(x.keywords) &&
+    x.keywords.some(k => q.includes(k))
+  );
+
+  let selected;
+  if (matched.length) {
+    matched.sort((a,b)=>(b.count||0) - (a.count||0));
+    selected = matched[0];
+    selected.count = (selected.count||0) + 1;
+  } else {
+    selected = {
+      id: Date.now(),
+      category,
+      keywords: [q],
+      answer: "지금은 흐름을 지켜보는 것이 가장 좋아 보입니다.",
+      count: 1
+    };
+    aiDB.push(selected);
+  }
+
+  aBox.innerText = selected.answer;
+  qInput.value = "";
+}
+
+/* ===============================
+   UTIL
+================================ */
+function pick(arr){
+  if (!Array.isArray(arr) || arr.length === 0) return "";
   return arr[Math.floor(Math.random() * arr.length)];
 }
-function appendChat(t, who) {
-  const d = document.createElement("div");
-  d.className = who;
-  d.innerText = t;
-  document.getElementById("chatLog").appendChild(d);
+
+function setText(id, text){
+  const el = document.getElementById(id);
+  if (el) el.innerText = text;
+}
+
+function hash(s){
+  let h = 0;
+  for (let i=0;i<s.length;i++){
+    h = (h<<5) - h + s.charCodeAt(i);
+    h |= 0;
+  }
+  return h;
 }
