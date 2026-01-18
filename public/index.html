@@ -18,21 +18,18 @@
 <body>
 
   <!-- Sound Toggle -->
-  <button id="soundToggle" class="sound-btn">🔊</button>
+  <button id="soundToggle" class="sound-btn" aria-label="Sound Toggle">🔊</button>
 
-  <!-- Cat Card -->
-  <div class="cat-card">
-    <img id="catImage" src="/assets/cat_ai.webp" alt="AI Cat" />
-  </div>
+  <!-- Chat -->
+  <main class="app">
+    <section id="chatContainer" class="chat-container"></section>
+  </main>
 
-  <!-- Chat Area -->
-  <div id="chatContainer" class="chat-container"></div>
-
-  <!-- Input Area -->
-  <div class="chat-input">
+  <!-- Input -->
+  <footer class="chat-input">
     <input type="text" id="userInput" placeholder="편하게 이야기해도 돼…" />
     <button id="sendBtn">전송</button>
-  </div>
+  </footer>
 
   <script src="script.js"></script>
 </body>
