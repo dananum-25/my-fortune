@@ -1,139 +1,175 @@
-// ===============================
-// GLOBAL STATE
-// ===============================
+/* ===============================
+   CONFIG
+================================ */
 const GAS_URL = "https://script.google.com/macros/s/AKfycbwPAEMT74SQGF0H2aUymPWwslS-QNYe8jV_Sgp5n2dbyqVGGysLfbuK3Gdcpth_nsBQ/exec";
-let soundEnabled = false;
-let bgm = null;
-let sessionStarted = false;
+const SESSION_ID = crypto.randomUUID();
+const BGM_VOLUME = 0.15;
 
-// ===============================
-// AUDIO SETUP
-// ===============================
-const AUDIO = {
-  entry: new Audio('/sounds/ambient_entry.mp3'),
-  end: new Audio('/sounds/session_end.mp3')
+/* ===============================
+   DOM
+================================ */
+const chat = document.getElementById("chatContainer");
+const input = document.getElementById("userInput");
+const sendBtn = document.getElementById("sendBtn");
+const soundBtn = document.getElementById("soundToggle");
+const tarotStage = document.getElementById("tarotStage");
+
+/* ===============================
+   STATE
+================================ */
+let soundEnabled = false;
+let bgmStarted = false;
+let conversationTurn = 0;
+let tarotInProgress = false;
+
+/* ===============================
+   AUDIO (BGM only)
+================================ */
+const bgm = new Audio("/assets/sound/ambient_entry.mp3");
+bgm.loop = true;
+bgm.volume = BGM_VOLUME;
+
+/* ===============================
+   SOUND TOGGLE (user gesture only)
+================================ */
+soundBtn.onclick = () => {
+  soundEnabled = !soundEnabled;
+  soundBtn.textContent = soundEnabled ? "🔊" : "🔇";
+
+  if (soundEnabled && !bgmStarted) {
+    bgm.play()
+      .then(() => {
+        bgmStarted = true;
+        console.log("BGM started");
+      })
+      .catch(err => console.warn("BGM play blocked:", err));
+  }
+
+  if (!soundEnabled && bgmStarted) {
+    bgm.pause();
+  }
 };
 
-AUDIO.entry.loop = true;
-AUDIO.entry.volume = 0.15;
-AUDIO.end.volume = 0.15;
+/* ===============================
+   CHAT HELPERS
+================================ */
+function addMessage(text, who) {
+  const div = document.createElement("div");
+  div.className = "msg " + who;
+  div.textContent = text;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
 
-function toggleSound() {
-  soundEnabled = !soundEnabled;
+/* ===============================
+   IMAGE LOAD DEFENSE (필수)
+================================ */
+function createCardImage(path) {
+  const img = new Image();
+  img.className = "tarot-card";
 
-  const btn = document.getElementById('soundToggle');
-  if (soundEnabled) {
-    btn.innerText = '🔊';
-    AUDIO.entry.play().catch(() => {});
-  } else {
-    btn.innerText = '🔇';
-    AUDIO.entry.pause();
-    AUDIO.entry.currentTime = 0;
+  img.onload = () => console.log("카드 로드 성공:", img.src);
+  img.onerror = () => console.error("카드 로드 실패:", img.src);
+
+  img.src = path;
+  return img;
+}
+
+/* ===============================
+   TAROT DATA (majors only, v1)
+================================ */
+const MAJOR_NAMES = [
+  "the_fool","the_magician","the_high_priestess","the_empress","the_emperor",
+  "the_hierophant","the_lovers","the_chariot","strength","the_hermit",
+  "wheel_of_fortune","justice","the_hanged_man","death","temperance",
+  "the_devil","the_tower","the_star","the_moon","the_sun",
+  "judgement","the_world"
+];
+
+function randomMajorCard() {
+  const index = Math.floor(Math.random() * 22);
+  const num = String(index).padStart(2, "0");
+  return `/assets/tarot/majors/${num}_${MAJOR_NAMES[index]}.png`;
+}
+
+/* ===============================
+   TAROT SPREAD (1-card v1)
+================================ */
+function showTarotSpread() {
+  if (tarotInProgress) return;
+  tarotInProgress = true;
+
+  tarotStage.innerHTML = "";
+  tarotStage.style.display = "flex";
+
+  addMessage("카드를 펼쳐볼게… 잠시만 기다려 🐾", "cat");
+
+  // 카드 뒷면 연출 (가짜 카드)
+  for (let i = 0; i < 3; i++) {
+    const back = document.createElement("div");
+    back.className = "tarot-back";
+    tarotStage.appendChild(back);
   }
+
+  // 실제 카드 선택 (약간의 딜레이 후)
+  setTimeout(() => {
+    tarotStage.innerHTML = "";
+
+    const cardPath = randomMajorCard();
+    const cardImg = createCardImage(cardPath);
+
+    tarotStage.appendChild(cardImg);
+
+    addMessage("이 카드는 지금 너의 흐름을 보여줘.", "cat");
+    tarotInProgress = false;
+  }, 1200);
 }
 
-// ===============================
-// CHAT
-// ===============================
-const chatBox = document.getElementById('chatMessages');
-const input = document.getElementById('chatInput');
-const sendBtn = document.getElementById('sendBtn');
-
-function addMessage(text, from = 'ai') {
-  const msg = document.createElement('div');
-  msg.className = `msg ${from}`;
-  msg.innerText = text;
-  chatBox.appendChild(msg);
-  chatBox.scrollTop = chatBox.scrollHeight;
+/* ===============================
+   LOGGING (AI 성장용)
+================================ */
+function logAI(rawText) {
+  fetch(GAS_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      type: "ai",
+      session_id: SESSION_ID,
+      user_question_raw: rawText
+    })
+  }).catch(() => {});
 }
 
-sendBtn.onclick = async () => {
+/* ===============================
+   INITIAL MESSAGE
+================================ */
+addMessage("괜찮아. 천천히 말해도 돼. 내가 여기 있어 🐱", "cat");
+
+/* ===============================
+   SEND FLOW
+================================ */
+sendBtn.onclick = () => {
   const text = input.value.trim();
   if (!text) return;
 
-  if (!sessionStarted && soundEnabled) {
-    AUDIO.entry.play().catch(() => {});
-    sessionStarted = true;
-  }
+  addMessage(text, "user");
+  input.value = "";
+  conversationTurn++;
 
-  addMessage(text, 'user');
-  input.value = '';
+  logAI(text);
 
-  if (text.includes('카드')) {
-    showTarotSpread();
+  // 질문 유도 단계 (아직 카드 X)
+  if (conversationTurn === 1) {
+    addMessage(
+      "조금 더 알고 싶어. 이 고민에서 가장 불안한 게 뭐야?",
+      "cat"
+    );
     return;
   }
 
-  addMessage('잠깐만… 고양이가 생각 중이야 🐾', 'ai');
-
-  await fetch(GAS_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      type: 'ai',
-      user_question_raw: text,
-      session_id: getSessionId()
-    })
-  });
+  // 카드 트리거 (v1: 2턴 이후)
+  if (conversationTurn >= 2 && !tarotInProgress) {
+    showTarotSpread();
+    return;
+  }
 };
-
-// ===============================
-// TAROT SPREAD
-// ===============================
-const MAJOR_CARDS = Array.from({ length: 22 }, (_, i) =>
-  `/assets/tarot/majors/${String(i).padStart(2, '0')}_${getMajorName(i)}.png`
-);
-
-function getMajorName(i) {
-  return [
-    'the_fool','the_magician','the_high_priestess','the_empress','the_emperor','the_hierophant',
-    'the_lovers','the_chariot','strength','the_hermit','wheel_of_fortune','justice',
-    'the_hanged_man','death','temperance','the_devil','the_tower','the_star','the_moon',
-    'the_sun','judgement','the_world'
-  ][i];
-}
-
-function showTarotSpread() {
-  const spread = document.getElementById('tarotSpread');
-  spread.innerHTML = '';
-  spread.style.display = 'flex';
-
-  addMessage('카드를 펼칠게… 마음으로 한 장 골라봐 ✨', 'ai');
-
-  MAJOR_CARDS.slice(0, 7).forEach(path => {
-    const img = new Image();
-    img.className = 'tarot-card';
-
-    img.onload = () => console.log('카드 로드 성공:', img.src);
-    img.onerror = () => console.error('카드 로드 실패:', img.src);
-
-    img.src = path;
-
-    img.onclick = () => {
-      spread.innerHTML = '';
-      spread.appendChild(img);
-      addMessage('이 카드가 너를 부르고 있었어…', 'ai');
-    };
-
-    spread.appendChild(img);
-  });
-}
-
-// ===============================
-// SESSION
-// ===============================
-function getSessionId() {
-  let id = localStorage.getItem('session_id');
-  if (!id) {
-    id = crypto.randomUUID();
-    localStorage.setItem('session_id', id);
-  }
-  return id;
-}
-
-window.addEventListener('beforeunload', () => {
-  if (soundEnabled) {
-    AUDIO.entry.pause();
-    AUDIO.end.play().catch(() => {});
-  }
-});
