@@ -18,26 +18,25 @@ const soundBtn = document.getElementById("soundToggle");
 ================================ */
 let turn = 0;
 let soundOn = true;
-let state = "idle"; // idle | listening | speaking | tarot
+let bgmStarted = false;
+let state = "idle";
 
 /* ===============================
    AUDIO
 ================================ */
-// BGM
-const bgmIdle = new Audio("/public/sounds/tarot/ambient_entry.mp3");
+const bgmIdle = new Audio("/sounds/tarot/ambient_entry.mp3");
 bgmIdle.loop = true;
 bgmIdle.volume = VOLUME;
 
-const bgmEnd = new Audio("/public/sounds/tarot/session_end.mp3");
+const bgmEnd = new Audio("/sounds/tarot/session_end.mp3");
 bgmEnd.loop = false;
 bgmEnd.volume = VOLUME;
 
-// SFX
 const sfx = {
-  speak: new Audio("/public/sounds/tarot/cat_speak_chime.mp3"),
-  reveal: new Audio("/public/sounds/tarot/tarot_reveal.mp3"),
-  pick: new Audio("/public/sounds/tarot/card_pick.mp3"),
-  spread: new Audio("/public/sounds/tarot/spread_open.mp3"),
+  speak: new Audio("/sounds/tarot/cat_speak_chime.mp3"),
+  spread: new Audio("/sounds/tarot/spread_open.mp3"),
+  pick: new Audio("/sounds/tarot/card_pick.mp3"),
+  reveal: new Audio("/sounds/tarot/tarot_reveal.mp3"),
 };
 
 Object.values(sfx).forEach(a => a.volume = VOLUME);
@@ -50,24 +49,28 @@ function stopAllBgm() {
   bgmEnd.pause(); bgmEnd.currentTime = 0;
 }
 
-function playBgmIdle() {
-  if (!soundOn) return;
-  stopAllBgm();
-  bgmIdle.play().catch(()=>{});
-}
-
-function playBgmEnd() {
-  if (!soundOn) return;
-  stopAllBgm();
-  bgmEnd.play().catch(()=>{});
+function playIdleBgmByUserAction() {
+  if (!soundOn || bgmStarted) return;
+  bgmStarted = true;
+  bgmIdle.play().catch(() => {});
 }
 
 function playSfx(name) {
   if (!soundOn || !sfx[name]) return;
-  // SFX 우선: BGM 중단
-  stopAllBgm();
+  bgmIdle.pause();
   sfx[name].currentTime = 0;
-  sfx[name].play().catch(()=>{});
+  sfx[name].play().catch(() => {});
+}
+
+/* ===============================
+   IMAGE DEFENSE (필수)
+================================ */
+function preloadImage(path) {
+  const img = new Image();
+  img.onload = () => console.log("카드 로드 성공:", path);
+  img.onerror = () => console.error("카드 로드 실패:", path);
+  img.src = path;
+  return img;
 }
 
 /* ===============================
@@ -87,7 +90,7 @@ function addCatMsg(text) {
 
   const avatar = document.createElement("div");
   avatar.className = "cat-avatar";
-  avatar.innerHTML = `<img src="/assets/cat_ai.webp" alt="cat" />`;
+  avatar.innerHTML = `<img src="/assets/cat_ai.webp" alt="AI 고양이 상담사" />`;
 
   const bubble = document.createElement("div");
   bubble.textContent = text;
@@ -108,7 +111,7 @@ function sendLog(payload) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
-  }).catch(()=>{});
+  }).catch(() => {});
 }
 
 /* ===============================
@@ -118,14 +121,11 @@ soundBtn.onclick = () => {
   soundOn = !soundOn;
   soundBtn.textContent = soundOn ? "🔊" : "🔇";
   if (!soundOn) stopAllBgm();
-  if (soundOn && state === "idle") playBgmIdle();
 };
 
 /* ===============================
-   INIT
+   INIT MESSAGE
 ================================ */
-state = "idle";
-playBgmIdle();
 addCatMsg("오늘 무슨 일이 있었어? 천천히 말해도 돼 🐾");
 
 /* ===============================
@@ -135,13 +135,11 @@ sendBtn.onclick = () => {
   const text = input.value.trim();
   if (!text) return;
 
-  // User action unlock (first action)
-  if (turn === 0) stopAllBgm();
+  playIdleBgmByUserAction(); // 🔥 최초 사용자 액션에서만 BGM 시작
 
   addUserMsg(text);
   input.value = "";
   turn++;
-  state = turn <= 2 ? "listening" : "speaking";
 
   sendLog({
     type: "ai",
@@ -150,33 +148,18 @@ sendBtn.onclick = () => {
     turn_index: turn
   });
 
-  if (turn === 1) {
-    addCatMsg("그 이야기에서 어떤 부분이 제일 마음에 걸려?");
-  } else if (turn === 2) {
-    addCatMsg("네 얘기를 이렇게 느꼈어. 상황이 꽤 너를 지치게 만드는 것 같아.");
-  } else if (turn === 3) {
-    state = "tarot";
-    playSfx("reveal");
-    addCatMsg("이건 카드로 한 번 비춰보는 게 좋겠어. 한 장 펼쳐볼게.");
-    playSfx("pick");
+  if (turn === 2) {
+    addCatMsg("그 상황에서 제일 마음에 걸리는 장면이 있어?");
+  }
 
-    sendLog({
-      type: "ai",
-      session_id: SESSION_ID,
-      turn_index: turn,
-      tarot_used: true,
-      question_category: "tarot_entry"
-    });
-  } else {
-    addCatMsg("이 카드는 결과라기보다, 지금 네 상태를 보여주는 그림이야.");
+  if (turn === 3) {
+    state = "tarot";
+    playSfx("spread");
+
+    const path = "/assets/tarot/majors/00_the_fool.png";
+    preloadImage(path);
+
+    addCatMsg("카드를 한 장 펼쳐볼게. 이건 지금 너의 흐름이야.");
+    playSfx("pick");
   }
 };
-
-/* ===============================
-   ENDING (example hook)
-================================ */
-// 필요 시 외부 조건으로 상담 종료를 판단해 호출
-function endSession() {
-  state = "idle";
-  playBgmEnd();
-}

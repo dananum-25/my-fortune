@@ -5,32 +5,43 @@
   <title>AI 고양이 타로 상담</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <!-- ✅ 네이버 서치콘솔 (절대 제거 금지) -->
+  <meta name="naver-site-verification" content="20b0cc209520048d7c651297a28b316fe1de7cd8" />
+
   <!-- Google AdSense -->
   <meta name="google-adsense-account" content="ca-pub-7356591276029815">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7356591276029815"
     crossorigin="anonymous"></script>
 
-  <!-- Naver Search -->
-  <meta name="naver-site-verification" content="20b0cc209520048d7c651297a28b316fe1de7cd8" />
-
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- Sound Toggle -->
-  <button id="soundToggle" class="sound-btn" aria-label="Sound Toggle">🔊</button>
+  <!-- 🔊 사운드 토글 (script.js에서 사용) -->
+  <button id="soundToggle" class="sound-btn">🔊</button>
 
-  <!-- Chat -->
-  <main class="app">
-    <section id="chatContainer" class="chat-container"></section>
-  </main>
+  <!-- 전체 앱 컨테이너 -->
+  <div class="app">
 
-  <!-- Input -->
-  <footer class="chat-input">
-    <input type="text" id="userInput" placeholder="편하게 이야기해도 돼…" />
-    <button id="sendBtn">전송</button>
-  </footer>
+    <!-- 채팅 영역 -->
+    <main id="chatContainer" class="chat-container">
+      <!-- JS에서 메시지 append -->
+    </main>
 
+    <!-- 입력 영역 -->
+    <footer class="chat-input">
+      <input
+        type="text"
+        id="userInput"
+        placeholder="편하게 이야기해도 돼…"
+        autocomplete="off"
+      />
+      <button id="sendBtn">전송</button>
+    </footer>
+
+  </div>
+
+  <!-- script.js는 네가 방금 수정한 버전 그대로 -->
   <script src="script.js"></script>
 </body>
 </html>
