@@ -1,6 +1,3 @@
-/* ===============================
-   GAS URL
-================================ */
 const GAS_URL =
   "https://script.google.com/macros/s/AKfycbwPAEMT74SQGF0H2aUymPWwslS-QNYe8jV_Sgp5n2dbyqVGGysLfbuK3Gdcpth_nsBQ/exec";
 
@@ -10,31 +7,21 @@ const GAS_URL =
 let todayDB = [];
 
 fetch("/data/fortunes_ko_today.json")
-  .then((r) => r.json())
-  .then((d) => {
+  .then(r => r.json())
+  .then(d => {
     todayDB = d.pools?.today || [];
   });
 
 /* ===============================
-   오늘 운세 (하루 고정)
+   오늘의 운세 (하루 고정)
 ================================ */
 function showTodayFortune() {
   const birth = document.getElementById("birth").value;
-  if (!birth) {
-    alert("생년월일을 입력해주세요");
-    return;
-  }
-
-  if (!todayDB.length) {
-    alert("운세 데이터를 불러오지 못했습니다.");
-    return;
-  }
+  if (!birth || !todayDB.length) return;
 
   const seed = `${birth}_${new Date().toISOString().slice(0, 10)}`;
   const idx = Math.abs(hash(seed)) % todayDB.length;
-  const fortune = todayDB[idx];
-
-  document.getElementById("todayText").innerText = fortune;
+  document.getElementById("todayText").innerText = todayDB[idx];
   document.getElementById("todaySection").classList.remove("hidden");
 }
 
@@ -46,7 +33,8 @@ function askAI() {
   if (!q) return;
 
   const answer =
-    "지금은 결과보다 과정이 중요해 보여. 마음이 흔들린다면 잠시 호흡을 고르고, 스스로에게 친절해져도 괜찮아.";
+    "지금 이 질문은 결과보다는 마음의 흐름을 먼저 살펴보는 게 좋아 보여.";
+
   document.getElementById("aiAnswer").innerText = answer;
 
   fetch(GAS_URL, {
@@ -56,10 +44,11 @@ function askAI() {
       type: "ai",
       session_id: getSession(),
       user_question_raw: q,
-      entry_point: "ai_chat_initial",
-      device: navigator.userAgent,
-      timestamp: new Date().toISOString(),
-    }),
+      ai_answer_text: answer,
+      question_category: "general",
+      tarot_used: false,
+      entry_point: "ai_chat"
+    })
   });
 }
 
