@@ -5,7 +5,7 @@
   <title>AI 고양이 타로 상담</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- ✅ 네이버 서치콘솔 (절대 제거 금지) -->
+  <!-- ❗ 네이버 서치콘솔 (절대 제거 금지) -->
   <meta name="naver-site-verification" content="20b0cc209520048d7c651297a28b316fe1de7cd8" />
 
   <!-- Google AdSense -->
@@ -17,22 +17,32 @@
 </head>
 <body>
 
-  <!-- 🔊 사운드 토글 (script.js에서 사용) -->
+  <!-- 🔊 사운드 토글 -->
   <button id="soundToggle" class="sound-btn">🔊</button>
 
-  <!-- 전체 앱 컨테이너 -->
   <div class="app">
 
-    <!-- 채팅 영역 -->
-    <main id="chatContainer" class="chat-container">
-      <!-- JS에서 메시지 append -->
-    </main>
+    <!-- 🐱 고양이 + 카드 무대 -->
+    <section id="stageArea" class="stage-area">
+      <img
+        id="catImage"
+        src="/assets/cat_ai.webp"
+        alt="AI 고양이 상담사"
+        class="cat-image"
+      />
 
-    <!-- 입력 영역 -->
+      <!-- 카드 연출 영역 -->
+      <div id="tarotStage" class="tarot-stage"></div>
+    </section>
+
+    <!-- 💬 채팅 로그 -->
+    <main id="chatContainer" class="chat-log"></main>
+
+    <!-- ⌨ 입력 -->
     <footer class="chat-input">
       <input
-        type="text"
         id="userInput"
+        type="text"
         placeholder="편하게 이야기해도 돼…"
         autocomplete="off"
       />
@@ -41,7 +51,6 @@
 
   </div>
 
-  <!-- script.js는 네가 방금 수정한 버전 그대로 -->
   <script src="script.js"></script>
 </body>
 </html>
