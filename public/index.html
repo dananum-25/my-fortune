@@ -1,128 +1,69 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <!-- ✅ 네이버 서치어드바이저 (최상단 고정) -->
+  <!-- 네이버 서치어드바이저 (최상단 고정) -->
   <meta name="naver-site-verification" content="20b0cc209520048d7c651297a28b316fe1de7cd8" />
 
-  <!-- 기본 메타 -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>오늘의 운세 | 띠 · MBTI · 연애 · 금전 · 직업 · 타로</title>
-  <meta name="description" content="띠별 운세와 MBTI 운세, 연애운·금전운·직업운과 타로카드 78장을 하루 1회 무료로 확인하세요." />
-  <meta name="keywords" content="오늘의 운세, 띠별 운세, MBTI 운세, 연애운, 금전운, 직업운, 타로카드, 무료 운세" />
-  <meta name="author" content="my-fortune" />
+
+  <title>오늘의 운세 · AI 고양이 상담</title>
+  <meta name="description" content="생년월일 기반 오늘의 운세와 AI 고양이 상담사가 함께하는 심리 타로 상담" />
 
   <!-- Google Search Console -->
-  <meta name="google-site-verification" content="5FKwm4_bVWL9skvm5olmNjvPSIzR_tW75VT_0NpJ9VA" />
+  <meta name="google-site-verification" content="여기에_SearchConsole_에서_받은_코드" />
 
-  <!-- Open Graph (카카오/네이버/페이스북) -->
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="오늘의 운세" />
-  <meta property="og:title" content="오늘의 운세 · 띠 · MBTI · 타로" />
-  <meta property="og:description" content="하루 1회 고정 운세 · 띠별 · MBTI · 연애 · 금전 · 직업 · 타로" />
-  <meta property="og:image" content="/assets/tarot/majors/00_the_fool.png" />
-  <meta property="og:url" content="https://my-fortune-lake.vercel.app/" />
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="오늘의 운세 · 타로" />
-  <meta name="twitter:description" content="띠 · MBTI · 연애 · 금전 · 직업 · 타로 무료 운세" />
-  <meta name="twitter:image" content="/assets/tarot/majors/00_the_fool.png" />
-
-  <!-- AdSense -->
-  <script async
-    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7356591276029815"
+  <!-- Google AdSense -->
+  <meta name="google-adsense-account" content="ca-pub-7356591276029815">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7356591276029815"
     crossorigin="anonymous"></script>
-  <meta name="google-adsense-account" content="ca-pub-7356591276029815" />
 
-  <!-- CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
 <header class="hero">
-  <h1 id="seoH1">오늘의 운세</h1>
-  <p class="subtitle">띠 · MBTI · 연애 · 금전 · 직업 · 타로</p>
+  <h1>오늘의 운세</h1>
+  <p>AI 고양이 상담사와 함께하는 하루 운세</p>
 </header>
 
 <main class="container">
 
-  <!-- 입력 영역 -->
+  <!-- 입력 -->
   <section class="card">
     <label>이름</label>
-    <input id="name" placeholder="이름 (선택)" />
+    <input id="name" placeholder="선택 입력" />
 
     <label>생년월일</label>
     <input id="birth" type="date" />
 
-    <label>띠</label>
-    <select id="zodiac"></select>
-
-    <label>MBTI</label>
-    <select id="mbti"></select>
-
-    <button class="btn primary" onclick="startFortune()">운세 보기</button>
+    <button class="btn primary" onclick="showTodayFortune()">
+      🌞 오늘의 운세 보기
+    </button>
   </section>
 
-  <!-- 결과 영역 -->
-  <section id="result" class="hidden">
+  <!-- 오늘 운세 -->
+  <section id="todaySection" class="card hidden">
+    <h2>🌞 오늘의 운세</h2>
+    <p id="todayText"></p>
+  </section>
 
-    <section class="card">
-      <h2 id="todayTitle">🌞 오늘의 운세</h2>
-      <p id="todayText"></p>
+  <!-- 고양이 AI 상담 -->
+  <section id="aiSection" class="card hidden">
+    <div class="cat-box">
+      <img src="/assets/cat_ai.png" alt="AI 고양이 상담사" />
+      <p class="cat-msg">궁금한 걸 편하게 물어보라냥 🐾</p>
+    </div>
 
-      <h3>🌙 내일의 운세</h3>
-      <p id="tomorrowText"></p>
+    <textarea id="aiQuestion" placeholder="예: 오늘 연애운이 왜 이런가요?"></textarea>
+    <button class="btn primary" onclick="askAI()">AI 상담하기</button>
 
-      <h3>📅 올해의 운세</h3>
-      <p id="yearText"></p>
-    </section>
-
-    <section class="card">
-      <h3 id="categoryTitle">🐲 띠별 운세</h3>
-      <p id="categoryText"></p>
-    </section>
-
-    <!-- 타로 -->
-    <section class="card tarot">
-      <h3>🔮 오늘의 타로</h3>
-      <img id="tarotImg" alt="오늘의 타로 카드" />
-      <p id="tarotText"></p>
-    </section>
-
-    <!-- AI 상담 -->
-    <section class="card">
-      <h3>🧠 AI에게 운세 상담하기</h3>
-
-      <textarea
-        id="aiQuestion"
-        placeholder="예: 올해 결혼해도 괜찮을까요?"
-      ></textarea>
-
-      <button class="btn primary" onclick="askAI()">상담 받기</button>
-
-      <div id="aiAnswer" class="answer"></div>
-      <p class="notice">※ 개인정보를 수집·저장하지 않습니다.</p>
-    </section>
-
-    <!-- 광고 카드 -->
-    <section class="card ad">
-      <h3>🚰 정수기 렌탈 혜택</h3>
-      <p>
-        제휴카드 사용 시 <b>월 렌탈료 0원</b><br />
-        설치 당일 <b>최대 50만원 페이백</b>
-      </p>
-      <a class="cta" href="https://capable-kataifi-46f1ad.netlify.app/" target="_blank">
-        👉 무료 상담 신청
-      </a>
-    </section>
-
+    <div id="aiAnswer" class="answer"></div>
   </section>
 
 </main>
 
-<!-- JS -->
 <script src="script.js" defer></script>
 </body>
 </html>

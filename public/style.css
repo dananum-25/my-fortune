@@ -7,7 +7,7 @@ body {
 
 .hero {
   text-align: center;
-  padding: 20px;
+  padding: 24px 16px;
 }
 
 .container {
@@ -23,77 +23,43 @@ body {
   margin-top: 14px;
 }
 
-.ad { border: 2px solid #ff9f43; }
-
-input, select, textarea {
+input, textarea {
   width: 100%;
-  padding: 10px;
-  margin-top: 6px;
+  padding: 12px;
   border-radius: 8px;
   border: none;
+  margin-top: 10px;
 }
 
 button {
   width: 100%;
-  margin-top: 10px;
-  padding: 12px;
+  margin-top: 12px;
+  padding: 14px;
   border-radius: 999px;
   border: none;
   background: #6b4fd6;
   color: white;
+  font-size: 1.05rem;
 }
 
-.secondary { background: #444; }
-
-.hidden { display: none; }
-
-.tarot img {
-  width: 100%;
-  max-width: 220px;
-  display: block;
-  margin: 10px auto;
-  border-radius: 12px;
+.hidden {
+  display: none;
 }
 
-.cta {
-  display: block;
-  padding: 12px;
-  background: #ff9f43;
-  color: #000;
-  border-radius: 999px;
+.cat-box {
   text-align: center;
-  text-decoration: none;
-  font-weight: bold;
 }
 
-.notice {
-  font-size: 0.8rem;
-  opacity: 0.7;
+.cat-box img {
+  width: 180px;
+  margin-bottom: 10px;
 }
 
-.chat-ai {
-  background: rgba(255,255,255,0.15);
-  padding: 8px;
-  border-radius: 8px;
-  margin-top: 6px;
+.cat-msg {
+  opacity: 0.85;
 }
 
-.chat-user {
-  text-align: right;
-  margin-top: 6px;
-}
-
-.game { border: 2px dashed #6bffb8; }
-
-/* ✅ 공유 버튼만 작게 (과도하게 큰 문제 해결) */
-.share-btn {
-  width: auto;
-  display: inline-block;
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: none;
-  background: #444;
-  color: #fff;
-  font-size: 0.9rem;
-  margin-top: 10px;
+.answer {
+  margin-top: 12px;
+  line-height: 1.6;
 }
