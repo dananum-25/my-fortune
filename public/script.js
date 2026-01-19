@@ -1,135 +1,155 @@
 /* ===============================
-   AUDIO PATHS (고정 선언)
-================================ */
-const SOUND = {
-  bgm: "/sounds/tarot/ambient_entry.mp3",
-  spread: "/sounds/tarot/spread_open.mp3",
-  pick: "/sounds/tarot/card_pick.mp3",
-  reveal: "/sounds/tarot/tarot_reveal.mp3",
-  cat: "/sounds/tarot/cat_speak_chime.mp3",
-  end: "/sounds/tarot/session_end.mp3"
-};
-
-/* ===============================
-   AUDIO OBJECTS
-================================ */
-const bgm = new Audio(SOUND.bgm);
-const spreadSound = new Audio(SOUND.spread);
-const pickSound = new Audio(SOUND.pick);
-const revealSound = new Audio(SOUND.reveal);
-const catSound = new Audio(SOUND.cat);
-const endSound = new Audio(SOUND.end);
-
-/* ===============================
-   AUDIO SETTINGS
-================================ */
-bgm.loop = true;
-bgm.volume = 0.15;
-
-[
-  spreadSound,
-  pickSound,
-  revealSound,
-  catSound,
-  endSound
-].forEach(a => a.volume = 0.2);
-
-/* ===============================
-   AUDIO DEBUG (절대 제거 금지)
-================================ */
-function debugAudio(audio, name) {
-  audio.onplay = () => console.log("🔊 재생:", name);
-  audio.onerror = () => console.error("❌ 사운드 로드 실패:", name, audio.src);
-}
-
-Object.entries({
-  bgm,
-  spreadSound,
-  pickSound,
-  revealSound,
-  catSound,
-  endSound
-}).forEach(([k, v]) => debugAudio(v, k));
-
-/* ===============================
-   SOUND STATE
+   상태
 ================================ */
 let soundEnabled = false;
+let turn = 0;
+let tarotLocked = false;
 
 /* ===============================
-   SOUND TOGGLE (초기 무음)
+   DOM
 ================================ */
-const soundBtn = document.getElementById("soundToggle");
-soundBtn.textContent = "🔇";
+const chatArea = document.getElementById("chatArea");
+const input = document.getElementById("chatInput");
+const sendBtn = document.getElementById("sendBtn");
+const tarotSpread = document.getElementById("tarotSpread");
+const soundToggle = document.getElementById("soundToggle");
 
-soundBtn.addEventListener("click", async () => {
+const bgmEntry = document.getElementById("bgmEntry");
+const bgmEnd = document.getElementById("bgmEnd");
+
+/* ===============================
+   사운드 설정
+================================ */
+bgmEntry.loop = true;
+bgmEntry.volume = 0.15;
+bgmEnd.volume = 0.15;
+
+soundToggle.textContent = "🔇";
+
+soundToggle.addEventListener("click", async () => {
   soundEnabled = !soundEnabled;
 
   if (soundEnabled) {
-    soundBtn.textContent = "🔊";
+    soundToggle.textContent = "🔊";
     try {
-      await bgm.play(); // 사용자 제스처 안
+      await bgmEntry.play();
     } catch (e) {
-      console.error("BGM 차단됨", e);
+      console.error("BGM 차단", e);
       soundEnabled = false;
-      soundBtn.textContent = "🔇";
+      soundToggle.textContent = "🔇";
     }
   } else {
-    soundBtn.textContent = "🔇";
-    bgm.pause();
-    bgm.currentTime = 0;
+    soundToggle.textContent = "🔇";
+    bgmEntry.pause();
+    bgmEntry.currentTime = 0;
   }
 });
 
 /* ===============================
-   SAFE PLAY
+   채팅 유틸
 ================================ */
-function playSound(audio) {
-  if (!soundEnabled) return;
-  audio.currentTime = 0;
-  audio.play().catch(() => {});
+function addBubble(text, who) {
+  const div = document.createElement("div");
+  div.className = `bubble ${who}`;
+  div.textContent = text;
+  chatArea.appendChild(div);
+  chatArea.scrollTop = chatArea.scrollHeight;
 }
 
 /* ===============================
-   TAROT SPREAD (3장 고정)
+   카드 이미지 방어 로딩
 ================================ */
-function showTarotSpread() {
-  playSound(spreadSound);
+function loadCardImage(path) {
+  const img = new Image();
+  img.className = "tarot-card";
 
-  const spread = document.getElementById("tarotSpread");
-  spread.innerHTML = "";
+  img.onload = () => console.log("카드 로드 성공:", img.src);
+  img.onerror = () => console.error("카드 로드 실패:", img.src);
 
-  // 뒷면
+  img.src = path;
+  return img;
+}
+
+/* ===============================
+   타로 데이터
+================================ */
+const MAJORS = [
+  "00_the_fool","01_the_magician","02_the_high_priestess",
+  "03_the_empress","04_the_emperor","05_the_hierophant",
+  "06_the_lovers","07_the_chariot","08_strength",
+  "09_the_hermit","10_wheel_of_fortune","11_justice",
+  "12_the_hanged_man","13_death","14_temperance",
+  "15_the_devil","16_the_tower","17_the_star",
+  "18_the_moon","19_the_sun","20_judgement","21_the_world"
+];
+
+function pickRandom(arr, n) {
+  return [...arr].sort(() => Math.random() - 0.5).slice(0, n);
+}
+
+/* ===============================
+   타로 스프레드
+================================ */
+function showSpread3() {
+  if (tarotLocked) return;
+  tarotLocked = true;
+
+  tarotSpread.innerHTML = "";
+
   for (let i = 0; i < 3; i++) {
     const back = document.createElement("div");
     back.className = "tarot-back";
-    spread.appendChild(back);
+    tarotSpread.appendChild(back);
   }
 
   setTimeout(() => {
-    spread.innerHTML = "";
-    playSound(revealSound);
-
-    const cards = pickRandom(MAJORS, 3);
-    cards.forEach(name => {
+    tarotSpread.innerHTML = "";
+    const chosen = pickRandom(MAJORS, 3);
+    chosen.forEach(name => {
       const path = `/assets/tarot/majors/${name}.png`;
-
-      const img = new Image();
-      img.onload = () => console.log("🃏 카드 로드 성공:", img.src);
-      img.onerror = () => console.error("❌ 카드 로드 실패:", img.src);
-      img.src = path;
-
-      img.className = "tarot-card";
-      spread.appendChild(img);
+      tarotSpread.appendChild(loadCardImage(path));
     });
   }, 900);
 }
 
 /* ===============================
-   SESSION END
+   초기 메시지
+================================ */
+addBubble("안녕 🐾 나는 타로 상담사 고양이야.", "ai");
+addBubble("요즘 가장 신경 쓰이는 고민을 편하게 적어줘.", "ai");
+
+/* ===============================
+   전송 처리
+================================ */
+sendBtn.addEventListener("click", sendMessage);
+input.addEventListener("keydown", e => {
+  if (e.key === "Enter") sendMessage();
+});
+
+function sendMessage() {
+  const text = input.value.trim();
+  if (!text) return;
+
+  addBubble(text, "user");
+  input.value = "";
+  turn++;
+
+  if (turn === 1) {
+    addBubble("고마워. 그 고민에서 가장 불안한 부분은 뭐야?", "ai");
+  } else if (turn === 2) {
+    addBubble("이제 타로로 흐름을 볼게…", "ai");
+    showSpread3();
+    addBubble("카드를 보고 떠오르는 느낌을 말해줘.", "ai");
+  } else {
+    addBubble("그 흐름을 더 깊게 읽어볼게.", "ai");
+  }
+}
+
+/* ===============================
+   종료 사운드
 ================================ */
 window.addEventListener("beforeunload", () => {
   if (!soundEnabled) return;
-  bgm.pause();
-  playSound(endSound);
+  bgmEntry.pause();
+  bgmEnd.play().catch(() => {});
 });
