@@ -17,17 +17,11 @@ body {
   background: #15151f;
 }
 
-.top-bar h1 {
-  font-size: 18px;
-  margin: 0;
-}
-
 #soundToggle {
   font-size: 18px;
   background: none;
   border: none;
   color: #fff;
-  cursor: pointer;
 }
 
 .stage {
@@ -36,44 +30,46 @@ body {
   height: calc(100vh - 56px);
 }
 
+/* 🐱 고양이 영역 */
 .cat-area {
   text-align: center;
   padding: 12px;
 }
 
 .cat-area img {
-  width: 160px;
-  max-width: 80%;
+  width: 180px;
+  max-width: 85%;
 }
 
-.cat-hint {
-  opacity: 0.8;
-  font-size: 14px;
-}
-
+/* 🃏 타로 카드 영역 – 핵심 */
 .tarot-area {
-  min-height: 140px;
+  min-height: 260px;              /* 🔥 기존 140 → 260 */
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
+  padding: 12px 0;
 }
 
+/* 카드 앞면 */
 .tarot-card {
-  width: 80px;
-  border-radius: 6px;
+  width: 110px;                   /* 🔥 기존 80 → 110 */
+  border-radius: 8px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.6);
 }
 
+/* 카드 뒷면 */
 .tarot-back {
-  width: 80px;
-  height: 120px;
+  width: 110px;
+  height: 180px;
   background: linear-gradient(135deg, #444, #222);
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
+/* 💬 채팅 */
 .chat-area {
   flex: 1;
-  padding: 12px;
+  padding: 10px 12px;
   overflow-y: auto;
 }
 
@@ -87,15 +83,14 @@ body {
 
 .bubble.ai {
   background: #2a2a3d;
-  align-self: flex-start;
 }
 
 .bubble.user {
   background: #4b7bec;
-  align-self: flex-end;
   margin-left: auto;
 }
 
+/* 입력 */
 .input-area {
   display: flex;
   padding: 10px;
@@ -114,5 +109,4 @@ body {
   padding: 8px 14px;
   border-radius: 6px;
   border: none;
-  cursor: pointer;
 }
