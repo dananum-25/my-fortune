@@ -1,116 +1,145 @@
+/* ===============================
+   Global
+================================ */
 * {
   box-sizing: border-box;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 body {
   margin: 0;
-  background: #0e0e13;
+  background: #0f0f18;
   color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.top-bar {
+/* ===============================
+   Header
+================================ */
+header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  background: #15151f;
+  background: #12121c;
+  border-bottom: 1px solid #222;
 }
 
-#soundToggle {
+header h1 {
   font-size: 18px;
-  background: none;
-  border: none;
-  color: #fff;
+  margin: 0;
+}
+
+header .sound-toggle {
+  margin-left: auto;
   cursor: pointer;
 }
 
-.stage {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 56px);
+/* ===============================
+   Main
+================================ */
+main {
+  padding: 16px;
 }
 
-/* 🐱 고양이 */
+/* ===============================
+   Cat Area
+================================ */
 .cat-area {
   text-align: center;
-  padding: 12px;
+  margin-bottom: 20px;
 }
+
 .cat-area img {
-  width: 180px;
-  max-width: 85%;
-}
-.cat-hint {
-  opacity: 0.85;
-  font-size: 14px;
+  max-width: 100%;
+  border-radius: 12px;
 }
 
-/* 🃏 타로 카드 영역 — 핵심 */
-.tarot-area {
-  min-height: 260px;              /* 충분한 높이 */
+.cat-area .hint {
+  margin-top: 12px;
+  opacity: 0.9;
+}
+
+/* ===============================
+   Chat
+================================ */
+.chat-log {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 0;
-  z-index: 2;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
-/* 카드 앞면 */
-.tarot-card {
-  width: 110px;
-  border-radius: 8px;
-  box-shadow: 0 8px 18px rgba(0,0,0,0.6);
+.chat-bubble {
+  max-width: 85%;
+  padding: 12px 14px;
+  border-radius: 16px;
+  line-height: 1.4;
+}
+
+.chat-bubble.ai {
+  background: #1d1d2a;
+  align-self: flex-start;
+}
+
+.chat-bubble.user {
+  background: #4c6edb;
+  align-self: flex-end;
+}
+
+.chat-input {
+  display: flex;
+  padding: 10px;
   background: #111;
 }
 
-/* 카드 뒷면 */
-.tarot-back {
-  width: 110px;
-  height: 180px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #444, #222);
-  box-shadow: 0 8px 18px rgba(0,0,0,0.6);
-}
-
-/* 💬 채팅 */
-.chat-area {
+.chat-input input {
   flex: 1;
-  padding: 10px 12px;
-  overflow-y: auto;
-}
-
-.bubble {
-  max-width: 80%;
-  margin-bottom: 8px;
-  padding: 8px 12px;
-  border-radius: 12px;
-  font-size: 14px;
-}
-.bubble.ai {
-  background: #2a2a3d;
-}
-.bubble.user {
-  background: #4b7bec;
-  margin-left: auto;
-}
-
-/* 입력 */
-.input-area {
-  display: flex;
   padding: 10px;
-  background: #15151f;
-}
-#chatInput {
-  flex: 1;
-  padding: 8px;
-  border-radius: 6px;
+  border-radius: 20px;
   border: none;
+  outline: none;
 }
-#sendBtn {
+
+.chat-input button {
   margin-left: 8px;
-  padding: 8px 14px;
-  border-radius: 6px;
+  padding: 0 16px;
+  border-radius: 20px;
   border: none;
+  background: #4c6edb;
+  color: #fff;
   cursor: pointer;
+}
+
+/* =====================================================
+   🔧 PATCH: Tarot card size fix (3 cards side-by-side)
+   - 기존 구조 유지
+   - 카드가 너무 커서 안 뜨는 현상 방지
+===================================================== */
+
+/* 카드 묶음 컨테이너 (이름이 뭐든 안전하게 대응) */
+.tarot-cards,
+.tarot-card-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* 카드 이미지 공통 방어 */
+.tarot-cards img,
+.tarot-card img,
+img.tarot-card {
+  width: 100%;
+  max-width: 30vw;   /* 모바일: 화면 기준 3장 가능 */
+  height: auto;
+  object-fit: contain;
+}
+
+/* PC에서는 카드 고정 크기 */
+@media (min-width: 768px) {
+  .tarot-cards img,
+  .tarot-card img,
+  img.tarot-card {
+    max-width: 180px;
+  }
 }
