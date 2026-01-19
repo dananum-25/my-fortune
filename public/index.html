@@ -5,7 +5,7 @@
   <title>AI 고양이 타로 상담</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- ❗ 네이버 서치콘솔 (절대 제거 금지) -->
+  <!-- 네이버 서치어드바이저 -->
   <meta name="naver-site-verification" content="20b0cc209520048d7c651297a28b316fe1de7cd8" />
 
   <!-- Google AdSense -->
@@ -20,35 +20,25 @@
   <!-- 🔊 사운드 토글 -->
   <button id="soundToggle" class="sound-btn">🔊</button>
 
-  <div class="app">
+  <!-- 🐱 고양이 영역 -->
+  <section class="cat-area">
+    <img src="/assets/cat_ai.webp" alt="AI 고양이 상담사" />
+    <div class="cat-bubble">
+      괜찮아. 천천히 말해도 돼.<br/>
+      고민을 하나만 말해줄래? 🐾
+    </div>
+  </section>
 
-    <!-- 🐱 고양이 + 카드 무대 -->
-    <section id="stageArea" class="stage-area">
-      <img
-        id="catImage"
-        src="/assets/cat_ai.webp"
-        alt="AI 고양이 상담사"
-        class="cat-image"
-      />
+  <!-- 🃏 타로 카드 영역 -->
+  <section id="tarotArea" class="tarot-area"></section>
 
-      <!-- 카드 연출 영역 -->
-      <div id="tarotStage" class="tarot-stage"></div>
-    </section>
+  <!-- 💬 채팅 영역 -->
+  <section class="chat-area" id="chatArea"></section>
 
-    <!-- 💬 채팅 로그 -->
-    <main id="chatContainer" class="chat-log"></main>
-
-    <!-- ⌨ 입력 -->
-    <footer class="chat-input">
-      <input
-        id="userInput"
-        type="text"
-        placeholder="편하게 이야기해도 돼…"
-        autocomplete="off"
-      />
-      <button id="sendBtn">전송</button>
-    </footer>
-
+  <!-- 입력 -->
+  <div class="input-bar">
+    <input id="userInput" placeholder="편하게 이야기해도 돼..." />
+    <button id="sendBtn">전송</button>
   </div>
 
   <script src="script.js"></script>
