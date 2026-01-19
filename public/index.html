@@ -2,44 +2,61 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>AI 고양이 타로 상담</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
   <!-- 네이버 서치어드바이저 -->
   <meta name="naver-site-verification" content="20b0cc209520048d7c651297a28b316fe1de7cd8" />
 
-  <!-- Google AdSense -->
+  <!-- 구글 서치 콘솔 -->
+  <meta name="google-site-verification" content="5FKwm4_bVWL9skvm5olmNjvPSIzR_tW75VT_0NpJ9VA" />
+
+  <!-- 구글 애드센스 -->
   <meta name="google-adsense-account" content="ca-pub-7356591276029815">
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7356591276029815"
+  <script async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7356591276029815"
     crossorigin="anonymous"></script>
 
+  <title>AI 고양이 타로 상담</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- 🔊 사운드 토글 -->
-  <button id="soundToggle" class="sound-btn">🔊</button>
+  <!-- 상단 바 -->
+  <header class="top-bar">
+    <h1>🐱 AI 타로 상담</h1>
+    <button id="soundToggle">🔇</button>
+  </header>
 
-  <!-- 🐱 고양이 영역 -->
-  <section class="cat-area">
-    <img src="/assets/cat_ai.webp" alt="AI 고양이 상담사" />
-    <div class="cat-bubble">
-      괜찮아. 천천히 말해도 돼.<br/>
-      고민을 하나만 말해줄래? 🐾
-    </div>
-  </section>
+  <!-- 메인 스테이지 -->
+  <main class="stage">
 
-  <!-- 🃏 타로 카드 영역 -->
-  <section id="tarotArea" class="tarot-area"></section>
+    <!-- 고양이 영역 -->
+    <section class="cat-area">
+      <img src="/assets/cat_ai.webp" alt="AI 고양이 상담사" />
+      <p class="cat-hint">궁금한 고민을 편하게 적어줘 🐾</p>
+    </section>
 
-  <!-- 💬 채팅 영역 -->
-  <section class="chat-area" id="chatArea"></section>
+    <!-- 타로 카드 영역 -->
+    <section id="tarotSpread" class="tarot-area">
+      <!-- 카드가 여기 등장 -->
+    </section>
 
-  <!-- 입력 -->
-  <div class="input-bar">
-    <input id="userInput" placeholder="편하게 이야기해도 돼..." />
-    <button id="sendBtn">전송</button>
-  </div>
+    <!-- 채팅 영역 -->
+    <section class="chat-area" id="chatArea">
+      <!-- 채팅 버블 -->
+    </section>
+
+    <!-- 입력 -->
+    <section class="input-area">
+      <input id="chatInput" type="text" placeholder="여기에 고민을 적어보세요…" />
+      <button id="sendBtn">전송</button>
+    </section>
+
+  </main>
+
+  <!-- 사운드 -->
+  <audio id="bgmEntry" src="/sounds/tarot/ambient_entry.mp3" preload="auto"></audio>
+  <audio id="bgmEnd" src="/sounds/tarot/session_end.mp3" preload="auto"></audio>
 
   <script src="script.js"></script>
 </body>
