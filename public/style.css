@@ -1,93 +1,118 @@
-body {
-  margin: 0;
-  background: #0f0f18;
-  color: #fff;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+* {
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-.sound-btn {
-  position: fixed;
-  top: 12px;
-  right: 12px;
-  z-index: 10;
-  background: rgba(0,0,0,0.6);
+body {
+  margin: 0;
+  background: #0e0e13;
+  color: #fff;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #15151f;
+}
+
+.top-bar h1 {
+  font-size: 18px;
+  margin: 0;
+}
+
+#soundToggle {
+  font-size: 18px;
+  background: none;
   border: none;
   color: #fff;
-  font-size: 20px;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  cursor: pointer;
+}
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 56px);
 }
 
 .cat-area {
   text-align: center;
-  padding: 16px;
+  padding: 12px;
 }
 
 .cat-area img {
-  max-width: 100%;
-  height: auto;
+  width: 160px;
+  max-width: 80%;
 }
 
-.cat-bubble {
-  margin-top: 12px;
-  background: rgba(0,0,0,0.6);
-  padding: 12px;
-  border-radius: 12px;
-  display: inline-block;
+.cat-hint {
+  opacity: 0.8;
+  font-size: 14px;
 }
 
 .tarot-area {
+  min-height: 140px;
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 8px;
-  padding: 12px;
 }
 
-.tarot-area img {
+.tarot-card {
   width: 80px;
   border-radius: 6px;
 }
 
+.tarot-back {
+  width: 80px;
+  height: 120px;
+  background: linear-gradient(135deg, #444, #222);
+  border-radius: 6px;
+}
+
 .chat-area {
+  flex: 1;
   padding: 12px;
-  max-height: 30vh;
   overflow-y: auto;
 }
 
-.chat-msg {
+.bubble {
+  max-width: 80%;
   margin-bottom: 8px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 14px;
 }
 
-.chat-msg.ai {
-  background: #1e1e2f;
-  padding: 8px;
-  border-radius: 8px;
+.bubble.ai {
+  background: #2a2a3d;
+  align-self: flex-start;
 }
 
-.chat-msg.user {
-  text-align: right;
-  color: #9ecbff;
+.bubble.user {
+  background: #4b7bec;
+  align-self: flex-end;
+  margin-left: auto;
 }
 
-.input-bar {
+.input-area {
   display: flex;
   padding: 10px;
-  background: #1a1a2a;
+  background: #15151f;
 }
 
-.input-bar input {
+#chatInput {
   flex: 1;
-  padding: 10px;
-  border-radius: 20px;
+  padding: 8px;
+  border-radius: 6px;
   border: none;
 }
 
-.input-bar button {
+#sendBtn {
   margin-left: 8px;
-  padding: 10px 16px;
-  border-radius: 20px;
+  padding: 8px 14px;
+  border-radius: 6px;
   border: none;
-  background: #6b5cff;
-  color: #fff;
+  cursor: pointer;
 }
