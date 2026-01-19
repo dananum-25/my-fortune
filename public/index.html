@@ -4,9 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
+  <!-- 네이버 서치어드바이저 (고정) -->
   <meta name="naver-site-verification" content="20b0cc209520048d7c651297a28b316fe1de7cd8" />
+
+  <!-- 구글 서치 콘솔 (고정) -->
   <meta name="google-site-verification" content="5FKwm4_bVWL9skvm5olmNjvPSIzR_tW75VT_0NpJ9VA" />
 
+  <!-- 구글 애드센스 (고정) -->
   <meta name="google-adsense-account" content="ca-pub-7356591276029815">
   <script async
     src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7356591276029815"
@@ -24,15 +28,19 @@
 
 <main class="stage">
 
+  <!-- 고양이 영역 -->
   <section class="cat-area">
     <img src="/assets/cat_ai.webp" alt="AI 고양이 상담사" />
-    <p class="cat-hint">궁금한 고민을 편하게 적어줘 🐾</p>
+    <p class="cat-hint">지금 가장 고민되는 한 가지만 말해줘 🐾</p>
   </section>
 
+  <!-- 타로 카드 영역 (처음엔 비어있음) -->
   <section id="tarotSpread" class="tarot-area"></section>
 
-  <section class="chat-area" id="chatArea"></section>
+  <!-- 채팅 -->
+  <section id="chatArea" class="chat-area"></section>
 
+  <!-- 입력 -->
   <section class="input-area">
     <input id="chatInput" type="text" placeholder="여기에 고민을 적어보세요…" />
     <button id="sendBtn">전송</button>
@@ -40,6 +48,7 @@
 
 </main>
 
+<!-- 사운드 -->
 <audio id="bgmEntry" src="/sounds/tarot/ambient_entry.mp3" preload="auto"></audio>
 <audio id="bgmEnd" src="/sounds/tarot/session_end.mp3" preload="auto"></audio>
 
