@@ -1,128 +1,118 @@
 /* ===============================
-   STATE
+   GLOBAL STATE
 ================================ */
-let soundOn = false;
-let phase = "chat"; // chat → spread → reveal
-let selectedCards = [];
+let isMuted = true;
+let bgmAudio = null;
+let currentStep = 0;
 
 /* ===============================
-   DOM
+   SOUND SYSTEM
 ================================ */
-const chatArea = document.getElementById("chatArea");
-const input = document.getElementById("chatInput");
-const sendBtn = document.getElementById("sendBtn");
-const spreadArea = document.getElementById("spreadArea");
-const soundToggle = document.getElementById("soundToggle");
-
-const bgm = document.getElementById("bgm");
-const cardSound = document.getElementById("cardSound");
-
-/* ===============================
-   SOUND
-================================ */
-bgm.loop = true;
-bgm.volume = 0.15;
-cardSound.volume = 0.3;
-
-soundToggle.onclick = async () => {
-  soundOn = !soundOn;
-  soundToggle.textContent = soundOn ? "🔊" : "🔇";
-  if (soundOn) {
-    try { await bgm.play(); } catch(e){}
-  } else {
-    bgm.pause(); bgm.currentTime = 0;
-  }
-};
-
-/* ===============================
-   CHAT
-================================ */
-function addBubble(text, who) {
-  const div = document.createElement("div");
-  div.className = `bubble ${who}`;
-  div.textContent = text;
-  chatArea.appendChild(div);
-  chatArea.scrollTop = chatArea.scrollHeight;
+function initBGM() {
+  if (bgmAudio) return;
+  bgmAudio = new Audio("/sounds/tarot/ambient_entry.mp3");
+  bgmAudio.loop = true;
+  bgmAudio.volume = 0.4;
 }
 
-addBubble("안녕 🐱 나는 타로 상담사야.", "ai");
-addBubble("지금 가장 신경 쓰이는 고민을 말해줘.", "ai");
+function playBGM() {
+  if (isMuted) return;
+  initBGM();
+  bgmAudio.play().catch(e => console.warn("BGM autoplay blocked", e));
+}
 
-sendBtn.onclick = send;
-input.onkeydown = e => e.key === "Enter" && send();
+function stopBGM() {
+  if (bgmAudio) bgmAudio.pause();
+}
 
-function send() {
-  const text = input.value.trim();
-  if (!text) return;
-  addBubble(text, "user");
-  input.value = "";
-
-  if (phase === "chat") {
-    addBubble("좋아. 카드를 섞고 있어… 끌리는 카드 3장을 골라줘.", "ai");
-    showSpread();
-    phase = "spread";
-  }
+function toggleSound() {
+  isMuted = !isMuted;
+  if (!isMuted) playBGM();
+  else stopBGM();
 }
 
 /* ===============================
-   TAROT DATA (78)
+   CARD DATA
 ================================ */
-const majors = Array.from({length:22},(_,i)=>`/assets/tarot/majors/${String(i).padStart(2,"0")}_${[
-"the_fool","the_magician","the_high_priestess","the_empress","the_emperor","the_hierophant",
-"the_lovers","the_chariot","strength","the_hermit","wheel_of_fortune","justice",
-"the_hanged_man","death","temperance","the_devil","the_tower","the_star",
-"the_moon","the_sun","judgement","the_world"][i]}.png`);
+const MAJORS = [
+  "00_the_fool","01_the_magician","02_the_high_priestess",
+  "03_the_empress","04_the_emperor","05_the_hierophant",
+  "06_the_lovers","07_the_chariot","08_strength",
+  "09_the_hermit","10_wheel_of_fortune","11_justice",
+  "12_the_hanged_man","13_death","14_temperance",
+  "15_the_devil","16_the_tower","17_the_star",
+  "18_the_moon","19_the_sun","20_judgement","21_the_world"
+];
 
-const suits = ["cups","pentacles","swords","wands"];
-const minors = [];
-suits.forEach(s=>{
-  for(let i=1;i<=14;i++){
-    minors.push(`/assets/tarot/minors/${s}/${String(i).padStart(2,"0")}.png`);
+const MINOR_SUITS = ["cups","swords","wands","pentacles"];
+const MINOR_VALUES = [
+  "01_ace","02_two","03_three","04_four","05_five",
+  "06_six","07_seven","08_eight","09_nine","10_ten",
+  "11_page","12_knight","13_queen","14_king"
+];
+
+/* ===============================
+   IMAGE LOADER (DEFENSIVE)
+================================ */
+function loadCardImage(path) {
+  const img = new Image();
+  img.onload = () => console.log("카드 로드 성공:", path);
+  img.onerror = () => console.error("카드 로드 실패:", path);
+  img.src = path;
+  img.className = "tarot-card";
+  return img;
+}
+
+/* ===============================
+   DRAW CARDS
+================================ */
+function drawThreeCards() {
+  const container = document.getElementById("tarot-cards");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  const cards = [];
+
+  for (let i = 0; i < 3; i++) {
+    if (Math.random() > 0.5) {
+      const major = MAJORS[Math.floor(Math.random() * MAJORS.length)];
+      cards.push(`/assets/tarot/majors/${major}.png`);
+    } else {
+      const suit = MINOR_SUITS[Math.floor(Math.random() * 4)];
+      const value = MINOR_VALUES[Math.floor(Math.random() * MINOR_VALUES.length)];
+      cards.push(`/assets/tarot/minors/${suit}/${value}.png`);
+    }
   }
+
+  cards.forEach(path => {
+    const img = loadCardImage(path);
+    container.appendChild(img);
+  });
+}
+
+/* ===============================
+   CHAT FLOW
+================================ */
+function nextStep() {
+  currentStep++;
+
+  if (currentStep === 1) {
+    playBGM();
+  }
+
+  if (currentStep === 3) {
+    drawThreeCards();
+    new Audio("/sounds/tarot/card_pick.mp3").play();
+  }
+}
+
+/* ===============================
+   INIT
+================================ */
+document.addEventListener("DOMContentLoaded", () => {
+  const soundBtn = document.getElementById("sound-toggle");
+  if (soundBtn) soundBtn.addEventListener("click", toggleSound);
+
+  console.log("AI 타로 시스템 초기화 완료");
 });
-
-const ALL_CARDS = [...majors, ...minors];
-
-/* ===============================
-   SPREAD
-================================ */
-function showSpread() {
-  spreadArea.innerHTML = "";
-  selectedCards = [];
-
-  const pool = [...ALL_CARDS].sort(()=>Math.random()-0.5).slice(0,12);
-
-  pool.forEach(path=>{
-    const card = document.createElement("div");
-    card.className = "card-back";
-
-    card.onclick = ()=>{
-      if (selectedCards.includes(path) || selectedCards.length >= 3) return;
-      card.classList.add("selected");
-      selectedCards.push(path);
-      if (soundOn) cardSound.play();
-
-      if (selectedCards.length === 3) reveal();
-    };
-
-    spreadArea.appendChild(card);
-  });
-}
-
-function reveal() {
-  spreadArea.innerHTML = "";
-  addBubble("선택한 카드들을 펼쳐볼게.", "ai");
-
-  selectedCards.forEach(path=>{
-    const img = new Image();
-    img.className = "card-front";
-
-    img.onload = ()=>console.log("카드 로드 성공:", img.src);
-    img.onerror = ()=>console.error("카드 로드 실패:", img.src);
-
-    img.src = path;
-    spreadArea.appendChild(img);
-  });
-
-  phase = "reveal";
-}
