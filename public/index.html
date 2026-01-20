@@ -2,18 +2,17 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- 네이버 서치어드바이저 (고정) -->
+  <!-- 네이버 서치어드바이저 -->
   <meta name="naver-site-verification" content="20b0cc209520048d7c651297a28b316fe1de7cd8" />
 
-  <!-- 구글 서치 콘솔 (고정) -->
+  <!-- 구글 서치 콘솔 -->
   <meta name="google-site-verification" content="5FKwm4_bVWL9skvm5olmNjvPSIzR_tW75VT_0NpJ9VA" />
 
-  <!-- 구글 애드센스 (고정) -->
+  <!-- 구글 애드센스 -->
   <meta name="google-adsense-account" content="ca-pub-7356591276029815">
-  <script async
-    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7356591276029815"
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7356591276029815"
     crossorigin="anonymous"></script>
 
   <title>AI 고양이 타로 상담</title>
@@ -26,16 +25,16 @@
   <button id="soundToggle">🔇</button>
 </header>
 
-<main class="stage">
+<main class="app">
 
-  <!-- 고양이 영역 -->
+  <!-- 고양이 -->
   <section class="cat-area">
-    <img src="/assets/cat_ai.webp" alt="AI 고양이 상담사" />
-    <p class="cat-hint">지금 가장 고민되는 한 가지만 말해줘 🐾</p>
+    <img src="/assets/cat_ai.webp" alt="AI 고양이 상담사">
+    <p class="cat-msg">지금 가장 마음에 걸리는 고민을 말해줘 🐾</p>
   </section>
 
-  <!-- 타로 카드 영역 (처음엔 비어있음) -->
-  <section id="tarotSpread" class="tarot-area"></section>
+  <!-- 카드 스프레드 -->
+  <section id="spreadArea" class="spread-area"></section>
 
   <!-- 채팅 -->
   <section id="chatArea" class="chat-area"></section>
@@ -49,8 +48,8 @@
 </main>
 
 <!-- 사운드 -->
-<audio id="bgmEntry" src="/sounds/tarot/ambient_entry.mp3" preload="auto"></audio>
-<audio id="bgmEnd" src="/sounds/tarot/session_end.mp3" preload="auto"></audio>
+<audio id="bgm" src="/sounds/tarot/ambient_entry.mp3" preload="auto"></audio>
+<audio id="cardSound" src="/sounds/tarot/card_pick.mp3" preload="auto"></audio>
 
 <script src="script.js"></script>
 </body>
