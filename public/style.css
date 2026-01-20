@@ -1,114 +1,199 @@
 * { box-sizing: border-box; }
 
-body {
+html, body {
   margin: 0;
-  background: #0e0e14;
+  padding: 0;
+  height: 100%;
+  background: #0e0e11;
   color: #fff;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont;
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", system-ui, sans-serif;
 }
 
-.top-bar {
+.topbar{
+  position: sticky;
+  top: 0;
+  z-index: 50;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  background: #15151f;
+  padding: 10px 12px;
+  background: rgba(14,14,17,0.92);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(8px);
 }
 
-#soundToggle {
-  background: none;
-  border: none;
+.brand{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.brand .logo{ font-size: 18px; }
+.brand .title{
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.2px;
+}
+
+.sound-btn {
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.12);
   color: #fff;
-  font-size: 18px;
+  font-size: 16px;
+  padding: 6px 10px;
+  border-radius: 18px;
   cursor: pointer;
 }
 
 .app {
+  height: calc(100vh - 56px - 60px); /* topbar + input */
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 56px);
+  padding: 10px 12px;
+  gap: 10px;
 }
 
-.cat-area {
-  text-align: center;
-  padding: 12px;
+/* Cat */
+.cat-area { width: 100%; }
+.cat-card{
+  width: 100%;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  overflow: hidden;
 }
-
-.cat-area img {
-  width: 180px;
+.cat-media{
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: rgba(0,0,0,0.35);
 }
-
-.cat-msg {
+.cat-media img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.cat-caption{
+  padding: 10px 12px 12px;
+}
+.cat-line{
+  font-weight: 700;
   font-size: 14px;
-  opacity: 0.85;
+  margin-bottom: 4px;
+}
+.cat-sub{
+  font-size: 12px;
+  opacity: 0.9;
+  line-height: 1.35;
 }
 
-/* 카드 스프레드 */
-.spread-area {
-  min-height: 200px;
+/* Tarot */
+.tarot-area{
+  width: 100%;
+  padding: 10px 12px 12px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+}
+.tarot-title{
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 8px;
+  opacity: 0.95;
+}
+.tarot-cards{
   display: flex;
   justify-content: center;
-  align-items: flex-end;
-  gap: 10px;
-  padding: 12px;
+  align-items: flex-start;
+  gap: 8px;
+  min-height: 96px;
 }
-
-.card-back,
-.card-front {
-  width: min(26vw, 96px);
-  height: 160px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #444, #222);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.6);
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.card-back.selected {
-  transform: translateY(-12px);
-  outline: 2px solid gold;
-}
-
-.card-front {
-  background: #000;
-}
-
-.chat-area {
-  flex: 1;
-  padding: 10px;
-  overflow-y: auto;
-}
-
-.bubble {
-  max-width: 80%;
-  padding: 8px 12px;
-  margin-bottom: 6px;
+.tarot-card{
+  width: min(28vw, 140px);
+  aspect-ratio: 2 / 3;
   border-radius: 12px;
-  font-size: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.25);
+  object-fit: cover;
+  display: block;
 }
 
-.bubble.ai { background: #2a2a3d; }
-.bubble.user {
-  background: #4b7bec;
-  margin-left: auto;
-}
-
-.input-area {
-  display: flex;
-  padding: 10px;
-  background: #15151f;
-}
-
-#chatInput {
+/* Chat */
+.chat-wrap{
   flex: 1;
-  padding: 8px;
-  border-radius: 6px;
-  border: none;
+  min-height: 120px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.chat-container {
+  height: 100%;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-#sendBtn {
-  margin-left: 8px;
-  padding: 8px 14px;
-  border-radius: 6px;
-  border: none;
+/* Messages */
+.msg {
+  max-width: 78%;
+  padding: 10px 12px;
+  border-radius: 16px;
+  line-height: 1.45;
+  word-break: break-word;
+  font-size: 13px;
+}
+.msg.user {
+  margin-left: auto;
+  background: #4a7cff;
+  border-bottom-right-radius: 6px;
+}
+.msg.cat {
+  background: #2a2a33;
+  border-bottom-left-radius: 6px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.msg .avatar{
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  font-size: 13px;
+}
+.msg .text{ flex: 1; }
+
+/* Input fixed bottom */
+.chat-input {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(14,14,17,0.96);
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.chat-input input {
+  flex: 1;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.35);
+  color: #fff;
+  outline: none;
+}
+.chat-input button {
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: #4a7cff;
+  color: #fff;
   cursor: pointer;
+  font-weight: 700;
 }
