@@ -2,55 +2,61 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
+  <title>AI 고양이 타로 상담</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- 네이버 서치어드바이저 -->
-  <meta name="naver-site-verification" content="20b0cc209520048d7c651297a28b316fe1de7cd8" />
-
-  <!-- 구글 서치 콘솔 -->
-  <meta name="google-site-verification" content="5FKwm4_bVWL9skvm5olmNjvPSIzR_tW75VT_0NpJ9VA" />
-
-  <!-- 구글 애드센스 -->
+  <!-- Google AdSense -->
   <meta name="google-adsense-account" content="ca-pub-7356591276029815">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7356591276029815"
     crossorigin="anonymous"></script>
 
-  <title>AI 고양이 타로 상담</title>
+  <!-- Naver Search -->
+  <meta name="naver-site-verification" content="20b0cc209520048d7c651297a28b316fe1de7cd8" />
+
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🐾</span>
+      <span class="title">AI 고양이 타로 상담</span>
+    </div>
+    <button id="soundToggle" class="sound-btn" aria-label="Sound Toggle">🔇</button>
+  </header>
 
-<header class="top-bar">
-  <h1>🐱 AI 타로 상담</h1>
-  <button id="soundToggle">🔇</button>
-</header>
+  <main class="app">
+    <!-- Cat -->
+    <section class="cat-area" aria-label="Cat Area">
+      <div class="cat-card">
+        <div class="cat-media">
+          <img src="/assets/cat_ai.webp" alt="AI 고양이 상담사" />
+        </div>
+        <div class="cat-caption">
+          <div class="cat-line">오늘은 어떤 마음이었어?</div>
+          <div class="cat-sub">편하게 말해줘. 예언이 아니라, 마음을 정리하는 상담이야 🐾</div>
+        </div>
+      </div>
+    </section>
 
-<main class="app">
+    <!-- Tarot Spread -->
+    <section class="tarot-area" aria-label="Tarot Cards">
+      <div class="tarot-title">🔮 카드 스프레드</div>
+      <div id="tarotCards" class="tarot-cards" aria-live="polite"></div>
+    </section>
 
-  <!-- 고양이 -->
-  <section class="cat-area">
-    <img src="/assets/cat_ai.webp" alt="AI 고양이 상담사">
-    <p class="cat-msg">지금 가장 마음에 걸리는 고민을 말해줘 🐾</p>
-  </section>
+    <!-- Chat -->
+    <section class="chat-wrap" aria-label="Chat">
+      <div id="chatContainer" class="chat-container"></div>
+    </section>
+  </main>
 
-  <!-- 카드 스프레드 -->
-  <section id="spreadArea" class="spread-area"></section>
+  <!-- Input -->
+  <footer class="chat-input">
+    <input type="text" id="userInput" placeholder="지금 가장 마음에 걸리는 고민을 적어줘…" autocomplete="off" />
+    <button id="sendBtn" type="button">전송</button>
+  </footer>
 
-  <!-- 채팅 -->
-  <section id="chatArea" class="chat-area"></section>
-
-  <!-- 입력 -->
-  <section class="input-area">
-    <input id="chatInput" type="text" placeholder="여기에 고민을 적어보세요…" />
-    <button id="sendBtn">전송</button>
-  </section>
-
-</main>
-
-<!-- 사운드 -->
-<audio id="bgm" src="/sounds/tarot/ambient_entry.mp3" preload="auto"></audio>
-<audio id="cardSound" src="/sounds/tarot/card_pick.mp3" preload="auto"></audio>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
