@@ -1,134 +1,141 @@
-* { box-sizing: border-box; }
+* { box-sizing:border-box }
 
 body {
-  margin: 0;
-  background: #0b0b12;
-  color: #eee;
-  font-family: system-ui, -apple-system;
+  margin:0;
+  background:#0b0b12;
+  color:#eee;
+  font-family:system-ui,-apple-system;
 }
 
 .topbar {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px;
-  background: #12121a;
+  display:flex;
+  justify-content:space-between;
+  padding:12px;
+  background:#12121a;
 }
 
 .sound-btn {
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 18px;
+  background:none;
+  border:none;
+  color:#fff;
+  font-size:18px;
 }
 
 .app {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 110px);
+  display:flex;
+  flex-direction:column;
+  height:calc(100vh - 110px);
 }
 
 .cat-area {
-  text-align: center;
-  padding: 10px;
+  text-align:center;
+  padding:10px;
 }
 .cat-area img {
-  width: 100%;
-  max-width: 340px;
-  border-radius: 12px;
+  width:100%;
+  max-width:340px;
+  border-radius:12px;
 }
 
 .tarot-stage {
-  padding: 10px;
+  padding:10px;
 }
 .big-cards {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
+  display:flex;
+  justify-content:center;
+  gap:12px;
 }
 .big-card {
-  width: 90px;
-  height: 150px;
-  background: url("/assets/tarot/back.png") center/cover no-repeat;
-  border-radius: 10px;
-  position: relative;
+  width:90px;
+  height:150px;
+  background:url("/assets/tarot/back.png") center/cover no-repeat;
+  border-radius:10px;
+  position:relative;
 }
 
-/* 🔥 불꽃 */
+/* 🔥 점화 */
 .big-card.ignite::after {
-  content: "";
-  position: absolute;
-  inset: -6px;
-  border-radius: 12px;
-  box-shadow: 0 0 18px 6px rgba(255,140,0,.8);
-  animation: fire 1s ease-out;
+  content:"";
+  position:absolute;
+  inset:-6px;
+  border-radius:12px;
+  box-shadow:0 0 22px 8px rgba(255,140,0,.85);
+  animation:fire .9s ease-out;
 }
 @keyframes fire {
-  from { opacity:1; }
-  to { opacity:0; }
+  from{opacity:1} to{opacity:0}
 }
 
 /* 🌫 연기 */
 .big-card.smoke {
-  animation: smoke 0.6s forwards;
+  animation:smoke .6s forwards;
 }
 @keyframes smoke {
-  to { filter: blur(3px); opacity: .85; }
+  to{filter:blur(3px);opacity:.85}
 }
 
-.picker { padding: 8px; }
+.picker { padding:8px }
 .grid78 {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 4px;
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:4px;
 }
 .pick {
-  width: 100%;
-  aspect-ratio: 2 / 3;
-  background: url("/assets/tarot/back.png") center/cover no-repeat;
-  border-radius: 4px;
-  opacity: 0.9;
+  width:100%;
+  aspect-ratio:2/3;
+  background:url("/assets/tarot/back.png") center/cover no-repeat;
+  border-radius:4px;
+  opacity:.9;
 }
 .pick.sel {
-  outline: 2px solid gold;
-  box-shadow: 0 0 6px gold;
+  outline:2px solid gold;
+  box-shadow:0 0 6px gold;
 }
 .pick.fade {
-  animation: fadeOut .6s forwards;
+  animation:fadeOut .6s forwards;
 }
 @keyframes fadeOut {
-  to { opacity: 0; transform: scale(.8); }
+  to{opacity:0;transform:scale(.8)}
 }
 
-.chat-wrap { flex: 1; overflow-y: auto; }
-.chat-container { padding: 10px; min-height: 120px; }
+/* 카드 비행 */
+.flying {
+  position:fixed;
+  z-index:999;
+  pointer-events:none;
+  transition:all .9s cubic-bezier(.2,.8,.2,1);
+}
+
+.chat-wrap { flex:1; overflow-y:auto }
+.chat-container { padding:10px; min-height:120px }
 
 .msg {
-  margin-bottom: 8px;
-  padding: 8px 10px;
-  border-radius: 10px;
-  max-width: 85%;
+  margin-bottom:8px;
+  padding:8px 10px;
+  border-radius:10px;
+  max-width:85%;
 }
-.msg.cat { background: #1a1a2a; }
-.msg.user { background: #2c4fff; margin-left: auto; }
+.msg.cat { background:#1a1a2a }
+.msg.user { background:#2c4fff; margin-left:auto }
 
 .chat-input {
-  display: flex;
-  padding: 8px;
-  background: #111;
+  display:flex;
+  padding:8px;
+  background:#111;
 }
 
 .modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.7);
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
-.hidden { display: none; }
+.hidden{display:none}
 .modal-card {
-  background: #1b1b2a;
-  padding: 20px;
-  border-radius: 12px;
-  text-align: center;
+  background:#1b1b2a;
+  padding:20px;
+  border-radius:12px;
+  text-align:center;
 }
