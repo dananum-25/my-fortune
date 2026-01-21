@@ -1,13 +1,10 @@
 /*************************************************
- * TAROT ENGINE v1.0  (STEP 2)
- * - 78장 완전 랜덤
- * - 상태 머신 기반
- * - UI 독립
+ * TAROT ENGINE v1.1  (STEP 3)
+ * - STEP2 엔진 유지
+ * - UI(DOM) 연결
  *************************************************/
 
-/* =========================
-   STATE MACHINE
-========================= */
+/* ===== STATE ===== */
 const STATE = {
   INIT: "INIT",
   PICKING: "PICKING",
@@ -18,149 +15,114 @@ const STATE = {
 };
 
 let currentState = STATE.INIT;
-
 function setState(next) {
   console.log(`STATE: ${currentState} → ${next}`);
   currentState = next;
 }
 
-/* =========================
-   CARD DECK (78)
-========================= */
+/* ===== DECK ===== */
 function createDeck() {
   const deck = [];
-
-  // majors 0~21
   for (let i = 0; i < 22; i++) {
-    deck.push({
-      type: "major",
-      id: i,
-      key: `major_${String(i).padStart(2, "0")}`,
-    });
+    deck.push({ type: "major", id: i });
   }
-
-  // minors
   const suits = ["cups", "wands", "swords", "pentacles"];
-  suits.forEach((suit) => {
+  suits.forEach(suit => {
     for (let i = 1; i <= 14; i++) {
-      deck.push({
-        type: "minor",
-        suit,
-        id: i,
-        key: `${suit}_${String(i).padStart(2, "0")}`,
-      });
+      deck.push({ type: "minor", suit, id: i });
     }
   });
-
   return deck;
 }
-
 let deck = createDeck();
 
-/* =========================
-   SELECTION ENGINE
-========================= */
-let selectedIndexes = []; // 0~77 중 선택
-let revealedCards = [];   // 실제 배정된 카드 객체
+/* ===== SELECTION ===== */
+let selectedIndexes = [];
+let revealedCards = [];
 
-function resetSelection() {
-  selectedIndexes = [];
-  revealedCards = [];
-  deck = createDeck();
-  setState(STATE.PICKING);
+/* ===== DOM ===== */
+const grid = document.getElementById("grid78");
+const modal = document.getElementById("confirmModal");
+const btnGo = document.getElementById("btnGo");
+const btnKeep = document.getElementById("btnKeep");
+const chat = document.getElementById("chatContainer");
+const input = document.getElementById("userInput");
+const sendBtn = document.getElementById("sendBtn");
+
+/* ===== CHAT ===== */
+function addMsg(text, who) {
+  const d = document.createElement("div");
+  d.className = `msg ${who}`;
+  d.textContent = text;
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
 }
 
-function pickCard(index) {
-  if (currentState !== STATE.PICKING) {
-    console.warn("픽킹 상태 아님");
-    return;
+/* ===== INIT ===== */
+function init() {
+  setState(STATE.PICKING);
+  addMsg("안녕 🐾 마음이 가는 카드 3장을 골라줘.", "cat");
+
+  // 78장 생성
+  for (let i = 0; i < 78; i++) {
+    const c = document.createElement("div");
+    c.className = "pick";
+    c.dataset.index = i;
+    c.onclick = () => pickCard(i, c);
+    grid.appendChild(c);
   }
+}
+
+/* ===== PICK ===== */
+function pickCard(index, el) {
+  if (currentState !== STATE.PICKING) return;
 
   if (selectedIndexes.includes(index)) {
-    // 선택 해제
-    selectedIndexes = selectedIndexes.filter((i) => i !== index);
-    console.log("선택 해제:", index);
+    selectedIndexes = selectedIndexes.filter(i => i !== index);
+    el.classList.remove("sel");
     return;
   }
 
-  if (selectedIndexes.length >= 3) {
-    console.warn("이미 3장 선택됨");
-    return;
-  }
+  if (selectedIndexes.length >= 3) return;
 
   selectedIndexes.push(index);
-  console.log("선택:", index);
+  el.classList.add("sel");
 
   if (selectedIndexes.length === 3) {
     setState(STATE.CONFIRM);
+    modal.classList.remove("hidden");
   }
 }
 
-/* =========================
-   CONFIRM → ASSIGN
-========================= */
-function confirmSelection() {
-  if (currentState !== STATE.CONFIRM) {
-    console.warn("확정 단계 아님");
-    return;
-  }
+/* ===== CONFIRM ===== */
+btnKeep.onclick = () => {
+  modal.classList.add("hidden");
+  setState(STATE.PICKING);
+};
 
-  // 78장 중에서 완전 랜덤 3장 추출 (중복 없음)
+btnGo.onclick = () => {
+  modal.classList.add("hidden");
+  confirmSelection();
+};
+
+function confirmSelection() {
+  if (currentState !== STATE.CONFIRM) return;
+
   const shuffled = [...deck].sort(() => Math.random() - 0.5);
   revealedCards = shuffled.slice(0, 3);
 
   console.log("🔮 배정된 카드:", revealedCards);
-
-  setState(STATE.TRANSITION);
-}
-
-/* =========================
-   TRANSITION → REVEAL
-========================= */
-function finishTransition() {
-  if (currentState !== STATE.TRANSITION) return;
   setState(STATE.REVEAL);
+
+  addMsg("좋아. 이제 이 카드들이 전하는 메시지를 볼게.", "cat");
 }
 
-function revealDone() {
-  if (currentState !== STATE.REVEAL) return;
-  setState(STATE.CHAT);
-}
-
-/* =========================
-   CHAT ENGINE (기본)
-========================= */
-let chatLog = [];
-
-function addChat(role, text) {
-  chatLog.push({
-    role,
-    text,
-    time: new Date().toISOString(),
-  });
-  console.log(`[CHAT][${role}]`, text);
-}
-
-/* =========================
-   INIT
-========================= */
-function initTarotEngine() {
-  console.log("타로 엔진 초기화");
-  setState(STATE.PICKING);
-}
-
-/* =========================
-   DEBUG HELPERS
-========================= */
-window.TAROT_ENGINE = {
-  STATE,
-  initTarotEngine,
-  pickCard,
-  confirmSelection,
-  finishTransition,
-  revealDone,
-  getState: () => currentState,
-  getSelected: () => selectedIndexes,
-  getRevealed: () => revealedCards,
-  getChatLog: () => chatLog,
+/* ===== CHAT INPUT ===== */
+sendBtn.onclick = () => {
+  if (!input.value.trim()) return;
+  addMsg(input.value, "user");
+  input.value = "";
 };
+
+/* ===== START ===== */
+init();
