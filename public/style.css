@@ -1,132 +1,87 @@
-* { box-sizing: border-box; }
 body {
-  margin: 0;
-  background: #0b0b12;
-  color: #eee;
-  font-family: -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif;
+  margin:0;
+  background:#0b0b12;
+  color:#fff;
+  font-family:system-ui;
 }
 
 .topbar {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px;
-  background: #12121a;
+  display:flex;
+  justify-content:space-between;
+  padding:12px;
+  background:#111;
 }
 
-.sound-btn {
-  font-size: 20px;
-  background: none;
-  border: none;
-  color: #fff;
+.cat img {
+  width:100%;
+  max-width:360px;
+  border-radius:14px;
+}
+.cat { text-align:center; padding:10px; }
+
+.stage { padding:10px; }
+.big-cards {
+  display:flex;
+  justify-content:center;
+  gap:12px;
+}
+.big-card {
+  width:90px;
+  height:150px;
+  background:url("/assets/tarot/back.png") center/cover;
+  border-radius:10px;
 }
 
-.app {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 110px);
-  overflow: hidden;
-}
-
-.cat-area {
-  text-align: center;
-  padding: 10px;
-}
-.cat-img {
-  width: 100%;
-  max-width: 360px;
-  border-radius: 12px;
-}
-.cat-text {
-  margin-top: 8px;
-}
-
-.tarot-stage {
-  padding: 10px;
-}
-.big-backs {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-}
-.big-back {
-  width: 90px;
-  height: 150px;
-  background: url("/assets/tarot/back.png") center/cover no-repeat;
-  border-radius: 10px;
-}
-
-.picker {
-  padding: 10px;
-}
 .grid78 {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 6px;
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:4px;
+  padding:8px;
 }
 .pick {
-  width: 100%;
-  aspect-ratio: 2/3;
-  background: url("/assets/tarot/back.png") center/cover no-repeat;
-  border-radius: 6px;
-  border: 1px solid #333;
+  width:100%;
+  aspect-ratio:2/3;
+  background:url("/assets/tarot/back.png") center/cover;
+  border-radius:4px;
+  opacity:.9;
 }
 .pick.sel {
-  border: 2px solid gold;
-  box-shadow: 0 0 8px gold;
+  outline:2px solid gold;
+  box-shadow:0 0 6px gold;
 }
-.pick.dis {
-  opacity: 0.3;
-}
-
-.chat-wrap {
-  flex: 1;
-  overflow-y: auto;
-}
-.chat-container {
-  padding: 10px;
-}
-.msg {
-  margin-bottom: 8px;
-  padding: 8px 10px;
-  border-radius: 10px;
-  max-width: 85%;
-}
-.msg.cat {
-  background: #1a1a2a;
-}
-.msg.user {
-  background: #2c4fff;
-  margin-left: auto;
+.pick.fade {
+  animation:fadeOut .6s forwards;
 }
 
-.chat-input {
-  display: flex;
-  padding: 8px;
-  background: #111;
-}
-.chat-input input {
-  flex: 1;
-  padding: 10px;
-}
-.chat-input button {
-  margin-left: 6px;
+@keyframes fadeOut {
+  to { opacity:0; transform:scale(.8); }
 }
 
 .modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.8);
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
-.modal.hidden { display: none; }
-.modal-card {
-  background: #1b1b2a;
-  padding: 20px;
-  border-radius: 12px;
-  text-align: center;
+.hidden { display:none; }
+
+.modal-box {
+  background:#1a1a2a;
+  padding:20px;
+  border-radius:12px;
+  text-align:center;
 }
-.modal-actions button {
-  margin: 8px;
+
+.chat {
+  padding:10px;
+  min-height:80px;
 }
+
+footer {
+  display:flex;
+  padding:8px;
+  background:#111;
+}
+footer input { flex:1; }
