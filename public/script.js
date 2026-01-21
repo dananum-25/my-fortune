@@ -1,90 +1,70 @@
 /*************************************************
- * TAROT ENGINE v1.2  (STEP 4)
- * - 카드 이동 / 불꽃 / 연기 / 리빌
+ * TAROT ENGINE v1.4  (STEP 6)
+ * - 카드 의미 + 상담 엔진 + 시트 기록
  *************************************************/
 
-/* ===== STATE ===== */
-const STATE = { PICKING:"PICKING", CONFIRM:"CONFIRM", REVEAL:"REVEAL" };
-let state = STATE.PICKING;
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwPAEMT74SQGF0H2aUymPWwslS-QNYe8jV_Sgp5n2dbyqVGGysLfbuK3Gdcpth_nsBQ/exec";
+const sessionId = crypto.randomUUID();
+let turnIndex = 0;
 
-/* ===== DECK ===== */
-function createDeck(){
-  const d=[];
-  for(let i=0;i<22;i++) d.push(`/assets/tarot/majors/${String(i).padStart(2,"0")}_the_fool.png`);
-  const suits=["cups","wands","swords","pentacles"];
-  suits.forEach(s=>{
-    for(let i=1;i<=14;i++){
-      d.push(`/assets/tarot/minors/${s}/${String(i).padStart(2,"0")}.png`);
-    }
-  });
-  return d;
-}
-let deck=createDeck();
-
-/* ===== DOM ===== */
-const grid=document.getElementById("grid78");
-const modal=document.getElementById("confirmModal");
-const btnGo=document.getElementById("btnGo");
-const btnKeep=document.getElementById("btnKeep");
-const bigCards=document.querySelectorAll(".big-card");
-const chat=document.getElementById("chatContainer");
-
-/* ===== CHAT ===== */
-function addMsg(t,w){
-  const d=document.createElement("div");
-  d.className=`msg ${w}`;
-  d.textContent=t;
-  chat.appendChild(d);
-  chat.scrollTop=chat.scrollHeight;
-}
-addMsg("마음이 가는 카드 3장을 골라줘 🐾","cat");
-
-/* ===== PICKS ===== */
-let selected=[];
-for(let i=0;i<78;i++){
-  const c=document.createElement("div");
-  c.className="pick";
-  c.onclick=()=>{
-    if(c.classList.contains("sel")){
-      c.classList.remove("sel");
-      selected=selected.filter(x=>x!==c);
-      return;
-    }
-    if(selected.length>=3) return;
-    c.classList.add("sel");
-    selected.push(c);
-    if(selected.length===3){
-      state=STATE.CONFIRM;
-      modal.classList.remove("hidden");
-    }
-  };
-  grid.appendChild(c);
-}
-
-/* ===== CONFIRM ===== */
-btnKeep.onclick=()=>modal.classList.add("hidden");
-btnGo.onclick=()=>{
-  modal.classList.add("hidden");
-  reveal();
+/* ===== 카드 의미 (요약) ===== */
+const CARD_MEANINGS = {
+  major: "지금 삶의 큰 테마가 작동 중이야.",
+  cups: "감정과 마음의 흐름이 중요해.",
+  wands: "의지와 방향성이 핵심이야.",
+  swords: "생각과 판단이 관건이야.",
+  pentacles: "현실적 안정과 선택을 봐야 해."
 };
 
-async function reveal(){
-  // 75장 제거
-  document.querySelectorAll(".pick:not(.sel)").forEach(p=>{
-    p.classList.add("fade");
-    setTimeout(()=>p.remove(),600);
-  });
-
-  const faces=deck.sort(()=>Math.random()-0.5).slice(0,3);
-
-  for(let i=0;i<3;i++){
-    bigCards[i].classList.add("ignite");
-    await wait(600);
-    bigCards[i].classList.add("smoke");
-    await wait(400);
-    bigCards[i].style.backgroundImage=`url('${faces[i]}')`;
-  }
-  addMsg("이 카드들 중 가장 먼저 눈에 들어온 건 뭐야?","cat");
+/* ===== 리딩 생성 ===== */
+function generateReading(cards){
+  return [
+    `첫 번째 카드는 이 고민의 본질을 보여줘. ${getMeaning(cards[0])}`,
+    `두 번째 카드는 네가 지금 상황을 어떻게 느끼는지 말해줘. ${getMeaning(cards[1])}`,
+    `세 번째 카드는 앞으로의 흐름과 조언이야. ${getMeaning(cards[2])}`
+  ];
 }
 
-const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function getMeaning(card){
+  if(card.type === "major") return CARD_MEANINGS.major;
+  return CARD_MEANINGS[card.suit];
+}
+
+/* ===== 상담 질문 유도 ===== */
+function followUpQuestion(){
+  return "이 카드 중에서 특히 마음이 움직인 장면이나 단어가 있었어?";
+}
+
+/* ===== 시트 기록 ===== */
+function logToSheet(payload){
+  fetch(GAS_URL,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify(payload)
+  }).catch(()=>{});
+}
+
+/* ===== STEP 5 reveal() 이후에 이어서 실행 ===== */
+function afterReveal(cards){
+  const readings = generateReading(cards);
+  readings.forEach(r=>addMsg(r,"cat"));
+
+  const q = followUpQuestion();
+  addMsg(q,"cat");
+
+  logToSheet({
+    session_id: sessionId,
+    turn_index: turnIndex++,
+    card_positions: "1-2-3",
+    card_ids: cards.map(c=>c.img).join(","),
+    card_names: cards.map(c=>c.name).join(","),
+    question_category: "tarot_core",
+    user_input: "",
+    ai_message: readings.join(" | "),
+    tone: "empathetic",
+    next_action: "user_reflection"
+  });
+}
+
+/* ===== 기존 reveal() 마지막에 이 줄 추가 ===== */
+// afterReveal(faces);
