@@ -1,79 +1,166 @@
-const grid = document.getElementById("grid78");
-const modal = document.getElementById("modal");
-const confirmBtn = document.getElementById("confirm");
-const cancelBtn = document.getElementById("cancel");
-const bigCards = document.querySelectorAll(".big-card");
+/*************************************************
+ * TAROT ENGINE v1.0  (STEP 2)
+ * - 78장 완전 랜덤
+ * - 상태 머신 기반
+ * - UI 독립
+ *************************************************/
 
-let selected = [];
-
-/* 78장 생성 */
-for (let i = 0; i < 78; i++) {
-  const d = document.createElement("div");
-  d.className = "pick";
-  d.onclick = () => togglePick(d);
-  grid.appendChild(d);
-}
-
-function togglePick(card) {
-  if (card.classList.contains("sel")) {
-    card.classList.remove("sel");
-    selected = selected.filter(c => c !== card);
-    return;
-  }
-  if (selected.length >= 3) return;
-  card.classList.add("sel");
-  selected.push(card);
-  if (selected.length === 3) modal.classList.remove("hidden");
-}
-
-cancelBtn.onclick = () => modal.classList.add("hidden");
-
-confirmBtn.onclick = async () => {
-  modal.classList.add("hidden");
-
-  document.querySelectorAll(".pick:not(.sel)").forEach(c=>{
-    c.classList.add("fade");
-    setTimeout(()=>c.remove(),600);
-  });
-
-  await animateToBigCards();
+/* =========================
+   STATE MACHINE
+========================= */
+const STATE = {
+  INIT: "INIT",
+  PICKING: "PICKING",
+  CONFIRM: "CONFIRM",
+  TRANSITION: "TRANSITION",
+  REVEAL: "REVEAL",
+  CHAT: "CHAT",
 };
 
-/* 카드 이동 + 점화 */
-async function animateToBigCards() {
-  const faces = getRandomCards();
+let currentState = STATE.INIT;
 
-  for (let i=0;i<3;i++) {
-    const rectFrom = selected[i].getBoundingClientRect();
-    const rectTo = bigCards[i].getBoundingClientRect();
+function setState(next) {
+  console.log(`STATE: ${currentState} → ${next}`);
+  currentState = next;
+}
 
-    const clone = selected[i].cloneNode();
-    document.body.appendChild(clone);
-    clone.style.position="fixed";
-    clone.style.left=rectFrom.left+"px";
-    clone.style.top=rectFrom.top+"px";
-    clone.style.transition="all .8s cubic-bezier(.2,.8,.2,1)";
+/* =========================
+   CARD DECK (78)
+========================= */
+function createDeck() {
+  const deck = [];
 
-    await sleep(50);
-    clone.style.left=rectTo.left+"px";
-    clone.style.top=rectTo.top+"px";
+  // majors 0~21
+  for (let i = 0; i < 22; i++) {
+    deck.push({
+      type: "major",
+      id: i,
+      key: `major_${String(i).padStart(2, "0")}`,
+    });
+  }
 
-    await sleep(900);
-    bigCards[i].classList.add("ignite");
-    await sleep(600);
-    bigCards[i].style.backgroundImage=`url(${faces[i]})`;
-    clone.remove();
+  // minors
+  const suits = ["cups", "wands", "swords", "pentacles"];
+  suits.forEach((suit) => {
+    for (let i = 1; i <= 14; i++) {
+      deck.push({
+        type: "minor",
+        suit,
+        id: i,
+        key: `${suit}_${String(i).padStart(2, "0")}`,
+      });
+    }
+  });
+
+  return deck;
+}
+
+let deck = createDeck();
+
+/* =========================
+   SELECTION ENGINE
+========================= */
+let selectedIndexes = []; // 0~77 중 선택
+let revealedCards = [];   // 실제 배정된 카드 객체
+
+function resetSelection() {
+  selectedIndexes = [];
+  revealedCards = [];
+  deck = createDeck();
+  setState(STATE.PICKING);
+}
+
+function pickCard(index) {
+  if (currentState !== STATE.PICKING) {
+    console.warn("픽킹 상태 아님");
+    return;
+  }
+
+  if (selectedIndexes.includes(index)) {
+    // 선택 해제
+    selectedIndexes = selectedIndexes.filter((i) => i !== index);
+    console.log("선택 해제:", index);
+    return;
+  }
+
+  if (selectedIndexes.length >= 3) {
+    console.warn("이미 3장 선택됨");
+    return;
+  }
+
+  selectedIndexes.push(index);
+  console.log("선택:", index);
+
+  if (selectedIndexes.length === 3) {
+    setState(STATE.CONFIRM);
   }
 }
 
-/* 중복 없는 랜덤 */
-function getRandomCards() {
-  const pool = [
-    "/assets/tarot/majors/00_the_fool.png",
-    "/assets/tarot/minors/cups/01_ace.png"
-    // 실제론 78장 전부 넣어야 함
-  ];
-  return pool.sort(()=>Math.random()-0.5).slice(0,3);
+/* =========================
+   CONFIRM → ASSIGN
+========================= */
+function confirmSelection() {
+  if (currentState !== STATE.CONFIRM) {
+    console.warn("확정 단계 아님");
+    return;
+  }
+
+  // 78장 중에서 완전 랜덤 3장 추출 (중복 없음)
+  const shuffled = [...deck].sort(() => Math.random() - 0.5);
+  revealedCards = shuffled.slice(0, 3);
+
+  console.log("🔮 배정된 카드:", revealedCards);
+
+  setState(STATE.TRANSITION);
 }
 
-const sleep = ms => new Promise(r=>setTimeout(r,ms));
+/* =========================
+   TRANSITION → REVEAL
+========================= */
+function finishTransition() {
+  if (currentState !== STATE.TRANSITION) return;
+  setState(STATE.REVEAL);
+}
+
+function revealDone() {
+  if (currentState !== STATE.REVEAL) return;
+  setState(STATE.CHAT);
+}
+
+/* =========================
+   CHAT ENGINE (기본)
+========================= */
+let chatLog = [];
+
+function addChat(role, text) {
+  chatLog.push({
+    role,
+    text,
+    time: new Date().toISOString(),
+  });
+  console.log(`[CHAT][${role}]`, text);
+}
+
+/* =========================
+   INIT
+========================= */
+function initTarotEngine() {
+  console.log("타로 엔진 초기화");
+  setState(STATE.PICKING);
+}
+
+/* =========================
+   DEBUG HELPERS
+========================= */
+window.TAROT_ENGINE = {
+  STATE,
+  initTarotEngine,
+  pickCard,
+  confirmSelection,
+  finishTransition,
+  revealDone,
+  getState: () => currentState,
+  getSelected: () => selectedIndexes,
+  getRevealed: () => revealedCards,
+  getChatLog: () => chatLog,
+};
