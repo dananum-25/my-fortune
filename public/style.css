@@ -36,7 +36,6 @@ body {
   max-width: 340px;
   border-radius: 12px;
 }
-.cat-msg { margin-top: 8px; }
 
 .tarot-stage {
   padding: 10px;
@@ -51,15 +50,32 @@ body {
   height: 150px;
   background: url("/assets/tarot/back.png") center/cover no-repeat;
   border-radius: 10px;
+  position: relative;
 }
 
-.picker {
-  padding: 8px;
+/* 🔥 불꽃 */
+.big-card.ignite::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 12px;
+  box-shadow: 0 0 18px 6px rgba(255,140,0,.8);
+  animation: fire 1s ease-out;
 }
-.picker-title {
-  text-align: center;
-  margin-bottom: 6px;
+@keyframes fire {
+  from { opacity:1; }
+  to { opacity:0; }
 }
+
+/* 🌫 연기 */
+.big-card.smoke {
+  animation: smoke 0.6s forwards;
+}
+@keyframes smoke {
+  to { filter: blur(3px); opacity: .85; }
+}
+
+.picker { padding: 8px; }
 .grid78 {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -76,15 +92,16 @@ body {
   outline: 2px solid gold;
   box-shadow: 0 0 6px gold;
 }
+.pick.fade {
+  animation: fadeOut .6s forwards;
+}
+@keyframes fadeOut {
+  to { opacity: 0; transform: scale(.8); }
+}
 
-.chat-wrap {
-  flex: 1;
-  overflow-y: auto;
-}
-.chat-container {
-  min-height: 120px;
-  padding: 10px;
-}
+.chat-wrap { flex: 1; overflow-y: auto; }
+.chat-container { padding: 10px; min-height: 120px; }
+
 .msg {
   margin-bottom: 8px;
   padding: 8px 10px;
@@ -92,22 +109,12 @@ body {
   max-width: 85%;
 }
 .msg.cat { background: #1a1a2a; }
-.msg.user {
-  background: #2c4fff;
-  margin-left: auto;
-}
+.msg.user { background: #2c4fff; margin-left: auto; }
 
 .chat-input {
   display: flex;
   padding: 8px;
   background: #111;
-}
-.chat-input input {
-  flex: 1;
-  padding: 10px;
-}
-.chat-input button {
-  margin-left: 6px;
 }
 
 .modal {
@@ -124,7 +131,4 @@ body {
   padding: 20px;
   border-radius: 12px;
   text-align: center;
-}
-.modal-actions button {
-  margin: 8px;
 }
