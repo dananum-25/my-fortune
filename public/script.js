@@ -1,18 +1,33 @@
 const grid = document.getElementById("grid78");
+const spread = document.getElementById("spreadSection");
 const modal = document.getElementById("confirmModal");
 const btnGo = document.getElementById("btnGo");
-const spread = document.getElementById("spreadSection");
-const bigCards = document.querySelectorAll(".big-card");
 const chat = document.getElementById("chatContainer");
+const input = document.getElementById("userInput");
+const sendBtn = document.getElementById("sendBtn");
+const soundBtn = document.getElementById("soundToggle");
+const bigCards = document.querySelectorAll(".big-card");
 
 let selected = [];
 let deck = [...Array(78)].map((_, i) => i);
 
+// 🔊 사운드 (버튼으로만 재생)
+const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
+bgm.loop = true;
+let soundOn = false;
+
+soundBtn.onclick = () => {
+  soundOn = !soundOn;
+  soundBtn.textContent = soundOn ? "🔊" : "🔇";
+  if (soundOn) bgm.play();
+  else bgm.pause();
+};
+
 // 초기 메시지
 addMsg("마음이 가는 카드 3장을 골라줘.", "cat");
 
-// 78장 생성
-deck.forEach(i => {
+// 카드 생성
+deck.forEach(() => {
   const d = document.createElement("div");
   d.className = "pick";
   d.onclick = () => togglePick(d);
@@ -33,34 +48,39 @@ function togglePick(el) {
 
 btnGo.onclick = () => {
   modal.classList.add("hidden");
-  startReveal();
+  reveal();
 };
 
-function startReveal() {
-  // 미선택 카드 제거
+function reveal() {
   document.querySelectorAll(".pick:not(.sel)")
-    .forEach(p => p.classList.add("fadeout"));
+    .forEach(p => p.classList.add("fade"));
 
-  // 선택 카드 → 빅카드로 이동
-  selected.forEach((card, i) => {
-    const big = bigCards[i];
-    big.classList.add("ignite");
+  selected.forEach((_, i) => {
     setTimeout(() => {
-      big.style.backgroundImage =
-        `url('/assets/tarot/majors/${randomCard()}.png')`;
-    }, 900);
+      bigCards[i].style.backgroundImage =
+        `url('/assets/tarot/majors/${rand()}.png')`;
+    }, 900 + i * 300);
   });
 
-  // 스프레드 제거
   setTimeout(() => {
     spread.style.display = "none";
     addMsg("이제 이 카드들을 하나씩 읽어볼게.", "cat");
-  }, 1200);
+  }, 1600);
 }
 
-function randomCard() {
-  const idx = Math.floor(Math.random() * deck.length);
-  return String(deck.splice(idx,1)[0]).padStart(2,"0");
+function rand() {
+  const i = Math.floor(Math.random() * deck.length);
+  return String(deck.splice(i, 1)[0]).padStart(2, "0");
+}
+
+// 채팅 전송 (완전 복구)
+sendBtn.onclick = send;
+input.onkeydown = e => e.key === "Enter" && send();
+
+function send() {
+  if (!input.value.trim()) return;
+  addMsg(input.value, "user");
+  input.value = "";
 }
 
 function addMsg(text, who) {
