@@ -5,70 +5,57 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI 고양이 타로 상담</title>
 
-  <!-- Google Search Console -->
   <meta name="google-site-verification" content="5FKwm4_bVWL9skvm5olmNjvPSIzR_tW75VT_0NpJ9VA" />
-
-  <!-- Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7356591276029815"
-    crossorigin="anonymous"></script>
 
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-  <header class="topbar">
-    <div class="brand">🐾 AI 고양이 타로 상담</div>
-    <button id="soundToggle" class="sound-btn">🔇</button>
-  </header>
+<header class="topbar">
+  <div class="brand">🐾 AI 고양이 타로 상담</div>
+  <button id="soundToggle">🔇</button>
+</header>
 
-  <main class="app">
-    <!-- 고양이 -->
-    <section class="cat-area">
-      <img src="/assets/cat_ai.webp" class="cat-img" />
-      <div class="cat-text">
-        지금 가장 마음에 걸리는 고민을 말해줘.<br />
-        <span>예언이 아니라, 마음을 정리하는 상담이야 🐾</span>
-      </div>
-    </section>
+<main>
+  <section class="cat">
+    <img src="/assets/cat_ai.webp">
+    <p>지금 가장 마음에 걸리는 고민을 말해줘.<br>
+    <span>예언이 아니라, 마음을 정리하는 상담이야 🐾</span></p>
+  </section>
 
-    <!-- 큰 카드 3장 -->
-    <section class="tarot-stage">
-      <div class="big-backs">
-        <div class="big-back"></div>
-        <div class="big-back"></div>
-        <div class="big-back"></div>
-      </div>
-    </section>
-
-    <!-- 78장 선택 -->
-    <section class="picker">
-      <div class="picker-title">마음이 가는 카드 3장을 골라줘</div>
-      <div id="grid78" class="grid78"></div>
-    </section>
-
-    <!-- 채팅 -->
-    <section class="chat-wrap">
-      <div id="chatContainer" class="chat-container"></div>
-    </section>
-  </main>
-
-  <footer class="chat-input">
-    <input id="userInput" placeholder="메시지를 입력하세요…" />
-    <button id="sendBtn">전송</button>
-  </footer>
-
-  <!-- 확인 모달 -->
-  <div id="confirmModal" class="modal hidden">
-    <div class="modal-card">
-      <h3>다 정하셨나요?</h3>
-      <p>이 카드로 리딩을 시작할게요</p>
-      <div class="modal-actions">
-        <button id="btnKeep">다시 고르기</button>
-        <button id="btnGo">진행</button>
-      </div>
+  <!-- 상단 카드 -->
+  <section class="stage">
+    <div class="big-cards">
+      <div class="big-card" data-slot="0"></div>
+      <div class="big-card" data-slot="1"></div>
+      <div class="big-card" data-slot="2"></div>
     </div>
-  </div>
+  </section>
 
-  <script src="script.js" defer></script>
+  <!-- 78장 -->
+  <section class="spread">
+    <p>마음이 가는 카드 3장을 골라줘</p>
+    <div id="grid78" class="grid78"></div>
+  </section>
+
+  <!-- 채팅 -->
+  <div id="chat" class="chat"></div>
+</main>
+
+<footer>
+  <input id="input" placeholder="메시지를 입력하세요…">
+  <button id="send">전송</button>
+</footer>
+
+<!-- 모달 -->
+<div id="modal" class="modal hidden">
+  <div class="modal-box">
+    <h3>다 정하셨나요?</h3>
+    <button id="cancel">다시 고르기</button>
+    <button id="confirm">이대로 진행</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
