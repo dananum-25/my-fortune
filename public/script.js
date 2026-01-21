@@ -1,91 +1,79 @@
-const chat = document.getElementById("chatContainer");
-const input = document.getElementById("userInput");
-const sendBtn = document.getElementById("sendBtn");
 const grid = document.getElementById("grid78");
-const modal = document.getElementById("confirmModal");
-const btnGo = document.getElementById("btnGo");
-const btnKeep = document.getElementById("btnKeep");
-const soundBtn = document.getElementById("soundToggle");
+const modal = document.getElementById("modal");
+const confirmBtn = document.getElementById("confirm");
+const cancelBtn = document.getElementById("cancel");
+const bigCards = document.querySelectorAll(".big-card");
 
-let muted = true;
 let selected = [];
 
-const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
-bgm.loop = true;
-bgm.volume = 0.15;
-
-soundBtn.onclick = () => {
-  muted = !muted;
-  soundBtn.textContent = muted ? "🔇" : "🔊";
-  muted ? bgm.pause() : bgm.play().catch(()=>{});
-};
-
-function addMsg(text, who) {
-  const d = document.createElement("div");
-  d.className = `msg ${who}`;
-  d.textContent = text;
-  chat.appendChild(d);
-  chat.scrollTop = chat.scrollHeight;
-}
-
-addMsg("안녕 🐾 마음이 가는 카드 3장을 골라줘.", "cat");
-
-// 78장 생성
+/* 78장 생성 */
 for (let i = 0; i < 78; i++) {
-  const c = document.createElement("div");
-  c.className = "pick";
-  c.onclick = () => {
-    if (c.classList.contains("sel")) {
-      c.classList.remove("sel");
-      selected = selected.filter(x => x !== c);
-      enableAll();
-      return;
-    }
-    if (selected.length >= 3) return;
-    c.classList.add("sel");
-    selected.push(c);
-    if (selected.length === 3) {
-      disableOthers();
-      modal.classList.remove("hidden");
-    }
-  };
-  grid.appendChild(c);
+  const d = document.createElement("div");
+  d.className = "pick";
+  d.onclick = () => togglePick(d);
+  grid.appendChild(d);
 }
 
-function disableOthers() {
-  document.querySelectorAll(".pick").forEach(p => {
-    if (!p.classList.contains("sel")) p.classList.add("dis");
-  });
-}
-function enableAll() {
-  document.querySelectorAll(".pick").forEach(p => p.classList.remove("dis"));
-}
-
-btnKeep.onclick = () => {
-  modal.classList.add("hidden");
-  enableAll();
-};
-
-btnGo.onclick = async () => {
-  modal.classList.add("hidden");
-  await reveal();
-};
-
-async function reveal() {
-  const backs = document.querySelectorAll(".big-back");
-  for (let i = 0; i < 3; i++) {
-    backs[i].style.animation = "pulse 0.8s";
-    await wait(800);
-    backs[i].style.backgroundImage =
-      "url('/assets/tarot/majors/00_the_fool.png')";
+function togglePick(card) {
+  if (card.classList.contains("sel")) {
+    card.classList.remove("sel");
+    selected = selected.filter(c => c !== card);
+    return;
   }
-  addMsg("카드를 보고 가장 먼저 느껴지는 감정을 말해줘.", "cat");
+  if (selected.length >= 3) return;
+  card.classList.add("sel");
+  selected.push(card);
+  if (selected.length === 3) modal.classList.remove("hidden");
 }
 
-sendBtn.onclick = () => {
-  if (!input.value.trim()) return;
-  addMsg(input.value, "user");
-  input.value = "";
+cancelBtn.onclick = () => modal.classList.add("hidden");
+
+confirmBtn.onclick = async () => {
+  modal.classList.add("hidden");
+
+  document.querySelectorAll(".pick:not(.sel)").forEach(c=>{
+    c.classList.add("fade");
+    setTimeout(()=>c.remove(),600);
+  });
+
+  await animateToBigCards();
 };
 
-const wait = ms => new Promise(r => setTimeout(r, ms));
+/* 카드 이동 + 점화 */
+async function animateToBigCards() {
+  const faces = getRandomCards();
+
+  for (let i=0;i<3;i++) {
+    const rectFrom = selected[i].getBoundingClientRect();
+    const rectTo = bigCards[i].getBoundingClientRect();
+
+    const clone = selected[i].cloneNode();
+    document.body.appendChild(clone);
+    clone.style.position="fixed";
+    clone.style.left=rectFrom.left+"px";
+    clone.style.top=rectFrom.top+"px";
+    clone.style.transition="all .8s cubic-bezier(.2,.8,.2,1)";
+
+    await sleep(50);
+    clone.style.left=rectTo.left+"px";
+    clone.style.top=rectTo.top+"px";
+
+    await sleep(900);
+    bigCards[i].classList.add("ignite");
+    await sleep(600);
+    bigCards[i].style.backgroundImage=`url(${faces[i]})`;
+    clone.remove();
+  }
+}
+
+/* 중복 없는 랜덤 */
+function getRandomCards() {
+  const pool = [
+    "/assets/tarot/majors/00_the_fool.png",
+    "/assets/tarot/minors/cups/01_ace.png"
+    // 실제론 78장 전부 넣어야 함
+  ];
+  return pool.sort(()=>Math.random()-0.5).slice(0,3);
+}
+
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
