@@ -103,7 +103,25 @@ body {
   position: relative;
   z-index: 10;
 }
+/* 기존 전부 유지 */
 
+/* 🔥 flying-card 수정 */
+.flying-card {
+  position: absolute; /* fixed ❌ */
+  width: 60px;
+  aspect-ratio: 2/3;
+  background: url("/assets/tarot/back.png") center/cover no-repeat;
+  border-radius: 6px;
+  z-index: 3000;
+  pointer-events: none;
+  transition: transform 1s ease-in-out, top 1s ease-in-out, left 1s ease-in-out;
+}
+
+/* big-card 보호 */
+.big-card {
+  position: relative;
+  z-index: 10;
+}
 /* 🔥 flying-card는 big-card보다 위 */
 .flying-card {
   position: fixed;
