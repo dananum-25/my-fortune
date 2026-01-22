@@ -11,7 +11,7 @@ const bigCards = document.querySelectorAll(".big-card");
 let selected = [];
 let deck = [...Array(78)].map((_, i) => i);
 
-// 🔊 사운드 (모바일 unlock 대응)
+// 🔊 사운드
 const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
 bgm.loop = true;
 bgm.volume = 0.15;
@@ -25,14 +25,11 @@ soundBtn.onclick = () => {
   }
   soundOn = !soundOn;
   soundBtn.textContent = soundOn ? "🔊" : "🔇";
-  if (soundOn) {
-    bgm.play().catch(()=>{});
-  } else {
-    bgm.pause();
-  }
+  if (soundOn) bgm.play().catch(()=>{});
+  else bgm.pause();
 };
 
-// big-card 초기화 보장
+// 빅카드 초기화 보장
 bigCards.forEach(card => {
   card.style.backgroundImage = "url('/assets/tarot/back.png')";
 });
@@ -40,7 +37,7 @@ bigCards.forEach(card => {
 // 초기 메시지
 addMsg("마음이 가는 카드 3장을 골라줘.", "cat");
 
-// 카드 생성
+// 카드 생성 (78장)
 deck.forEach(() => {
   const d = document.createElement("div");
   d.className = "pick";
@@ -66,9 +63,11 @@ btnGo.onclick = () => {
 };
 
 function reveal() {
-  document.querySelectorAll(".pick:not(.sel)")
+  // 🔥 중요 수정: 스프레드 내부 카드만 fade
+  spread.querySelectorAll(".pick:not(.sel)")
     .forEach(p => p.classList.add("fade"));
 
+  // 선택된 3장은 유지
   selected.forEach((_, i) => {
     setTimeout(() => {
       bigCards[i].style.backgroundImage =
@@ -76,6 +75,7 @@ function reveal() {
     }, 800 + i * 300);
   });
 
+  // 스프레드 영역 제거
   setTimeout(() => {
     spread.style.display = "none";
     addMsg("이제 이 카드들을 하나씩 읽어볼게.", "cat");
