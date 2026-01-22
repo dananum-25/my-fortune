@@ -5,6 +5,14 @@ body {
   padding-bottom: 90px;
 }
 
+.cat-area img {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
 .big-cards {
   display: flex;
   justify-content: center;
@@ -22,7 +30,7 @@ body {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 6px;
-  max-height: 260px;
+  max-height: 240px;
   overflow-y: auto;
 }
 
@@ -35,9 +43,14 @@ body {
 .pick.sel { outline: 2px solid gold; }
 .pick.fade { opacity: 0; transform: scale(.6); transition: .4s; }
 
-.chat-container {
+.chat-wrap {
   padding: 12px;
-  min-height: 120px;
+}
+
+.chat-container {
+  min-height: 160px;
+  max-height: 40vh;
+  overflow-y: auto;
 }
 
 .chat-input {
