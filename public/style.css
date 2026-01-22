@@ -43,9 +43,7 @@ body {
 .pick.sel { outline: 2px solid gold; }
 .pick.fade { opacity: 0; transform: scale(.6); transition: .4s; }
 
-.chat-wrap {
-  padding: 12px;
-}
+.chat-wrap { padding: 12px; }
 
 .chat-container {
   min-height: 160px;
