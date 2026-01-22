@@ -11,17 +11,31 @@ const bigCards = document.querySelectorAll(".big-card");
 let selected = [];
 let deck = [...Array(78)].map((_, i) => i);
 
-// 🔊 사운드 (버튼으로만 재생)
+// 🔊 사운드 (모바일 unlock 대응)
 const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
 bgm.loop = true;
+bgm.volume = 0.15;
 let soundOn = false;
+let soundUnlocked = false;
 
 soundBtn.onclick = () => {
+  if (!soundUnlocked) {
+    bgm.load();
+    soundUnlocked = true;
+  }
   soundOn = !soundOn;
   soundBtn.textContent = soundOn ? "🔊" : "🔇";
-  if (soundOn) bgm.play();
-  else bgm.pause();
+  if (soundOn) {
+    bgm.play().catch(()=>{});
+  } else {
+    bgm.pause();
+  }
 };
+
+// big-card 초기화 보장
+bigCards.forEach(card => {
+  card.style.backgroundImage = "url('/assets/tarot/back.png')";
+});
 
 // 초기 메시지
 addMsg("마음이 가는 카드 3장을 골라줘.", "cat");
@@ -59,13 +73,13 @@ function reveal() {
     setTimeout(() => {
       bigCards[i].style.backgroundImage =
         `url('/assets/tarot/majors/${rand()}.png')`;
-    }, 900 + i * 300);
+    }, 800 + i * 300);
   });
 
   setTimeout(() => {
     spread.style.display = "none";
     addMsg("이제 이 카드들을 하나씩 읽어볼게.", "cat");
-  }, 1600);
+  }, 1500);
 }
 
 function rand() {
@@ -73,7 +87,7 @@ function rand() {
   return String(deck.splice(i, 1)[0]).padStart(2, "0");
 }
 
-// 채팅 전송 (완전 복구)
+// 채팅
 sendBtn.onclick = send;
 input.onkeydown = e => e.key === "Enter" && send();
 
