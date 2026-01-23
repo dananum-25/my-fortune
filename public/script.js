@@ -7,6 +7,7 @@ const input = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
 const soundBtn = document.getElementById("soundToggle");
 const bigCards = document.querySelectorAll(".big-card");
+const stage = document.getElementById("stage");
 
 let selected = [];
 let deck = [...Array(78)].map((_, i) => i);
@@ -20,17 +21,8 @@ let soundOn = false;
 soundBtn.onclick = () => {
   soundOn = !soundOn;
   soundBtn.textContent = soundOn ? "🔊" : "🔇";
-  if (soundOn) {
-    bgm.play().catch(()=>{});
-  } else {
-    bgm.pause();
-  }
+  soundOn ? bgm.play().catch(()=>{}) : bgm.pause();
 };
-
-/* 빅카드 초기 */
-bigCards.forEach(c => {
-  c.style.backgroundImage = "url('/assets/tarot/back.png')";
-});
 
 /* 초기 메시지 */
 addMsg("마음이 가는 카드 3장을 골라줘.", "cat");
@@ -63,32 +55,31 @@ btnGo.onclick = () => {
 function startAnimation() {
   if (soundOn) bgm.play().catch(()=>{});
 
-  /* 미선택 카드 fade */
+  /* 미선택 카드 숨김 */
   spread.querySelectorAll(".pick:not(.sel)")
     .forEach(p => p.classList.add("fade"));
 
-  /* 선택 카드 → flying-card */
+  /* 선택 카드 → flying */
   const flyingCards = selected.map(card => {
-    const rect = card.getBoundingClientRect();
+    const r = card.getBoundingClientRect();
+    const sr = stage.getBoundingClientRect();
     const fc = document.createElement("div");
     fc.className = "flying-card";
-    fc.style.left = rect.left + window.scrollX + "px";
-    fc.style.top  = rect.top  + window.scrollY + "px";
-    document.body.appendChild(fc);
+    fc.style.left = (r.left - sr.left) + "px";
+    fc.style.top  = (r.top  - sr.top)  + "px";
+    stage.appendChild(fc);
     return fc;
   });
 
   /* 이동 */
   flyingCards.forEach((fc, i) => {
-    const target = bigCards[i].getBoundingClientRect();
-    const tx = target.left + window.scrollX;
-    const ty = target.top  + window.scrollY;
-
+    const tr = bigCards[i].getBoundingClientRect();
+    const sr = stage.getBoundingClientRect();
     setTimeout(() => {
-      fc.style.left = tx + "px";
-      fc.style.top  = ty + "px";
-      fc.style.transform = "scale(1.3)";
-    }, 200 + i * 200);
+      fc.style.left = (tr.left - sr.left) + "px";
+      fc.style.top  = (tr.top  - sr.top)  + "px";
+      fc.style.transform = "scale(1.2)";
+    }, 300 + i * 200);
   });
 
   /* 리빌 */
@@ -100,9 +91,7 @@ function startAnimation() {
         `url('/assets/tarot/majors/${rand()}.png')`;
     });
 
-    /* 스프레드는 이제 제거 */
-    spread.remove();
-
+    spread.style.visibility = "hidden";
     addMsg("이제 이 카드들을 하나씩 읽어볼게.", "cat");
   }, 1600);
 }
