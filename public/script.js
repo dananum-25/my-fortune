@@ -24,6 +24,20 @@ soundBtn.onclick = () => {
   soundOn ? bgm.play().catch(()=>{}) : bgm.pause();
 };
 
+/* 방어적 이미지 세팅 */
+function safeSetCard(el, path) {
+  const img = new Image();
+  img.onload = () => {
+    console.log("카드 로드 성공:", path);
+    el.style.backgroundImage = `url('${path}')`;
+  };
+  img.onerror = () => {
+    console.error("카드 로드 실패:", path);
+    el.style.backgroundImage = "url('/assets/tarot/back.png')";
+  };
+  img.src = path;
+}
+
 /* 초기 메시지 */
 addMsg("마음이 가는 카드 3장을 골라줘.", "cat");
 
@@ -83,11 +97,10 @@ function startAnimation() {
     flyingCards.forEach(fc => fc.remove());
 
     selected.forEach((_, i) => {
-      bigCards[i].style.backgroundImage =
-        `url('/assets/tarot/majors/${rand()}.png')`;
+      const num = rand();
+      safeSetCard(bigCards[i], `/assets/tarot/majors/${num}.png`);
     });
 
-    /* 🔒 spread는 레이아웃에서 제거 */
     spread.style.position = "absolute";
     spread.style.height = "0";
     spread.style.overflow = "hidden";
