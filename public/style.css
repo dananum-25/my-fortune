@@ -1,6 +1,4 @@
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -28,11 +26,9 @@ body {
 }
 
 /* 앱 */
-.app {
-  padding-bottom: 90px;
-}
+.app { padding-bottom: 90px; }
 
-/* 🔒 연출 무대 */
+/* 🔒 무대 */
 #stage {
   position: relative;
   height: 100vh;
@@ -45,21 +41,27 @@ body {
   padding: 12px;
 }
 
-.cat-area img {
-  width: 140px;
-}
+.cat-area img { width: 140px; }
 
 .cat-area span {
   font-size: 13px;
   color: #ccc;
 }
 
-/* 빅카드 */
+/* 🔮 빅카드 완전 고정 */
+.tarot-stage {
+  position: relative;
+  height: 180px;
+}
+
 .big-cards {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
-  justify-content: center;
   gap: 14px;
-  margin: 8px 0 12px;
+  z-index: 30;
 }
 
 .big-card {
@@ -67,19 +69,11 @@ body {
   height: 160px;
   background: url("/assets/tarot/back.png") center/cover no-repeat;
   border-radius: 10px;
-  position: relative;
-  z-index: 5;
 }
 
 /* 스프레드 */
 .picker {
   padding: 6px 12px;
-}
-
-.picker-title {
-  text-align: center;
-  font-size: 14px;
-  margin-bottom: 6px;
 }
 
 .grid78 {
@@ -96,9 +90,7 @@ body {
   border-radius: 6px;
 }
 
-.pick.sel {
-  outline: 2px solid gold;
-}
+.pick.sel { outline: 2px solid gold; }
 
 .pick.fade {
   opacity: 0;
@@ -106,7 +98,7 @@ body {
   transition: .4s;
 }
 
-/* flying card */
+/* flying */
 .flying-card {
   position: absolute;
   width: 60px;
@@ -119,9 +111,7 @@ body {
 }
 
 /* 채팅 */
-.chat-wrap {
-  padding: 8px 12px;
-}
+.chat-wrap { padding: 8px 12px; }
 
 .chat-container {
   min-height: 120px;
@@ -129,17 +119,9 @@ body {
   overflow-y: auto;
 }
 
-.msg {
-  margin: 4px 0;
-}
-
-.msg.cat {
-  color: #ffd;
-}
-
-.msg.user {
-  text-align: right;
-}
+.msg { margin: 4px 0; }
+.msg.cat { color: #ffd; }
+.msg.user { text-align: right; }
 
 /* 입력 */
 .chat-input {
@@ -165,9 +147,7 @@ body {
   z-index: 500;
 }
 
-.hidden {
-  display: none;
-}
+.hidden { display: none; }
 
 .modal-card {
   background: #1a1a22;
