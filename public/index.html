@@ -16,7 +16,7 @@
 <main class="app">
 
   <section class="cat-area">
-    <img src="/assets/cat_ai.webp" />
+    <img src="/assets/cat_ai.webp" alt="AI 고양이" />
     <p>
       지금 가장 마음에 걸리는 고민을 말해줘.<br>
       <span>예언이 아니라, 마음을 정리하는 상담이야 🐾</span>
@@ -26,19 +26,34 @@
   <!-- 🔮 빅카드 -->
   <section class="tarot-stage">
     <div class="big-cards">
-      <div class="big-card"><div class="big-back"></div><div class="big-front"></div></div>
-      <div class="big-card"><div class="big-back"></div><div class="big-front"></div></div>
-      <div class="big-card"><div class="big-back"></div><div class="big-front"></div></div>
+      <div class="big-card">
+        <div class="big-card-inner">
+          <div class="big-back"></div>
+          <div class="big-front"></div>
+        </div>
+      </div>
+      <div class="big-card">
+        <div class="big-card-inner">
+          <div class="big-back"></div>
+          <div class="big-front"></div>
+        </div>
+      </div>
+      <div class="big-card">
+        <div class="big-card-inner">
+          <div class="big-back"></div>
+          <div class="big-front"></div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- 🃏 78장 스프레드 -->
+  <!-- 78장 스프레드 -->
   <section id="spreadSection" class="picker">
     <div class="picker-title">마음이 가는 카드 3장을 골라줘</div>
     <div id="grid78" class="grid78"></div>
   </section>
 
-  <!-- 💬 채팅 -->
+  <!-- 채팅 -->
   <section class="chat-wrap">
     <div id="chatContainer" class="chat-container"></div>
   </section>
