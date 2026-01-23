@@ -55,34 +55,30 @@ btnGo.onclick = () => {
 function startAnimation() {
   if (soundOn) bgm.play().catch(()=>{});
 
-  /* 미선택 카드 숨김 */
   spread.querySelectorAll(".pick:not(.sel)")
     .forEach(p => p.classList.add("fade"));
 
-  /* 선택 카드 → flying */
+  const stageRect = stage.getBoundingClientRect();
+
   const flyingCards = selected.map(card => {
     const r = card.getBoundingClientRect();
-    const sr = stage.getBoundingClientRect();
     const fc = document.createElement("div");
     fc.className = "flying-card";
-    fc.style.left = (r.left - sr.left) + "px";
-    fc.style.top  = (r.top  - sr.top)  + "px";
+    fc.style.left = (r.left - stageRect.left) + "px";
+    fc.style.top  = (r.top  - stageRect.top)  + "px";
     stage.appendChild(fc);
     return fc;
   });
 
-  /* 이동 */
   flyingCards.forEach((fc, i) => {
     const tr = bigCards[i].getBoundingClientRect();
-    const sr = stage.getBoundingClientRect();
     setTimeout(() => {
-      fc.style.left = (tr.left - sr.left) + "px";
-      fc.style.top  = (tr.top  - sr.top)  + "px";
+      fc.style.left = (tr.left - stageRect.left) + "px";
+      fc.style.top  = (tr.top  - stageRect.top)  + "px";
       fc.style.transform = "scale(1.2)";
     }, 300 + i * 200);
   });
 
-  /* 리빌 */
   setTimeout(() => {
     flyingCards.forEach(fc => fc.remove());
 
@@ -91,7 +87,11 @@ function startAnimation() {
         `url('/assets/tarot/majors/${rand()}.png')`;
     });
 
-    spread.style.visibility = "hidden";
+    /* 🔒 spread는 레이아웃에서 제거 */
+    spread.style.position = "absolute";
+    spread.style.height = "0";
+    spread.style.overflow = "hidden";
+
     addMsg("이제 이 카드들을 하나씩 읽어볼게.", "cat");
   }, 1600);
 }
