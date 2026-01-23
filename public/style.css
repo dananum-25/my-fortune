@@ -7,7 +7,7 @@ body {
   overflow-x: hidden;
 }
 
-/* 상단바 */
+/* 상단 */
 .topbar {
   height: 48px;
   display: flex;
@@ -25,10 +25,7 @@ body {
   font-size: 20px;
 }
 
-/* 앱 */
-.app { padding-bottom: 90px; }
-
-/* 🔒 무대 */
+/* 무대 */
 #stage {
   position: relative;
   height: 100vh;
@@ -48,7 +45,7 @@ body {
   color: #ccc;
 }
 
-/* 🔮 빅카드 완전 고정 */
+/* 빅카드 */
 .tarot-stage {
   position: relative;
   height: 180px;
@@ -72,9 +69,7 @@ body {
 }
 
 /* 스프레드 */
-.picker {
-  padding: 6px 12px;
-}
+.picker { padding: 6px 12px; }
 
 .grid78 {
   display: grid;
