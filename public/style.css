@@ -1,22 +1,65 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   background: #0b0b0f;
   color: #fff;
+  overflow-x: hidden;
+}
+
+/* 상단바 */
+.topbar {
+  height: 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 14px;
+  background: #111;
+  z-index: 100;
+}
+
+#soundToggle {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+}
+
+/* 앱 */
+.app {
   padding-bottom: 90px;
 }
 
-.cat-area img {
-  width: 100%;
-  max-width: 420px;
-  height: auto;
-  display: block;
-  margin: 0 auto;
+/* 🔒 연출 무대 */
+#stage {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
 }
 
+/* 고양이 */
+.cat-area {
+  text-align: center;
+  padding: 12px;
+}
+
+.cat-area img {
+  width: 140px;
+}
+
+.cat-area span {
+  font-size: 13px;
+  color: #ccc;
+}
+
+/* 빅카드 */
 .big-cards {
   display: flex;
   justify-content: center;
-  gap: 12px;
+  gap: 14px;
+  margin: 8px 0 12px;
 }
 
 .big-card {
@@ -24,13 +67,26 @@ body {
   height: 160px;
   background: url("/assets/tarot/back.png") center/cover no-repeat;
   border-radius: 10px;
+  position: relative;
+  z-index: 5;
+}
+
+/* 스프레드 */
+.picker {
+  padding: 6px 12px;
+}
+
+.picker-title {
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 6px;
 }
 
 .grid78 {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 6px;
-  max-height: 240px;
+  max-height: 260px;
   overflow-y: auto;
 }
 
@@ -40,17 +96,52 @@ body {
   border-radius: 6px;
 }
 
-.pick.sel { outline: 2px solid gold; }
-.pick.fade { opacity: 0; transform: scale(.6); transition: .4s; }
+.pick.sel {
+  outline: 2px solid gold;
+}
 
-.chat-wrap { padding: 12px; }
+.pick.fade {
+  opacity: 0;
+  transform: scale(.6);
+  transition: .4s;
+}
+
+/* flying card */
+.flying-card {
+  position: absolute;
+  width: 60px;
+  aspect-ratio: 2/3;
+  background: url("/assets/tarot/back.png") center/cover no-repeat;
+  border-radius: 6px;
+  z-index: 50;
+  pointer-events: none;
+  transition: all 1s ease-in-out;
+}
+
+/* 채팅 */
+.chat-wrap {
+  padding: 8px 12px;
+}
 
 .chat-container {
-  min-height: 160px;
-  max-height: 40vh;
+  min-height: 120px;
+  max-height: 240px;
   overflow-y: auto;
 }
 
+.msg {
+  margin: 4px 0;
+}
+
+.msg.cat {
+  color: #ffd;
+}
+
+.msg.user {
+  text-align: right;
+}
+
+/* 입력 */
 .chat-input {
   position: fixed;
   bottom: 0;
@@ -60,9 +151,10 @@ body {
   padding: 10px;
   display: flex;
   gap: 8px;
-  z-index: 999;
+  z-index: 200;
 }
 
+/* 모달 */
 .modal {
   position: fixed;
   inset: 0;
@@ -70,66 +162,16 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 500;
 }
 
-.hidden { display: none; }
-/* 기존 유지 */
-body {
-  margin: 0;
-  background: #0b0b0f;
-  color: #fff;
-  padding-bottom: 90px;
+.hidden {
+  display: none;
 }
 
-/* … 기존 코드 동일 … */
-
-.pick.fade { opacity: 0; transform: scale(.6); transition: .4s; }
-
-/* 🔥 연출용 카드 */
-.flying-card {
-  position: fixed;
-  width: 60px;
-  aspect-ratio: 2/3;
-  background: url("/assets/tarot/back.png") center/cover no-repeat;
-  border-radius: 6px;
-  z-index: 3000;
-  pointer-events: none;
-  transition: all 1s ease-in-out;
-}
-/* 🔒 기존 CSS 전부 유지 */
-
-/* 🔥 추가: big-card 레이어 고정 */
-.big-card {
-  position: relative;
-  z-index: 10;
-}
-/* 기존 전부 유지 */
-
-/* 🔥 flying-card 수정 */
-.flying-card {
-  position: absolute; /* fixed ❌ */
-  width: 60px;
-  aspect-ratio: 2/3;
-  background: url("/assets/tarot/back.png") center/cover no-repeat;
-  border-radius: 6px;
-  z-index: 3000;
-  pointer-events: none;
-  transition: transform 1s ease-in-out, top 1s ease-in-out, left 1s ease-in-out;
-}
-
-/* big-card 보호 */
-.big-card {
-  position: relative;
-  z-index: 10;
-}
-/* 🔥 flying-card는 big-card보다 위 */
-.flying-card {
-  position: fixed;
-  width: 60px;
-  aspect-ratio: 2/3;
-  background: url("/assets/tarot/back.png") center/cover no-repeat;
-  border-radius: 6px;
-  z-index: 3000;
-  pointer-events: none;
-  transition: all 1s ease-in-out;
+.modal-card {
+  background: #1a1a22;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
 }
