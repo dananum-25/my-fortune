@@ -115,3 +115,29 @@ body {
   background:#1a1a1f; padding:20px; border-radius:12px; text-align:center;
 }
 .hidden { display:none; }
+/* 기존 스타일 유지 + 핵심만 */
+
+.big-front {
+  display: none;
+  z-index: 10;
+  background-size: cover;
+  background-position: center;
+}
+
+/* 파이어볼 */
+.fireball {
+  position: fixed;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    #f3e7ff,
+    #b07cff,
+    #ffd36b,
+    #7a00c8);
+  box-shadow:
+    0 0 20px rgba(176,124,255,.9),
+    0 0 36px rgba(255,211,107,.85);
+  z-index: 9999;
+  pointer-events: none;
+}
