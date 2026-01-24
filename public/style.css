@@ -4,34 +4,34 @@ body {
   margin: 0;
   background: #0b0b0f;
   color: #fff;
-  padding-bottom: 90px;
   font-family: system-ui, sans-serif;
+  padding-bottom: 90px;
 }
 
 .topbar {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px;
+  display:flex;
+  justify-content:space-between;
+  padding:12px;
 }
 
-.sound-btn { font-size: 18px; }
+.sound-btn { font-size:18px; }
 
 .cat-area {
-  text-align: center;
-  padding: 12px;
+  text-align:center;
+  padding:12px;
 }
 .cat-area img {
-  width: 92%;
-  max-width: 420px;
-  border-radius: 12px;
+  width:92%;
+  max-width:420px;
+  border-radius:12px;
 }
-.cat-area span { opacity: .85; }
+.cat-area span { opacity:.85; }
 
 /* 빅카드 */
 .tarot-stage {
   display:flex;
   justify-content:center;
-  margin:16px 0;
+  margin:18px 0;
 }
 .big-cards {
   display:flex;
@@ -59,51 +59,51 @@ body {
   z-index:5;
 }
 
-/* 🔥 점화 */
+/* 선택 카드 재배치 */
+.chosen-stage {
+  display:flex;
+  justify-content:center;
+  gap:14px;
+  margin:10px 0 20px;
+}
+.chosen-stage .pick {
+  width:90px;
+}
+
+/* 불꽃 */
 .big-card.burning .big-back::before {
   content:"";
   position:absolute;
-  inset:-30%;
-  background: radial-gradient(circle,
-    #ffd36b,
-    #ff9f43,
-    #b04cff,
+  inset:-25%;
+  background: radial-gradient(circle at 50% 60%,
+    rgba(255,220,140,.95),
+    rgba(255,150,80,.75),
+    rgba(200,60,20,.5),
     transparent 70%);
   filter: blur(6px);
-  animation: burn 3s ease-in-out forwards;
+  animation: flame 3s ease-in-out forwards;
+}
+@keyframes flame {
+  0% { opacity:.3; transform:scale(.9); }
+  50% { opacity:1; transform:scale(1.1); }
+  100% { opacity:.9; transform:scale(1); }
 }
 
+/* 연기 */
 .big-card.smoking .big-back::after {
   content:"";
   position:absolute;
-  inset:-40%;
+  inset:-35%;
   background: radial-gradient(circle at bottom,
-    rgba(230,230,255,.9),
-    rgba(160,160,180,.6),
-    transparent 70%);
-  filter: blur(12px);
+    rgba(220,220,230,.9),
+    rgba(160,160,170,.6),
+    transparent 75%);
+  filter: blur(10px);
   animation: smoke 3.5s ease-out forwards;
 }
-
-@keyframes burn {
-  0% { opacity:.2; }
-  50% { opacity:1; }
-  100% { opacity:.8; }
-}
 @keyframes smoke {
-  to { transform:translateY(-80px); opacity:0; }
-}
-
-/* 선택 카드 슬롯 */
-.selected-stage {
-  display:flex;
-  justify-content:center;
-  gap:18px;
-  margin:20px 0;
-}
-.selected-stage .pick {
-  width:90px;
-  height:135px;
+  from { opacity:.9; transform:translateY(10px); }
+  to { opacity:0; transform:translateY(-70px); }
 }
 
 /* 스프레드 */
@@ -130,26 +130,41 @@ body {
   transition:.6s ease;
 }
 
+/* 파이어볼 */
+.fireball {
+  position:fixed;
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  background: radial-gradient(circle,
+    #fff,
+    #ffcf6b,
+    #ff7a18,
+    #7a00c8);
+  box-shadow:
+    0 0 20px rgba(255,180,80,.9),
+    0 0 40px rgba(255,120,40,.7);
+  pointer-events:none;
+  z-index:9999;
+}
+
 /* 채팅 */
 .chat-container {
   padding:12px;
   min-height:140px;
 }
 .msg { margin-bottom:6px; }
+.msg.user { text-align:right; opacity:.9; }
 .msg.cat { opacity:.85; }
-.msg.user { text-align:right; }
 
-/* 입력 */
 .chat-input {
   position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
+  bottom:0; left:0; right:0;
   background:#111;
   padding:10px;
   display:flex;
   gap:8px;
-  z-index:999;
+  z-index:1000;
 }
 
 /* 모달 */
@@ -168,21 +183,3 @@ body {
   text-align:center;
 }
 .hidden { display:none; }
-
-/* 🔥 파이어볼 */
-.fireball {
-  position:absolute;
-  width:46px;
-  height:46px;
-  border-radius:50%;
-  background: radial-gradient(circle,
-    #fff2b0,
-    #ff9f43,
-    #b04cff,
-    #5a00a8);
-  box-shadow:
-    0 0 25px rgba(255,200,120,.9),
-    0 0 45px rgba(176,124,255,.9);
-  pointer-events:none;
-  z-index:9999;
-}
