@@ -53,49 +53,57 @@ body {
 .big-back {
   background-image:url("/assets/tarot/back.png");
   z-index:1;
-  overflow:hidden;
 }
 .big-front {
   display:none;
-  z-index:10;
+  z-index:5;
 }
 
-/* 🔥 불꽃 */
+/* 🔥 점화 */
 .big-card.burning .big-back::before {
   content:"";
   position:absolute;
   inset:-30%;
-  background: radial-gradient(circle at 50% 60%,
-    rgba(255,200,120,.95),
-    rgba(255,120,40,.8),
-    rgba(180,40,0,.6),
+  background: radial-gradient(circle,
+    #ffd36b,
+    #ff9f43,
+    #b04cff,
     transparent 70%);
   filter: blur(6px);
-  animation: flame 3s ease-in-out forwards;
+  animation: burn 3s ease-in-out forwards;
 }
 
-@keyframes flame {
-  0% { opacity:.3; transform:scale(.9); }
-  50% { opacity:1; transform:scale(1.1); }
-  100% { opacity:.85; transform:scale(1); }
-}
-
-/* 💨 연기 */
 .big-card.smoking .big-back::after {
   content:"";
   position:absolute;
   inset:-40%;
-  background: radial-gradient(circle,
-    rgba(220,220,220,.9),
-    rgba(160,160,160,.6),
+  background: radial-gradient(circle at bottom,
+    rgba(230,230,255,.9),
+    rgba(160,160,180,.6),
     transparent 70%);
   filter: blur(12px);
   animation: smoke 3.5s ease-out forwards;
 }
 
+@keyframes burn {
+  0% { opacity:.2; }
+  50% { opacity:1; }
+  100% { opacity:.8; }
+}
 @keyframes smoke {
-  from { opacity:.8; transform:translateY(10px); }
-  to { opacity:0; transform:translateY(-70px); }
+  to { transform:translateY(-80px); opacity:0; }
+}
+
+/* 선택 카드 슬롯 */
+.selected-stage {
+  display:flex;
+  justify-content:center;
+  gap:18px;
+  margin:20px 0;
+}
+.selected-stage .pick {
+  width:90px;
+  height:135px;
 }
 
 /* 스프레드 */
@@ -168,11 +176,13 @@ body {
   height:46px;
   border-radius:50%;
   background: radial-gradient(circle,
-    #fff,
-    #ffb347,
-    #ff5e00,
-    #8b0000);
-  box-shadow: 0 0 40px rgba(255,120,0,.9);
-  z-index:9999;
+    #fff2b0,
+    #ff9f43,
+    #b04cff,
+    #5a00a8);
+  box-shadow:
+    0 0 25px rgba(255,200,120,.9),
+    0 0 45px rgba(176,124,255,.9);
   pointer-events:none;
+  z-index:9999;
 }
