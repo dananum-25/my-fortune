@@ -1,87 +1,59 @@
-const grid = document.getElementById("grid");
-const confirm = document.getElementById("confirm");
-const goBtn = document.getElementById("go");
-const bigCards = document.querySelectorAll(".big-card");
+/* ===== 카드 파일 테이블 ===== */
 
-let selected = [];
+// 메이저 22장 (실제 파일명과 1:1 매칭)
+const MAJORS = [
+  "00_the_fool.png",
+  "01_the_magician.png",
+  "02_the_high_priestess.png",
+  "03_the_empress.png",
+  "04_the_emperor.png",
+  "05_the_hierophant.png",
+  "06_the_lovers.png",
+  "07_the_chariot.png",
+  "08_strength.png",
+  "09_the_hermit.png",
+  "10_wheel_of_fortune.png",
+  "11_justice.png",
+  "12_the_hanged_man.png",
+  "13_death.png",
+  "14_temperance.png",
+  "15_the_devil.png",
+  "16_the_tower.png",
+  "17_the_star.png",
+  "18_the_moon.png",
+  "19_the_sun.png",
+  "20_judgement.png",
+  "21_the_world.png"
+];
 
-for(let i=0;i<78;i++){
-  const d=document.createElement("div");
-  d.className="pick";
-  d.onclick=()=>pick(d);
-  grid.appendChild(d);
-}
-
-function pick(el){
-  if(el.classList.contains("sel")){
-    el.classList.remove("sel");
-    selected=selected.filter(x=>x!==el);
-    return;
-  }
-  if(selected.length>=3) return;
-  el.classList.add("sel");
-  selected.push(el);
-  if(selected.length===3) confirm.classList.remove("hidden");
-}
-
-goBtn.onclick=async()=>{
-  document.getElementById("picker").remove();
-  confirm.remove();
-  await fireSequence();
+// 마이너 공통 파일명
+const MINOR_NAMES = {
+  "01":"ace","02":"two","03":"three","04":"four","05":"five","06":"six",
+  "07":"seven","08":"eight","09":"nine","10":"ten",
+  "11":"page","12":"knight","13":"queen","14":"king"
 };
 
-async function fireSequence(){
-  const targets=[...bigCards].map(c=>c.getBoundingClientRect());
+const SUITS = ["cups","wands","swords","pentacles"];
 
-  for(let i=0;i<3;i++){
-    const fb=document.createElement("div");
-    fb.className="fireball";
-    document.body.appendChild(fb);
+/* ===== 78장 랜덤 드로우 ===== */
+function draw78() {
+  const isMajor = Math.random() < (22 / 78);
 
-    const startX=window.innerWidth/2;
-    const startY=window.innerHeight*0.75;
-    const endX=targets[i].left+targets[i].width/2;
-    const endY=targets[i].top+targets[i].height/2;
-
-    fb.animate([
-      {transform:`translate(${startX}px,${startY}px)`},
-      {transform:`translate(${(startX+endX)/2}px,${startY-180}px)`},
-      {transform:`translate(${endX}px,${endY}px)`}
-    ],{duration:4200,easing:"ease-in-out",fill:"forwards"});
-
-    await wait(600);
-    setTimeout(()=>fb.remove(),4300);
-  }
-
-  await wait(4500);
-
-  bigCards.forEach(c=>c.classList.add("burning"));
-  await wait(2500);
-  bigCards.forEach(c=>c.classList.add("smoke"));
-  await wait(3000);
-
-  bigCards.forEach((c,i)=>{
-    const f=c.querySelector(".front");
-    f.style.backgroundImage=`url('${draw78()}')`;
-    f.style.display="block";
-  });
-}
-
-function draw78(){
-  const r=Math.random();
-  if(r<22){
-    return `/assets/tarot/majors/${String(Math.floor(Math.random()*22)).padStart(2,"0")}_the_fool.png`;
-  }else{
-    const suits=["cups","wands","swords","pentacles"];
-    const suit=suits[Math.floor(Math.random()*4)];
-    const num=String(Math.floor(Math.random()*14)+1).padStart(2,"0");
-    return `/assets/tarot/minors/${suit}/${num}_ace.png`.replace("ace",nameMap[num]);
+  if (isMajor) {
+    const file = MAJORS[Math.floor(Math.random() * MAJORS.length)];
+    return `/assets/tarot/majors/${file}`;
+  } else {
+    const suit = SUITS[Math.floor(Math.random() * 4)];
+    const num = String(Math.floor(Math.random() * 14) + 1).padStart(2, "0");
+    const name = MINOR_NAMES[num];
+    return `/assets/tarot/minors/${suit}/${num}_${name}.png`;
   }
 }
 
-const nameMap={
-"01":"ace","02":"two","03":"three","04":"four","05":"five","06":"six","07":"seven",
-"08":"eight","09":"nine","10":"ten","11":"page","12":"knight","13":"queen","14":"king"
-};
-
-const wait=ms=>new Promise(r=>setTimeout(r,ms));
+/* ===== 리빌 ===== */
+bigCards.forEach((card) => {
+  const front = card.querySelector(".front");
+  const img = draw78();
+  front.style.backgroundImage = `url('${img}')`;
+  front.style.display = "block";
+});
