@@ -14,9 +14,7 @@ body {
   padding: 12px;
 }
 
-.sound-btn {
-  font-size: 18px;
-}
+.sound-btn { font-size: 18px; }
 
 .cat-area {
   text-align: center;
@@ -66,42 +64,38 @@ body {
 .big-card.burning .big-back::before {
   content:"";
   position:absolute;
-  inset:-25%;
+  inset:-30%;
   background: radial-gradient(circle at 50% 60%,
-    rgba(200,160,255,.95),
-    rgba(140,90,220,.75),
-    rgba(255,200,90,.55),
-    rgba(120,0,200,.35),
+    rgba(255,200,120,.95),
+    rgba(255,120,40,.8),
+    rgba(180,40,0,.6),
     transparent 70%);
   filter: blur(6px);
-  animation: flamePulse 2.8s ease-in-out forwards;
-  z-index:6;
+  animation: flame 3s ease-in-out forwards;
+}
+
+@keyframes flame {
+  0% { opacity:.3; transform:scale(.9); }
+  50% { opacity:1; transform:scale(1.1); }
+  100% { opacity:.85; transform:scale(1); }
 }
 
 /* 💨 연기 */
 .big-card.smoking .big-back::after {
   content:"";
   position:absolute;
-  inset:-35%;
-  background: radial-gradient(circle at bottom,
-    rgba(230,220,255,.95),
-    rgba(190,180,210,.7),
-    rgba(140,140,150,.45),
-    transparent 75%);
-  filter: blur(10px);
-  animation: smokeRise 3.4s ease-out forwards;
-  z-index:7;
+  inset:-40%;
+  background: radial-gradient(circle,
+    rgba(220,220,220,.9),
+    rgba(160,160,160,.6),
+    transparent 70%);
+  filter: blur(12px);
+  animation: smoke 3.5s ease-out forwards;
 }
 
-@keyframes flamePulse {
-  0% { transform:scale(.95); opacity:.6; }
-  50% { transform:scale(1.1); opacity:1; }
-  100% { transform:scale(1.0); opacity:.85; }
-}
-
-@keyframes smokeRise {
-  0% { transform:translateY(10px); opacity:.9; }
-  100% { transform:translateY(-60px); opacity:0; }
+@keyframes smoke {
+  from { opacity:.8; transform:translateY(10px); }
+  to { opacity:0; transform:translateY(-70px); }
 }
 
 /* 스프레드 */
@@ -170,17 +164,15 @@ body {
 /* 🔥 파이어볼 */
 .fireball {
   position:absolute;
-  width:44px;
-  height:44px;
+  width:46px;
+  height:46px;
   border-radius:50%;
   background: radial-gradient(circle,
-    #f3e7ff,
-    #b07cff,
-    #ffd36b,
-    #7a00c8);
-  box-shadow:
-    0 0 20px rgba(176,124,255,.9),
-    0 0 36px rgba(255,211,107,.85);
-  pointer-events:none;
+    #fff,
+    #ffb347,
+    #ff5e00,
+    #8b0000);
+  box-shadow: 0 0 40px rgba(255,120,0,.9);
   z-index:9999;
+  pointer-events:none;
 }
