@@ -6,14 +6,12 @@ const chat = document.getElementById("chatContainer");
 const input = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
 const soundBtn = document.getElementById("soundToggle");
-
 const bigCards = document.querySelectorAll(".big-card");
-const bigFronts = document.querySelectorAll(".big-front");
 
 let selected = [];
 let deck = [...Array(78)].map((_, i) => i);
 
-/* 사운드 */
+// 🔊 사운드
 const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
 bgm.loop = true;
 let soundOn = false;
@@ -21,13 +19,14 @@ let soundOn = false;
 soundBtn.onclick = () => {
   soundOn = !soundOn;
   soundBtn.textContent = soundOn ? "🔊" : "🔇";
-  soundOn ? bgm.play().catch(()=>{}) : bgm.pause();
+  if (soundOn) bgm.play().catch(()=>{});
+  else bgm.pause();
 };
 
-/* 초기 멘트 */
+// 메시지
 addMsg("마음이 가는 카드 3장을 골라줘.", "cat");
 
-/* 카드 생성 */
+// 카드 생성
 deck.forEach(() => {
   const d = document.createElement("div");
   d.className = "pick";
@@ -49,71 +48,39 @@ function togglePick(el) {
 
 btnGo.onclick = async () => {
   modal.classList.add("hidden");
-  await ritualSequence();
+  await reveal();
 };
 
-async function ritualSequence() {
+async function reveal() {
+  document.querySelectorAll(".pick:not(.sel)")
+    .forEach(p => p.classList.add("fade"));
 
-  await wait(600);        // ① 정적
-  await wait(1800);       // ② 불씨 여운
-
-  const targets = [...bigCards].map(c => c.getBoundingClientRect());
-
-  selected.forEach((card, i) => {
-    const from = card.getBoundingClientRect();
-    const to = targets[i];
-
-    const fireball = document.createElement("div");
-    fireball.className = "fireball";
-    fireball.style.left = from.left + from.width/2 + "px";
-    fireball.style.top = from.top + from.height/2 + "px";
-    document.body.appendChild(fireball);
-
-    fireball.animate([
-      { transform: "translate(0,0) scale(1)" },
-      {
-        transform:
-          `translate(${to.left - from.left}px, ${to.top - from.top}px) scale(1.3)`
-      }
-    ], {
-      duration: 2800,
-      easing: "cubic-bezier(.22,1,.36,1)",
-      fill: "forwards"
-    });
-
-    setTimeout(() => fireball.remove(), 3000);
-  });
-
-  document.querySelectorAll(".pick:not(.sel)").forEach(p => p.remove());
-
-  await wait(400);        // ④ 도착 정적
+  // 🔥 천천히 점화
+  await wait(1200);
 
   bigCards.forEach(c => c.classList.add("burning"));
-  await wait(2600);       // ⑤ 활활
+  await wait(2400);
 
   bigCards.forEach(c => c.classList.add("smoking"));
-  await wait(1600);       // ⑥ 연기
+  await wait(3000);
 
-  await wait(500);        // ⑦ 침묵
-
-  selected.forEach((_, i) => {
-    bigFronts[i].style.display = "block";
-    bigFronts[i].style.backgroundImage =
-      `url('/assets/tarot/majors/${draw()}.png')`;
+  bigCards.forEach((c, i) => {
+    const front = c.querySelector(".big-front");
+    front.style.backgroundImage =
+      `url('/assets/tarot/majors/${rand()}.png')`;
+    front.style.display = "block";
   });
 
   spread.style.display = "none";
   addMsg("이제 이 카드들을 하나씩 읽어볼게.", "cat");
 }
 
-function draw() {
+function rand() {
   const i = Math.floor(Math.random() * deck.length);
   return String(deck.splice(i, 1)[0]).padStart(2, "0");
 }
 
-const wait = ms => new Promise(r => setTimeout(r, ms));
-
-/* 채팅 */
+// 채팅
 sendBtn.onclick = send;
 input.onkeydown = e => e.key === "Enter" && send();
 
@@ -125,8 +92,10 @@ function send() {
 
 function addMsg(text, who) {
   const d = document.createElement("div");
-  d.className = "msg " + who;
+  d.className = `msg ${who}`;
   d.textContent = text;
   chat.appendChild(d);
   chat.scrollTop = chat.scrollHeight;
 }
+
+const wait = ms => new Promise(r => setTimeout(r, ms));
