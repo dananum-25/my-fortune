@@ -1,185 +1,73 @@
-* { box-sizing: border-box; }
+*{box-sizing:border-box}
+body{margin:0;background:#0b0b0f;color:#fff;font-family:sans-serif}
 
-body {
-  margin: 0;
-  background: #0b0b0f;
-  color: #fff;
-  font-family: system-ui, sans-serif;
-  padding-bottom: 90px;
-}
+.topbar{display:flex;justify-content:space-between;padding:12px}
 
-.topbar {
-  display:flex;
-  justify-content:space-between;
-  padding:12px;
-}
+.cat-area{text-align:center}
+.cat-area img{width:90%;max-width:420px;border-radius:12px}
 
-.sound-btn { font-size:18px; }
+.tarot-stage{display:flex;justify-content:center;margin:20px}
+.big-cards{display:flex;gap:14px}
+.big-card{width:110px;height:170px;position:relative}
 
-.cat-area {
-  text-align:center;
-  padding:12px;
-}
-.cat-area img {
-  width:92%;
-  max-width:420px;
-  border-radius:12px;
-}
-.cat-area span { opacity:.85; }
-
-/* 빅카드 */
-.tarot-stage {
-  display:flex;
-  justify-content:center;
-  margin:18px 0;
-}
-.big-cards {
-  display:flex;
-  gap:14px;
-}
-.big-card {
-  width:110px;
-  height:170px;
-  position:relative;
-}
-.big-back,
-.big-front {
-  position:absolute;
-  inset:0;
-  border-radius:12px;
-  background-size:cover;
-  background-position:center;
-}
-.big-back {
-  background-image:url("/assets/tarot/back.png");
-  z-index:1;
-}
-.big-front {
-  display:none;
-  z-index:5;
+.big-card .back,
+.big-card .front{
+position:absolute;inset:0;
+border-radius:12px;
+background-size:cover;
+background-position:center
 }
 
-/* 선택 카드 재배치 */
-.chosen-stage {
-  display:flex;
-  justify-content:center;
-  gap:14px;
-  margin:10px 0 20px;
-}
-.chosen-stage .pick {
-  width:90px;
+.big-card .back{background-image:url("/assets/tarot/back.png")}
+.big-card .front{display:none}
+
+.big-card.burning::before{
+content:"";
+position:absolute;inset:-20%;
+background:radial-gradient(circle,#ffd36b,#ff7a00,#7a00c8,transparent);
+animation:burn 2.5s forwards;
 }
 
-/* 불꽃 */
-.big-card.burning .big-back::before {
-  content:"";
-  position:absolute;
-  inset:-25%;
-  background: radial-gradient(circle at 50% 60%,
-    rgba(255,220,140,.95),
-    rgba(255,150,80,.75),
-    rgba(200,60,20,.5),
-    transparent 70%);
-  filter: blur(6px);
-  animation: flame 3s ease-in-out forwards;
-}
-@keyframes flame {
-  0% { opacity:.3; transform:scale(.9); }
-  50% { opacity:1; transform:scale(1.1); }
-  100% { opacity:.9; transform:scale(1); }
+@keyframes burn{
+0%{opacity:.3}
+50%{opacity:1}
+100%{opacity:.8}
 }
 
-/* 연기 */
-.big-card.smoking .big-back::after {
-  content:"";
-  position:absolute;
-  inset:-35%;
-  background: radial-gradient(circle at bottom,
-    rgba(220,220,230,.9),
-    rgba(160,160,170,.6),
-    transparent 75%);
-  filter: blur(10px);
-  animation: smoke 3.5s ease-out forwards;
-}
-@keyframes smoke {
-  from { opacity:.9; transform:translateY(10px); }
-  to { opacity:0; transform:translateY(-70px); }
+.big-card.smoke::after{
+content:"";
+position:absolute;inset:-30%;
+background:radial-gradient(circle,#eee,#999,transparent);
+animation:smoke 3s forwards;
 }
 
-/* 스프레드 */
-.picker { padding:10px 12px; }
-.grid78 {
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:6px;
-  max-height:260px;
-  overflow-y:auto;
-}
-.pick {
-  aspect-ratio:2/3;
-  background:url("/assets/tarot/back.png") center/cover no-repeat;
-  border-radius:6px;
-}
-.pick.sel {
-  outline:2px solid #ffd36b;
-  box-shadow:0 0 10px rgba(255,210,120,.6);
-}
-.pick.fade {
-  opacity:0;
-  transform:scale(.5);
-  transition:.6s ease;
+@keyframes smoke{
+0%{opacity:1}
+100%{opacity:0;transform:translateY(-60px)}
 }
 
-/* 파이어볼 */
-.fireball {
-  position:fixed;
-  width:48px;
-  height:48px;
-  border-radius:50%;
-  background: radial-gradient(circle,
-    #fff,
-    #ffcf6b,
-    #ff7a18,
-    #7a00c8);
-  box-shadow:
-    0 0 20px rgba(255,180,80,.9),
-    0 0 40px rgba(255,120,40,.7);
-  pointer-events:none;
-  z-index:9999;
+#grid{
+display:grid;
+grid-template-columns:repeat(6,1fr);
+gap:6px;
+padding:10px;
+max-height:280px;
+overflow:auto;
 }
 
-/* 채팅 */
-.chat-container {
-  padding:12px;
-  min-height:140px;
-}
-.msg { margin-bottom:6px; }
-.msg.user { text-align:right; opacity:.9; }
-.msg.cat { opacity:.85; }
-
-.chat-input {
-  position:fixed;
-  bottom:0; left:0; right:0;
-  background:#111;
-  padding:10px;
-  display:flex;
-  gap:8px;
-  z-index:1000;
+.pick{
+aspect-ratio:2/3;
+background:url("/assets/tarot/back.png") center/cover;
+border-radius:6px;
 }
 
-/* 모달 */
-.modal {
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.7);
-  display:flex;
-  justify-content:center;
-  align-items:center;
+.pick.sel{outline:2px solid gold}
+
+.fireball{
+position:fixed;
+width:40px;height:40px;
+border-radius:50%;
+background:radial-gradient(circle,#fff,#ffb300,#ff6a00,#7a00c8);
+box-shadow:0 0 30px rgba(255,160,0,.9);
+z-index:9999;
 }
-.modal-card {
-  background:#1a1a1f;
-  padding:20px;
-  border-radius:12px;
-  text-align:center;
-}
-.hidden { display:none; }
