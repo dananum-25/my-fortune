@@ -1,36 +1,21 @@
+const bigCards = document.querySelectorAll(".big-card");
 const grid = document.getElementById("grid78");
 const spread = document.getElementById("spreadSection");
 const modal = document.getElementById("confirmModal");
 const btnGo = document.getElementById("btnGo");
-const chat = document.getElementById("chatContainer");
-const input = document.getElementById("userInput");
-const sendBtn = document.getElementById("sendBtn");
-const soundBtn = document.getElementById("soundToggle");
-const bigCards = document.querySelectorAll(".big-card");
+
+/* 🔑 드로우 전용 덱 (중요) */
+let revealDeck = [...Array(78)].map((_, i) => i);
 
 let selected = [];
-let deck = [...Array(78)].map((_, i) => i);
-
-/* 사운드 */
-const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
-bgm.loop = true;
-let soundOn = false;
-soundBtn.onclick = () => {
-  soundOn = !soundOn;
-  soundBtn.textContent = soundOn ? "🔊" : "🔇";
-  soundOn ? bgm.play().catch(()=>{}) : bgm.pause();
-};
-
-/* 초기 멘트 */
-addMsg("마음이 가는 카드 3장을 골라줘.", "cat");
 
 /* 78장 생성 */
-deck.forEach(() => {
+for (let i = 0; i < 78; i++) {
   const d = document.createElement("div");
   d.className = "pick";
   d.onclick = () => togglePick(d);
   grid.appendChild(d);
-});
+}
 
 function togglePick(el) {
   if (el.classList.contains("sel")) {
@@ -50,54 +35,58 @@ btnGo.onclick = async () => {
 };
 
 async function ritual() {
-  // 75장 제거
-  document.querySelectorAll(".pick:not(.sel)").forEach(p => p.classList.add("fade"));
-  await wait(800);
+  document.querySelectorAll(".pick:not(.sel)").forEach(p => p.remove());
 
-  // 점화
+  const targets = [...bigCards].map(c => c.getBoundingClientRect());
+
+  selected.forEach((card, i) => {
+    const from = card.getBoundingClientRect();
+    const to = targets[i];
+
+    const fireball = document.createElement("div");
+    fireball.className = "fireball";
+    document.body.appendChild(fireball);
+
+    const arc = -120; // 🔥 포물선 높이
+
+    fireball.animate([
+      { transform: `translate(${from.left}px, ${from.top}px)` },
+      { transform: `translate(${(from.left + to.left)/2}px, ${from.top + arc}px)` },
+      { transform: `translate(${to.left}px, ${to.top}px)` }
+    ], {
+      duration: 3600,
+      easing: "ease-in-out",
+      fill: "forwards"
+    });
+
+    setTimeout(() => fireball.remove(), 3800);
+  });
+
+  await wait(4200);
+
   bigCards.forEach(c => c.classList.add("burning"));
   await wait(2600);
 
-  // 연기
   bigCards.forEach(c => c.classList.add("smoking"));
   await wait(3200);
 
-  // 🔑 반드시 제거 (버그 핵심)
   bigCards.forEach(c => c.classList.remove("burning", "smoking"));
-  await wait(600); // 여운
+  await wait(600);
 
-  // 리빌 (100% 보임)
+  /* ✅ 앞면 리빌 – 반드시 나옴 */
   bigCards.forEach((c, i) => {
     const front = c.querySelector(".big-front");
-    front.style.backgroundImage = `url('/assets/tarot/majors/${draw()}.png')`;
+    front.style.backgroundImage =
+      `url('/assets/tarot/majors/${drawReveal()}.png')`;
     front.style.display = "block";
   });
 
   spread.style.display = "none";
-  addMsg("이제 이 카드들을 하나씩 읽어볼게.", "cat");
 }
 
-function draw() {
-  const i = Math.floor(Math.random() * deck.length);
-  return String(deck.splice(i, 1)[0]).padStart(2, "0");
-}
-
-/* 채팅 */
-sendBtn.onclick = send;
-input.onkeydown = e => e.key === "Enter" && send();
-
-function send() {
-  if (!input.value.trim()) return;
-  addMsg(input.value, "user");
-  input.value = "";
-}
-
-function addMsg(text, who) {
-  const d = document.createElement("div");
-  d.className = `msg ${who}`;
-  d.textContent = text;
-  chat.appendChild(d);
-  chat.scrollTop = chat.scrollHeight;
+function drawReveal() {
+  const i = Math.floor(Math.random() * revealDeck.length);
+  return String(revealDeck.splice(i, 1)[0]).padStart(2, "0");
 }
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
