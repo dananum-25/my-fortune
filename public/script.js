@@ -54,42 +54,19 @@ async function ritual() {
   document.querySelectorAll(".pick:not(.sel)").forEach(p => p.classList.add("fade"));
   await wait(800);
 
-  // 파이어볼 변환 + 이동
-  const targets = [...bigCards].map(c => c.getBoundingClientRect());
-
-  selected.forEach((card, i) => {
-    const from = card.getBoundingClientRect();
-    const to = targets[i];
-
-    const fireball = document.createElement("div");
-    fireball.className = "fireball";
-    fireball.style.left = (from.left + from.width / 2 - 22) + "px";
-    fireball.style.top  = (from.top  + from.height / 2 - 22) + "px";
-    document.body.appendChild(fireball);
-
-    fireball.animate([
-      { transform: "translate(0,0) scale(.9)" },
-      { transform: `translate(${to.left - from.left}px, ${to.top - from.top}px) scale(1.3)` }
-    ], {
-      duration: 3200,               // ×4 느린 비행
-      easing: "cubic-bezier(.22,1,.36,1)",
-      fill: "forwards"
-    });
-
-    setTimeout(() => fireball.remove(), 3400);
-  });
-
-  await wait(900);                   // 접촉 전 정적
-
-  // 빅카드 점화
+  // 점화
   bigCards.forEach(c => c.classList.add("burning"));
-  await wait(2600);                  // 활활
+  await wait(2600);
 
   // 연기
   bigCards.forEach(c => c.classList.add("smoking"));
-  await wait(3200);                  // 연기 충분
+  await wait(3200);
 
-  // 리빌
+  // 🔑 반드시 제거 (버그 핵심)
+  bigCards.forEach(c => c.classList.remove("burning", "smoking"));
+  await wait(600); // 여운
+
+  // 리빌 (100% 보임)
   bigCards.forEach((c, i) => {
     const front = c.querySelector(".big-front");
     front.style.backgroundImage = `url('/assets/tarot/majors/${draw()}.png')`;
