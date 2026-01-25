@@ -4,7 +4,6 @@ body {
   margin: 0;
   background: #0b0b0f;
   color: #fff;
-  padding-bottom: 90px;
   font-family: system-ui, sans-serif;
 }
 
@@ -12,168 +11,76 @@ body {
   display: flex;
   justify-content: space-between;
   padding: 12px;
-  background: #000;
 }
+
+.sound-btn { font-size: 18px; }
 
 .cat-area {
   text-align: center;
-  padding: 16px;
+  padding: 12px;
 }
-
 .cat-area img {
-  width: 100%;
-  max-width: 360px;
+  width: 92%;
+  max-width: 420px;
   border-radius: 12px;
-}
-
-.cat-area span {
-  font-size: 14px;
-  opacity: .85;
 }
 
 /* 빅카드 */
 .tarot-stage {
   display: flex;
   justify-content: center;
-  margin: 18px 0;
+  margin: 16px 0;
 }
-
 .big-cards {
   display: flex;
   gap: 14px;
 }
-
 .big-card {
   width: 110px;
   height: 170px;
+  background: url("/assets/tarot/back.png") center/cover no-repeat;
+  border-radius: 12px;
   position: relative;
+  overflow: hidden;
 }
-
-.big-back,
 .big-front {
   position: absolute;
   inset: 0;
-  border-radius: 12px;
   background-size: cover;
   background-position: center;
-}
-
-.big-back {
-  background-image: url("/assets/tarot/back.png");
-  overflow: hidden;
-}
-
-.big-front {
   display: none;
 }
 
-/* 빅카드 점화 */
-.big-card.burning .big-back::before {
-  content: "";
-  position: absolute;
-  inset: -20%;
-  background: radial-gradient(circle at center,
-    rgba(255,200,120,.9),
-    rgba(255,120,0,.6),
-    transparent 70%);
-  animation: flamePulse 2.6s ease-in-out forwards;
+/* 선택 카드 재정렬 */
+.selected-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 12px 0;
 }
-
-.big-card.smoking .big-back::after {
-  content: "";
-  position: absolute;
-  inset: -20%;
-  background: radial-gradient(circle at bottom,
-    rgba(200,200,200,.6),
-    transparent 70%);
-  animation: smokeRise 1.6s forwards;
-}
-
-@keyframes flamePulse {
-  0% { opacity: .2; transform: scale(.8); }
-  50% { opacity: 1; transform: scale(1.1); }
-  100% { opacity: .9; transform: scale(1); }
-}
-
-@keyframes smokeRise {
-  0% { opacity: .7; filter: blur(4px); }
-  100% {
-    opacity: 0;
-    transform: translateY(-40px);
-    filter: blur(18px);
-  }
+.selected-row .pick {
+  width: 80px;
+  height: 120px;
 }
 
 /* 스프레드 */
-.picker {
-  padding: 12px;
-}
-
+.picker { padding: 10px 12px; }
 .grid78 {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 6px;
-  max-height: 240px;
+  max-height: 260px;
   overflow-y: auto;
 }
-
 .pick {
-  aspect-ratio: 2/3;
+  aspect-ratio: 2 / 3;
   background: url("/assets/tarot/back.png") center/cover no-repeat;
   border-radius: 6px;
+  cursor: pointer;
 }
-
-.pick.sel { outline: 2px solid gold; }
-.pick.fade { opacity: 0; transform: scale(.6); transition: .4s; }
-
-/* 🔥 Fireball */
-.fireball {
-  position: fixed;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: radial-gradient(circle,
-    #fff3b0,
-    #ff9f1c,
-    #ff4800);
-  box-shadow:
-    0 0 18px #ffae00,
-    0 0 32px rgba(255,120,0,.8);
-  z-index: 9999;
-  pointer-events: none;
-}
-
-.fireball::after {
-  content: "";
-  position: absolute;
-  inset: -20%;
-  border-radius: 50%;
-  background: radial-gradient(circle,
-    rgba(255,200,120,.6),
-    transparent 70%);
-  filter: blur(8px);
-}
-
-/* 채팅 */
-.chat-container {
-  padding: 12px;
-  min-height: 140px;
-}
-
-.msg { margin-bottom: 6px; }
-.msg.cat { opacity: .85; }
-.msg.user { text-align: right; }
-
-/* 입력 */
-.chat-input {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #111;
-  padding: 10px;
-  display: flex;
-  gap: 8px;
+.pick.sel {
+  outline: 2px solid #ffd36b;
+  box-shadow: 0 0 10px rgba(255,210,120,.6);
 }
 
 /* 모달 */
@@ -184,13 +91,49 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 9999;
 }
-
 .modal-card {
   background: #1a1a1f;
   padding: 20px;
   border-radius: 12px;
-  text-align: center;
+}
+.hidden { display: none; }
+
+/* 파이어볼 */
+.fireball {
+  position: fixed;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff, #ffb300, #ff3d00);
+  box-shadow: 0 0 25px rgba(255,150,0,.9);
+  pointer-events: none;
+  z-index: 9000;
 }
 
-.hidden { display: none; }
+/* 점화 */
+.big-card.burning::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background: radial-gradient(circle, rgba(255,180,0,.9), transparent 70%);
+  animation: burn 2s ease-in-out;
+}
+@keyframes burn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 연기 */
+.big-card.smoking::after {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  background: radial-gradient(circle, rgba(200,200,200,.6), transparent 70%);
+  animation: smoke 2s ease-out forwards;
+}
+@keyframes smoke {
+  from { opacity: .8; }
+  to { opacity: 0; transform: translateY(-40px); }
+}
