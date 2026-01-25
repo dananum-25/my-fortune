@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI 고양이 타로 상담</title>
 
-  <!-- 🔒 고정 메타 (절대 삭제 금지) -->
+  <!-- 고정 메타 (LOCK) -->
   <meta name="naver-site-verification" content="20b0cc209520048d7c651297a28b316fe1de7cd8" />
   <meta name="google-site-verification" content="5FKwm4_bVWL9skvm5olmNjvPSIzR_tW75VT_0NpJ9VA" />
   <meta name="google-adsense-account" content="ca-pub-7356591276029815" />
@@ -16,67 +16,59 @@
 
 <header class="topbar">
   <div class="brand">🐾 AI 고양이 타로 상담</div>
-  <button id="soundToggle" class="sound-btn">사운드 🔇</button>
+  <button id="soundToggle" class="sound-btn">
+    <span class="sound-label">사운드</span>
+    <span id="soundIcon">🔇</span>
+  </button>
 </header>
 
 <main class="app">
 
-  <!-- 1️⃣ 고양이 & 안내 -->
+  <!-- BASE: 고양이 -->
   <section class="cat-area">
     <img src="/assets/cat_ai.webp" alt="AI 고양이 상담사" />
-    <p>
-      지금 가장 마음에 걸리는 고민을 선택해줘.<br />
-      <span>질문을 정리한 뒤 카드를 펼칠게 🐾</span>
+    <p id="catMessage">
+      지금 가장 마음에 걸리는 고민을 골라줘.<br>
+      <span>예언이 아니라, 마음을 정리하는 상담이야 🐾</span>
     </p>
   </section>
 
-  <!-- 2️⃣ 질문 좁히기 -->
-  <section id="questionStep" class="question-step">
-    <div class="q-title">어떤 주제가 가장 궁금한가요?</div>
-    <div class="q-grid">
-      <button class="q-card" data-q="love">연애</button>
-      <button class="q-card" data-q="money">금전</button>
-      <button class="q-card" data-q="job">직업</button>
-      <button class="q-card" data-q="relationship">인간관계</button>
-      <button class="q-card" data-q="future">앞으로의 흐름</button>
-    </div>
+  <!-- BASE: 질문 단계 -->
+  <section id="questionSection" class="question-section">
+    <div id="qTitle" class="q-title"></div>
+    <div id="qGrid" class="q-grid"></div>
   </section>
 
-  <!-- 3️⃣ 빅카드 -->
-  <section id="tarotStage" class="tarot-stage hidden">
+  <!-- ======================================================
+       ADDITION STEP 4
+       중간 트리거 + 빅카드 + 78장 스프레드
+       (연출 없음 / 구조만)
+  ======================================================= -->
+
+  <!-- 중간 트리거 -->
+  <section id="triggerSection" class="hidden trigger-section">
+    <p class="trigger-text">
+      지금 선택을 생각하며<br>
+      카드를 3장 선택해볼까요?
+    </p>
+  </section>
+
+  <!-- 빅카드 3장 (back 상태) -->
+  <section id="bigCardSection" class="hidden tarot-stage">
     <div class="big-cards">
-      <div class="big-card"></div>
-      <div class="big-card"></div>
-      <div class="big-card"></div>
+      <div class="big-card back"></div>
+      <div class="big-card back"></div>
+      <div class="big-card back"></div>
     </div>
   </section>
 
-  <!-- 4️⃣ 78장 스프레드 -->
-  <section id="spreadSection" class="picker hidden">
+  <!-- 78장 스프레드 -->
+  <section id="spreadSection" class="hidden picker">
     <div class="picker-title">마음이 가는 카드 3장을 골라줘</div>
     <div id="grid78" class="grid78"></div>
   </section>
 
-  <!-- 5️⃣ 채팅 -->
-  <section class="chat-wrap">
-    <div id="chatContainer" class="chat-container"></div>
-  </section>
-
 </main>
-
-<footer class="chat-input">
-  <input id="userInput" placeholder="메시지를 입력하세요…" />
-  <button id="sendBtn">전송</button>
-</footer>
-
-<!-- 6️⃣ 확인 모달 -->
-<div id="confirmModal" class="modal hidden">
-  <div class="modal-card">
-    <h3>다 정하셨나요?</h3>
-    <p>이 카드로 리딩을 시작할게요.</p>
-    <button id="btnGo">이대로 진행</button>
-  </div>
-</div>
 
 <script src="script.js"></script>
 </body>
