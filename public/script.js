@@ -1,72 +1,163 @@
-const grid = document.getElementById("grid78");
-const spread = document.getElementById("spreadSection");
-const modal = document.getElementById("confirmModal");
-const btnGo = document.getElementById("btnGo");
-const selectedArea = document.getElementById("selectedArea");
-const chat = document.getElementById("chatContainer");
-const input = document.getElementById("userInput");
-const sendBtn = document.getElementById("sendBtn");
+const questionArea = document.getElementById("questionArea");
 
-/* 채팅 */
-function addMsg(text, who) {
-  const d = document.createElement("div");
-  d.className = `msg ${who}`;
-  d.textContent = text;
-  chat.appendChild(d);
-  chat.scrollTop = chat.scrollHeight;
-}
-addMsg("마음이 가는 카드 3장을 골라줘.", "cat");
+/* STEP A 질문 */
+const stepA = {
+  question: "괜찮아, 지금 마음이 복잡한 건 자연스러운 일이야.\n먼저, 이 고민이 어떤 쪽에 더 가까운지 골라볼까? 🐾",
+  options: [
+    { key: "relation", label: "사람과의 관계 / 감정 문제" },
+    { key: "decision", label: "중요한 선택이나 결정" },
+    { key: "pattern", label: "계속 반복되는 고민" },
+    { key: "self", label: "나 자신에 대한 혼란이나 방향성" }
+  ]
+};
 
-sendBtn.onclick = send;
-input.onkeydown = e => e.key === "Enter" && send();
-function send() {
-  if (!input.value.trim()) return;
-  addMsg(input.value, "user");
-  input.value = "";
-}
+/* STEP B 질문 세트 */
+const stepB = {
+  relation: [
+    {
+      q: "이 관계에서 가장 힘든 건 뭐에 가까워?",
+      a: [
+        "기대한 만큼 돌아오지 않는다",
+        "상대의 말이나 행동이 자주 상처가 된다",
+        "나만 더 애쓰는 것 같다",
+        "정리해야 할 것 같지만 마음이 따라주지 않는다",
+        "이 관계가 나를 불안하게 만든다"
+      ]
+    },
+    {
+      q: "지금 이 관계에서 네 마음에 더 가까운 건?",
+      a: [
+        "붙잡고 싶은 마음이 크다",
+        "놓아야 할 것 같다",
+        "아직 결정할 준비가 안 됐다",
+        "상대의 진짜 마음을 알고 싶다"
+      ]
+    }
+  ],
 
-/* 카드 선택 */
-let selected = [];
+  decision: [
+    {
+      q: "이 선택을 어렵게 만드는 가장 큰 이유는?",
+      a: [
+        "결과가 두렵다",
+        "어느 쪽도 완전히 마음에 들지 않는다",
+        "잘못된 선택을 할까 봐 걱정된다",
+        "주변의 시선이 신경 쓰인다"
+      ]
+    },
+    {
+      q: "선택을 미루고 있을 때 드는 감정은?",
+      a: [
+        "불안",
+        "답답함",
+        "회피하고 싶은 마음",
+        "압박감"
+      ]
+    }
+  ],
 
-for (let i = 0; i < 78; i++) {
-  const d = document.createElement("div");
-  d.className = "pick";
-  d.onclick = () => togglePick(d);
-  grid.appendChild(d);
-}
+  pattern: [
+    {
+      q: "이 고민이 반복될 때마다 드는 생각은?",
+      a: [
+        "또 같은 상황이 왔다",
+        "왜 항상 이런 선택을 할까",
+        "바뀌지 않는 내가 답답하다",
+        "언제까지 이럴지 모르겠다"
+      ]
+    },
+    {
+      q: "이 패턴에서 가장 벗어나고 싶은 건?",
+      a: [
+        "감정의 소모",
+        "비슷한 관계",
+        "같은 실패",
+        "반복되는 후회"
+      ]
+    }
+  ],
 
-function togglePick(el) {
-  if (el.classList.contains("sel")) {
-    el.classList.remove("sel");
-    selected = selected.filter(x => x !== el);
-    return;
-  }
-  if (selected.length >= 3) return;
-  el.classList.add("sel");
-  selected.push(el);
-  if (selected.length === 3) modal.classList.remove("hidden");
-}
+  self: [
+    {
+      q: "요즘 나 자신에게 가장 많이 드는 감정은?",
+      a: [
+        "자신 없음",
+        "혼란",
+        "조급함",
+        "지침",
+        "공허함"
+      ]
+    },
+    {
+      q: "지금 나에게 가장 필요한 건?",
+      a: [
+        "확신",
+        "휴식",
+        "방향",
+        "용기",
+        "정리"
+      ]
+    }
+  ]
+};
 
-/* 이대로 진행 */
-btnGo.onclick = () => {
-  modal.classList.add("hidden");
+let currentStepB = [];
+let stepBIndex = 0;
 
-  /* 🔒 스크롤 완전 차단 + 맨 위 */
-  document.body.style.overflow = "hidden";
-  window.scrollTo({ top: 0, behavior: "instant" });
+/* 화면 렌더 함수 */
+function renderQuestion(question, options, onSelect) {
+  questionArea.innerHTML = "";
 
-  /* 스프레드 제거 */
-  spread.style.display = "none";
+  const title = document.createElement("div");
+  title.className = "question-title";
+  title.textContent = question;
+  questionArea.appendChild(title);
 
-  /* 선택 카드 재정렬 */
-  selectedArea.innerHTML = "";
-  selectedArea.classList.remove("hidden");
+  const grid = document.createElement("div");
+  grid.className = "card-grid";
 
-  selected.forEach(() => {
-    const c = document.createElement("div");
-    c.className = "selected-card";
-    selectedArea.appendChild(c);
+  options.forEach(opt => {
+    const card = document.createElement("div");
+    card.className = "select-card";
+    card.textContent = opt.label || opt;
+    card.onclick = () => onSelect(opt.key || opt);
+    grid.appendChild(card);
   });
 
-  addMsg("좋아. 이제 이 카드들로 리딩을 시작할게.", "cat");
-};
+  questionArea.appendChild(grid);
+}
+
+/* STEP A 시작 */
+renderQuestion(
+  stepA.question,
+  stepA.options,
+  (key) => {
+    currentStepB = stepB[key];
+    stepBIndex = 0;
+    renderStepB();
+  }
+);
+
+/* STEP B 진행 */
+function renderStepB() {
+  const step = currentStepB[stepBIndex];
+  renderQuestion(
+    step.q,
+    step.a,
+    () => {
+      stepBIndex++;
+      if (stepBIndex < currentStepB.length) {
+        renderStepB();
+      } else {
+        renderQuestion(
+          "고마워. 이제 고민의 중심이 충분히 드러났어.\n그럼 이 마음을 카드로 비춰볼까? 🐾",
+          [{ label: "카드에게 물어보기", key: "go" }],
+          () => {
+            // 다음 단계에서 카드 등장
+            alert("다음 단계: 카드 연출 진입");
+          }
+        );
+      }
+    }
+  );
+}
