@@ -1,79 +1,100 @@
-* { box-sizing: border-box; }
+*{box-sizing:border-box}
+body{
+  margin:0;background:#0b0b0f;color:#fff;
+  padding-bottom:90px;font-family:system-ui,sans-serif
+}
+.topbar{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 14px
+}
+.sound-btn{font-size:14px}
+.brand{font-weight:700}
 
-body {
-  margin: 0;
-  background: #0b0b0f;
-  color: #fff;
-  font-family: system-ui, sans-serif;
-}
+.cat-area{text-align:center;padding:12px}
+.cat-area img{width:92%;max-width:420px;border-radius:12px}
+.cat-area span{opacity:.85}
 
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px;
+/* 질문 */
+.question-stage{padding:12px}
+.q-card{
+  background:#14141a;border-radius:14px;padding:14px;margin-bottom:10px
 }
+.q-options{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:8px
+}
+.q-opt{
+  background:#1a1a22;border:1px solid #2a2a38;color:#fff;
+  padding:12px;border-radius:12px
+}
+.q-actions{margin-top:10px;text-align:center}
+.primary{background:#6f3cff;border:none;color:#fff;padding:10px 14px;border-radius:10px}
+.ghost{background:transparent;border:1px solid #444;color:#fff;padding:10px 14px;border-radius:10px}
+.hidden{display:none}
 
-.sound-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  background: none;
-  border: none;
-  color: #fff;
+/* 빅카드 */
+.tarot-stage{display:flex;justify-content:center;margin:12px 0}
+.big-cards{display:flex;gap:14px}
+.big-card{width:110px;height:170px;position:relative}
+.big-back,.big-front{
+  position:absolute;inset:0;border-radius:12px;
+  background-size:cover;background-position:center
 }
+.big-back{background-image:url("/public/assets/tarot/back.png")}
+.big-front{display:none}
 
-.sound-label {
-  opacity: .85;
+/* 스프레드 */
+.picker{padding:10px 12px}
+.grid78{
+  display:grid;grid-template-columns:repeat(6,1fr);
+  gap:6px;max-height:260px;overflow-y:auto
 }
+.pick{
+  aspect-ratio:2/3;background:url("/public/assets/tarot/back.png") center/cover no-repeat;
+  border-radius:6px
+}
+.pick.sel{outline:2px solid #ffd36b;box-shadow:0 0 10px rgba(255,210,120,.6)}
+.pick.fade{opacity:0;transform:scale(.5);transition:.6s ease}
 
-.app {
-  padding-bottom: 24px;
-}
+/* 채팅 */
+.chat-container{padding:12px;min-height:140px}
+.msg{margin-bottom:6px}
+.msg.cat{opacity:.85}
+.msg.user{text-align:right}
 
-/* 고양이 */
-.cat-area {
-  text-align: center;
-  padding: 12px;
-}
-.cat-area img {
-  width: 92%;
-  max-width: 420px;
-  border-radius: 12px;
-}
-.cat-area span {
-  opacity: .85;
-}
-
-/* 질문 카드 */
-.question-section {
-  padding: 14px;
-}
-
-.q-title {
-  margin-bottom: 12px;
-  font-size: 16px;
-  opacity: .95;
-}
-
-.q-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.q-card {
-  padding: 20px 14px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #1e1e2a, #12121a);
-  border: 1px solid rgba(255,255,255,.08);
-  text-align: center;
-  font-size: 15px;
-  line-height: 1.4;
+/* 입력 */
+.chat-input{
+  position:fixed;bottom:0;left:0;right:0;z-index:999;
+  background:#111;padding:10px;display:flex;gap:8px
 }
 
-.q-card:active {
-  transform: scale(.97);
-  border-color: rgba(255,210,120,.6);
+/* 모달 */
+.modal{
+  position:fixed;inset:0;z-index:2000;
+  background:rgba(0,0,0,.7);display:flex;justify-content:center;align-items:center
 }
+.modal-card{
+  background:#1a1a1f;padding:20px;border-radius:12px;text-align:center
+}
+
+/* 🔥 파이어볼 */
+.fireball{
+  position:absolute;width:44px;height:44px;border-radius:50%;
+  background:radial-gradient(circle,#f3e7ff,#b07cff,#ffd36b,#7a00c8);
+  box-shadow:0 0 20px rgba(176,124,255,.9),0 0 36px rgba(255,211,107,.85);
+  pointer-events:none;z-index:3000
+}
+/* 점화/연기 */
+.big-card.burning .big-back::before{
+  content:"";position:absolute;inset:-25%;
+  background:radial-gradient(circle at 50% 60%,rgba(200,160,255,.95),
+    rgba(140,90,220,.75),rgba(255,200,90,.55),rgba(120,0,200,.35),transparent 70%);
+  filter:blur(6px);animation:flame 2s ease-in-out forwards
+}
+.big-card.smoking .big-back::after{
+  content:"";position:absolute;inset:-35%;
+  background:radial-gradient(circle at bottom,rgba(230,220,255,.95),
+    rgba(190,180,210,.7),rgba(140,140,150,.45),transparent 75%);
+  filter:blur(10px);animation:smoke 2s ease-out forwards
+}
+@keyframes flame{0%{opacity:.6}50%{opacity:1}100%{opacity:.85}}
+@keyframes smoke{0%{opacity:.9}100%{opacity:0;transform:translateY(-60px)}}
