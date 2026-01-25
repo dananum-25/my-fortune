@@ -1,139 +1,118 @@
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
   background: #0b0b0f;
   color: #fff;
-  font-family: system-ui, sans-serif;
+  padding-bottom: 90px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
 }
 
 .topbar {
   display: flex;
   justify-content: space-between;
-  padding: 12px;
+  align-items: center;
+  padding: 10px 14px;
+  background: #111;
 }
 
-.sound-btn { font-size: 18px; }
+.brand {
+  font-weight: bold;
+}
+
+.app {
+  padding: 16px;
+}
 
 .cat-area {
   text-align: center;
-  padding: 12px;
 }
+
 .cat-area img {
-  width: 92%;
-  max-width: 420px;
+  max-width: 100%;
   border-radius: 12px;
 }
 
-/* 빅카드 */
-.tarot-stage {
-  display: flex;
-  justify-content: center;
-  margin: 16px 0;
+.cat-area p {
+  margin-top: 12px;
+  line-height: 1.5;
 }
+
+.tarot-stage {
+  margin: 24px 0;
+}
+
 .big-cards {
   display: flex;
+  justify-content: center;
   gap: 14px;
 }
+
 .big-card {
   width: 110px;
-  height: 170px;
+  height: 180px;
   background: url("/assets/tarot/back.png") center/cover no-repeat;
-  border-radius: 12px;
-  position: relative;
-  overflow: hidden;
-}
-.big-front {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  display: none;
+  border-radius: 10px;
 }
 
-/* 선택 카드 재정렬 */
-.selected-row {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin: 12px 0;
-}
-.selected-row .pick {
-  width: 80px;
-  height: 120px;
+.picker {
+  margin-top: 24px;
 }
 
-/* 스프레드 */
-.picker { padding: 10px 12px; }
+.picker-title {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
 .grid78 {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 6px;
+  gap: 8px;
   max-height: 260px;
   overflow-y: auto;
 }
+
 .pick {
   aspect-ratio: 2 / 3;
   background: url("/assets/tarot/back.png") center/cover no-repeat;
   border-radius: 6px;
-  cursor: pointer;
-}
-.pick.sel {
-  outline: 2px solid #ffd36b;
-  box-shadow: 0 0 10px rgba(255,210,120,.6);
 }
 
-/* 모달 */
+.pick.sel {
+  outline: 2px solid gold;
+}
+
+.chat-input {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #111;
+  padding: 10px;
+  display: flex;
+  gap: 8px;
+  z-index: 20;
+}
+
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.7);
+  background: rgba(0,0,0,0.75);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999;
 }
+
+.hidden {
+  display: none;
+}
+
 .modal-card {
   background: #1a1a1f;
-  padding: 20px;
+  padding: 24px;
   border-radius: 12px;
-}
-.hidden { display: none; }
-
-/* 파이어볼 */
-.fireball {
-  position: fixed;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #fff, #ffb300, #ff3d00);
-  box-shadow: 0 0 25px rgba(255,150,0,.9);
-  pointer-events: none;
-  z-index: 9000;
-}
-
-/* 점화 */
-.big-card.burning::before {
-  content: "";
-  position: absolute;
-  inset: -20%;
-  background: radial-gradient(circle, rgba(255,180,0,.9), transparent 70%);
-  animation: burn 2s ease-in-out;
-}
-@keyframes burn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* 연기 */
-.big-card.smoking::after {
-  content: "";
-  position: absolute;
-  inset: -30%;
-  background: radial-gradient(circle, rgba(200,200,200,.6), transparent 70%);
-  animation: smoke 2s ease-out forwards;
-}
-@keyframes smoke {
-  from { opacity: .8; }
-  to { opacity: 0; transform: translateY(-40px); }
+  text-align: center;
 }
