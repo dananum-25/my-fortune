@@ -8,12 +8,12 @@ body {
   font-family: system-ui, sans-serif;
 }
 
-/* 🔴 이거 없으면 78장 안보임 */
 .app {
   display: flex;
   flex-direction: column;
 }
 
+/* 상단 */
 .topbar {
   display: flex;
   justify-content: space-between;
@@ -22,6 +22,7 @@ body {
 
 .sound-btn { font-size: 18px; }
 
+/* 고양이 */
 .cat-area {
   text-align: center;
   padding: 12px;
@@ -41,18 +42,15 @@ body {
   position: relative;
   z-index: 2;
 }
-
 .big-cards {
   display: flex;
   gap: 14px;
 }
-
 .big-card {
   width: 110px;
   height: 170px;
   position: relative;
 }
-
 .big-back,
 .big-front {
   position: absolute;
@@ -61,15 +59,13 @@ body {
   background-size: cover;
   background-position: center;
 }
-
 .big-back {
   background-image: url("/assets/tarot/back.png");
   z-index: 1;
 }
-
 .big-front {
   display: none;
-  z-index: 10;
+  z-index: 3;
 }
 
 /* 스프레드 */
@@ -78,27 +74,22 @@ body {
   position: relative;
   z-index: 1;
 }
-
 .grid78 {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 6px;
   max-height: 260px;
-  min-height: 220px;
   overflow-y: auto;
 }
-
 .pick {
   aspect-ratio: 2 / 3;
   background: url("/assets/tarot/back.png") center/cover no-repeat;
   border-radius: 6px;
 }
-
 .pick.sel {
   outline: 2px solid #ffd36b;
   box-shadow: 0 0 10px rgba(255,210,120,.6);
 }
-
 .pick.fade {
   opacity: 0;
   transform: scale(.5);
@@ -110,7 +101,6 @@ body {
   padding: 12px;
   min-height: 140px;
 }
-
 .msg { margin-bottom: 6px; }
 .msg.cat { opacity: .85; }
 .msg.user { text-align: right; }
@@ -125,21 +115,23 @@ body {
   padding: 10px;
   display: flex;
   gap: 8px;
-  z-index: 999;
+  z-index: 900;
 }
 
-/* 모달 */
+/* ✅ 모달 – 무조건 최상단 */
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.7);
+  background: rgba(0,0,0,.75);
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 9999; /* 🔑 핵심 */
 }
 .modal-card {
   background: #1a1a1f;
-  padding: 20px;
-  border-radius: 12px;
+  padding: 24px;
+  border-radius: 14px;
+  text-align: center;
 }
 .hidden { display: none; }
