@@ -1,110 +1,134 @@
+/* =========================
+   SOUND SYSTEM
+========================= */
+let soundEnabled = false;
+let soundUnlocked = false;
+
+const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
+bgm.loop = true;
+bgm.volume = 0.18;
+
+const FX = {
+  pick: "/sounds/tarot/card_pick.mp3",
+  spread: "/sounds/tarot/spread_open.mp3",
+  fire: "/sounds/tarot/fire.mp3",
+  reveal: "/sounds/tarot/tarot_reveal.mp3"
+};
+
+function unlockSound() {
+  if (soundUnlocked) return;
+  const silent = new Audio("data:audio/mp3;base64,//uQxAAAA");
+  silent.play().catch(()=>{});
+  soundUnlocked = true;
+}
+
+function playFX(type) {
+  if (!soundEnabled || !soundUnlocked) return;
+  const a = new Audio(FX[type]);
+  a.volume = .8;
+  a.play().catch(()=>{});
+}
+
+/* =========================
+   ELEMENTS
+========================= */
 const grid = document.getElementById("grid78");
-const spread = document.getElementById("spreadSection");
 const modal = document.getElementById("confirmModal");
 const btnGo = document.getElementById("btnGo");
-const chat = document.getElementById("chatContainer");
-const input = document.getElementById("userInput");
-const sendBtn = document.getElementById("sendBtn");
-const soundBtn = document.getElementById("soundToggle");
 const bigCards = document.querySelectorAll(".big-card");
+const soundBtn = document.getElementById("soundToggle");
 
-/* 사운드 */
-let bgm = null;
-let soundOn = false;
+/* =========================
+   CARD TABLE
+========================= */
+const MAJORS = [
+  "00_the_fool.png","01_the_magician.png","02_the_high_priestess.png",
+  "03_the_empress.png","04_the_emperor.png","05_the_hierophant.png",
+  "06_the_lovers.png","07_the_chariot.png","08_strength.png",
+  "09_the_hermit.png","10_wheel_of_fortune.png","11_justice.png",
+  "12_the_hanged_man.png","13_death.png","14_temperance.png",
+  "15_the_devil.png","16_the_tower.png","17_the_star.png",
+  "18_the_moon.png","19_the_sun.png","20_judgement.png","21_the_world.png"
+];
 
-soundBtn.onclick = () => {
-  soundOn = !soundOn;
-  soundBtn.textContent = soundOn ? "🔊" : "🔇";
-  if (soundOn) {
-    bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
-    bgm.loop = true;
-    bgm.volume = 0.15;
-    bgm.play().catch(()=>{});
-  } else {
-    if (bgm) bgm.pause();
-    bgm = null;
+const SUITS = ["cups","wands","swords","pentacles"];
+const MINORS = ["01_ace","02_two","03_three","04_four","05_five","06_six",
+  "07_seven","08_eight","09_nine","10_ten","11_page","12_knight","13_queen","14_king"];
+
+function draw78() {
+  if (Math.random() < 22/78) {
+    return `/assets/tarot/majors/${MAJORS.splice(Math.floor(Math.random()*MAJORS.length),1)[0]}`;
   }
-};
-
-/* 채팅 */
-function addMsg(t,w){
-  const d=document.createElement("div");
-  d.className=`msg ${w}`;
-  d.textContent=t;
-  chat.appendChild(d);
-  chat.scrollTop=chat.scrollHeight;
+  const suit = SUITS[Math.floor(Math.random()*4)];
+  const card = MINORS.splice(Math.floor(Math.random()*MINORS.length),1)[0];
+  return `/assets/tarot/minors/${suit}/${card}.png`;
 }
-sendBtn.onclick=send;
-input.onkeydown=e=>e.key==="Enter"&&send();
-function send(){
-  if(!input.value.trim())return;
-  addMsg(input.value,"user");
-  input.value="";
-}
-addMsg("마음이 가는 카드 3장을 골라줘.","cat");
 
-/* 카드 */
-let selected=[];
-for(let i=0;i<78;i++){
-  const d=document.createElement("div");
-  d.className="pick";
-  d.onclick=()=>pick(d);
+/* =========================
+   SPREAD
+========================= */
+let selected = [];
+
+for (let i=0;i<78;i++) {
+  const d = document.createElement("div");
+  d.className = "pick";
+  d.onclick = () => {
+    if (d.classList.contains("sel")) return;
+    if (selected.length>=3) return;
+    d.classList.add("sel");
+    selected.push(d);
+    playFX("pick");
+    if (selected.length===3) modal.classList.remove("hidden");
+  };
   grid.appendChild(d);
 }
-function pick(el){
-  if(el.classList.contains("sel")){
-    el.classList.remove("sel");
-    selected=selected.filter(x=>x!==el);
-    return;
-  }
-  if(selected.length>=3)return;
-  el.classList.add("sel");
-  selected.push(el);
-  if(selected.length===3) modal.classList.remove("hidden");
-}
 
-btnGo.onclick=async()=>{
+btnGo.onclick = async () => {
   modal.classList.add("hidden");
-  await ritual();
-};
+  playFX("spread");
 
-async function ritual(){
   document.querySelectorAll(".pick:not(.sel)").forEach(p=>p.classList.add("fade"));
-  await wait(700);
-
-  const targets=[...bigCards].map(c=>c.getBoundingClientRect());
+  await wait(600);
 
   selected.forEach((card,i)=>{
-    const from=card.getBoundingClientRect();
-    const to=targets[i];
-    const fb=document.createElement("div");
+    const from = card.getBoundingClientRect();
+    const to = bigCards[i].getBoundingClientRect();
+
+    const fb = document.createElement("div");
     fb.className="fireball";
     document.body.appendChild(fb);
 
-    fb.animate([
-      { transform:`translate(${from.left}px,${from.top}px)` },
-      { transform:`translate(${(from.left+to.left)/2}px,${from.top-180}px)` },
-      { transform:`translate(${to.left}px,${to.top}px)` }
-    ],{duration:5000,easing:"ease-in-out",fill:"forwards"});
+    playFX("fire");
 
-    setTimeout(()=>fb.remove(),5100);
+    fb.animate([
+      {transform:`translate(${from.left}px,${from.top}px)`},
+      {transform:`translate(${(from.left+to.left)/2}px,${from.top-160}px)`},
+      {transform:`translate(${to.left}px,${to.top}px)`}
+    ],{duration:3000,easing:"ease-in-out",fill:"forwards"});
+
+    setTimeout(()=>fb.remove(),3100);
   });
 
-  await wait(5200);
+  await wait(3200);
 
-  bigCards.forEach(c=>c.classList.add("burning"));
-  await wait(3000);
-  bigCards.forEach(c=>c.classList.add("smoking"));
-  await wait(3500);
-
-  bigCards.forEach((c,i)=>{
-    const front=c.querySelector(".big-front");
-    front.style.backgroundImage=`url('/assets/tarot/majors/00_the_fool.png')`;
+  bigCards.forEach(c=>{
+    const front=c.querySelector(".front");
+    front.style.backgroundImage=`url('${draw78()}')`;
     front.style.display="block";
   });
 
-  spread.style.display="none";
-  addMsg("이제 이 카드들을 하나씩 읽어볼게.","cat");
-}
+  playFX("reveal");
+};
 
-const wait=ms=>new Promise(r=>setTimeout(r,ms));
+/* ========================= */
+const wait = ms => new Promise(r=>setTimeout(r,ms));
+
+soundBtn.onclick = () => {
+  unlockSound();
+  soundEnabled=!soundEnabled;
+  soundBtn.textContent=soundEnabled?"🔊":"🔇";
+  if (soundEnabled) bgm.play().catch(()=>{});
+  else bgm.pause();
+};
+
+document.addEventListener("pointerdown",unlockSound,{once:true});
