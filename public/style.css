@@ -1,34 +1,3 @@
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 20000; /* ★ 무조건 최상단 */
-  background: rgba(0,0,0,.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  background: #0b0b0f;
-  color: #fff;
-  padding-bottom: 90px;
-  font-family: system-ui, sans-serif;
-}
-
-.topbar {
-  display:flex;
-  justify-content:space-between;
-  padding:12px;
-}
-
-.cat-area { text-align:center; padding:12px; }
-.cat-area img { width:90%; max-width:420px; border-radius:12px; }
-
-.tarot-stage { display:flex; justify-content:center; margin:16px 0; }
-.big-cards { display:flex; gap:14px; }
-
 .big-card {
   width:110px;
   height:170px;
@@ -53,61 +22,58 @@ body {
   display:none;
 }
 
-.big-card.burning .back {
-  box-shadow: 0 0 30px rgba(255,140,0,.9);
+/* 🔥 점화 */
+.big-card.burning .back::before {
+  content:"";
+  position:absolute;
+  inset:-25%;
+  background: radial-gradient(circle at 50% 60%,
+    rgba(255,200,120,.95),
+    rgba(255,120,40,.8),
+    rgba(120,0,0,.5),
+    transparent 70%);
+  filter: blur(6px);
+  animation: flame 3s ease-in-out forwards;
+  z-index:3;
 }
 
-.picker { padding:10px 12px; }
-.grid78 {
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:6px;
-  max-height:260px;
-  overflow:auto;
+/* 💨 연기 */
+.big-card.smoking .back::after {
+  content:"";
+  position:absolute;
+  inset:-35%;
+  background: radial-gradient(circle at bottom,
+    rgba(220,220,220,.9),
+    rgba(140,140,140,.5),
+    transparent 75%);
+  filter: blur(10px);
+  animation: smoke 3.5s ease-out forwards;
+  z-index:4;
 }
 
-.pick {
-  aspect-ratio:2/3;
-  background:url("/assets/tarot/back.png") center/cover no-repeat;
-  border-radius:6px;
-}
-.pick.sel { outline:2px solid gold; }
-.pick.fade { opacity:0; transform:scale(.5); transition:.6s; }
-
-.chat-container { padding:12px; min-height:140px; }
-.msg.user { text-align:right; }
-
-.chat-input {
-  position:fixed;
-  bottom:0; left:0; right:0;
-  background:#111;
-  padding:10px;
-  display:flex;
-  gap:8px;
-  z-index:999;
+@keyframes flame {
+  0% { opacity:.3; }
+  50% { opacity:1; }
+  100% { opacity:.85; }
 }
 
-.modal {
-  position:fixed; inset:0;
-  background:rgba(0,0,0,.7);
-  display:flex;
-  align-items:center;
-  justify-content:center;
+@keyframes smoke {
+  from { transform:translateY(0); opacity:.8; }
+  to { transform:translateY(-60px); opacity:0; }
 }
-.hidden { display:none; }
 
-/* 🔥 FX 레이어 */
+/* 🔥 파이어볼 */
 #fx-layer {
   position:fixed;
   inset:0;
   pointer-events:none;
   z-index:10000;
 }
-
 .fireball {
   position:absolute;
-  width:40px; height:40px;
+  width:44px;
+  height:44px;
   border-radius:50%;
-  background:radial-gradient(circle,#fff,#ffb347,#ff5e00,#7a0000);
+  background: radial-gradient(circle,#fff,#ffb347,#ff5e00,#7a0000);
   box-shadow:0 0 30px rgba(255,140,0,.9);
 }
