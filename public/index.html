@@ -5,105 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI 고양이 타로 상담</title>
 
-  <style>
-    body {
-      margin: 0;
-      background: radial-gradient(circle at top, #1b1325, #050508);
-      color: #f5f5f5;
-      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Noto Sans KR", sans-serif;
-      display: flex;
-      justify-content: center;
-    }
+  <!-- 🔒 고정 메타 -->
+  <meta name="naver-site-verification" content="20b0cc209520048d7c651297a28b316fe1de7cd8" />
+  <meta name="google-site-verification" content="5FKwm4_bVWL9skvm5olmNjvPSIzR_tW75VT_0NpJ9VA" />
+  <meta name="google-adsense-account" content="ca-pub-7356591276029815" />
 
-    .app {
-      width: 100%;
-      max-width: 420px;
-      padding: 16px;
-      box-sizing: border-box;
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-
-    header h1 {
-      font-size: 18px;
-      font-weight: 700;
-      margin: 0;
-    }
-
-    .cat-wrap {
-      margin-top: 12px;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-    }
-
-    .cat-wrap img {
-      width: 100%;
-      display: block;
-    }
-
-    .message {
-      margin-top: 20px;
-      line-height: 1.6;
-      font-size: 15px;
-      text-align: center;
-    }
-
-    .choices {
-      margin-top: 24px;
-      display: grid;
-      gap: 12px;
-    }
-
-    .choice-card {
-      padding: 16px;
-      border-radius: 14px;
-      background: linear-gradient(145deg, #2a1f3d, #1a1228);
-      border: 1px solid rgba(255,255,255,0.08);
-      text-align: center;
-      font-size: 15px;
-      cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    .choice-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-  <div class="app">
 
-    <header>
-      <h1>🐾 AI 고양이 타로 상담</h1>
-    </header>
+<header class="topbar">
+  <div class="brand">🐾 AI 고양이 타로 상담</div>
+  <button id="soundToggle" class="sound-btn">🔇</button>
+</header>
 
-    <!-- 고양이 이미지 (핵심 확인 포인트) -->
-    <div class="cat-wrap">
-      <img src="/public/assets/cat_ai.webp" alt="AI 고양이 상담사" />
+<main class="app">
+
+  <!-- 고양이 영역 -->
+  <section class="cat-area">
+    <img src="/public/assets/cat_ai.webp" alt="AI 고양이 상담사" />
+    <p>
+      지금 가장 마음에 걸리는 고민을 골라줘.<br>
+      <span>예언이 아니라, 마음을 정리하는 상담이야 🐾</span>
+    </p>
+  </section>
+
+  <!-- 질문 카드 영역 -->
+  <section id="questionSection" class="question-section">
+    <div class="q-title">어떤 주제에 대한 상담일까?</div>
+    <div class="q-grid">
+      <div class="q-card" data-value="love">연애 · 관계</div>
+      <div class="q-card" data-value="job">직업 · 진로</div>
+      <div class="q-card" data-value="money">금전 · 현실</div>
+      <div class="q-card" data-value="self">나 자신 · 마음</div>
     </div>
+  </section>
 
-    <!-- 상담 멘트 -->
-    <div class="message">
-      지금 가장 마음에 걸리는 고민을 떠올려줘.<br />
-      예언이 아니라, 마음을 정리하는 상담이야 🐾
-    </div>
+  <!-- 78장 스프레드 -->
+  <section id="spreadSection" class="picker hidden">
+    <div class="picker-title">마음이 가는 카드 3장을 골라줘</div>
+    <div id="grid78" class="grid78"></div>
+  </section>
 
-    <!-- 질문 좁히기 (구조만) -->
-    <div class="choices">
-      <div class="choice-card">관계 · 사람</div>
-      <div class="choice-card">일 · 진로 · 돈</div>
-      <div class="choice-card">나 자신 · 감정</div>
-      <div class="choice-card">선택과 결정</div>
-    </div>
+</main>
 
-  </div>
+<script src="script.js"></script>
 </body>
 </html>
