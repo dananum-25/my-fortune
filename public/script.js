@@ -1,100 +1,124 @@
 /* ===============================
-   1️⃣ 기본 DOM
-================================ */
-const soundBtn = document.getElementById("soundToggle");
-const questionStep = document.getElementById("questionStep");
-const tarotStage = document.getElementById("tarotStage");
-const spreadSection = document.getElementById("spreadSection");
-const grid78 = document.getElementById("grid78");
-const modal = document.getElementById("confirmModal");
-const btnGo = document.getElementById("btnGo");
-const chat = document.getElementById("chatContainer");
-
-/* ===============================
-   2️⃣ 사운드 (초기 뮤트)
+   BASE: 사운드
 ================================ */
 const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
 bgm.loop = true;
-bgm.volume = 0.15;
-let muted = true;
+bgm.volume = 0.3;
+
+const sPick = new Audio("/sounds/tarot/pick.mp3");
+const sOpen = new Audio("/sounds/tarot/spread_open.mp3");
+
+let soundOn = false;
+const soundBtn = document.getElementById("soundToggle");
+const soundIcon = document.getElementById("soundIcon");
 
 soundBtn.onclick = () => {
-  muted = !muted;
-  soundBtn.textContent = muted ? "사운드 🔇" : "사운드 🔊";
-  muted ? bgm.pause() : bgm.play().catch(()=>{});
+  soundOn = !soundOn;
+  soundIcon.textContent = soundOn ? "🔊" : "🔇";
+  if (soundOn) bgm.play().catch(()=>{});
+  else bgm.pause();
 };
 
 /* ===============================
-   3️⃣ 질문 선택
+   BASE: 질문 데이터
 ================================ */
-document.querySelectorAll(".q-card").forEach(btn => {
-  btn.onclick = () => {
-    questionStep.classList.add("hidden");
-    tarotStage.classList.remove("hidden");
-    spreadSection.classList.remove("hidden");
-    initSpread();
-    addMsg("카드를 펼칠게. 마음이 가는 카드 3장을 골라줘.", "cat");
-  };
-});
+const QUESTIONS = [
+  {
+    title: "어떤 주제에 대한 상담일까?",
+    options: [
+      { label: "연애 · 관계", next: 1 },
+      { label: "직업 · 진로", next: 1 },
+      { label: "금전 · 현실", next: 1 },
+      { label: "나 자신 · 마음", next: 1 }
+    ]
+  },
+  {
+    title: "지금 상황은 어떤 상태에 가까울까?",
+    options: [
+      { label: "혼란스럽고 방향을 못 잡겠어", next: 2 },
+      { label: "선택의 기로에 서 있어", next: 2 },
+      { label: "이미 결정했지만 확신이 없어", next: 2 },
+      { label: "감정이 흔들리고 있어", next: 2 }
+    ]
+  },
+  {
+    title: "카드에게 무엇을 묻고 싶을까?",
+    options: [
+      { label: "지금의 흐름을 알고 싶어", next: "done" },
+      { label: "내 선택이 맞는지 묻고 싶어", next: "done" },
+      { label: "조언이나 방향을 듣고 싶어", next: "done" },
+      { label: "이 상황의 핵심을 알고 싶어", next: "done" }
+    ]
+  }
+];
+
+const qTitle = document.getElementById("qTitle");
+const qGrid = document.getElementById("qGrid");
+const catMsg = document.getElementById("catMessage");
+
+let step = 0;
+renderStep(step);
+
+function renderStep(idx) {
+  qTitle.textContent = QUESTIONS[idx].title;
+  qGrid.innerHTML = "";
+
+  QUESTIONS[idx].options.forEach(opt => {
+    const card = document.createElement("div");
+    card.className = "q-card";
+    card.textContent = opt.label;
+
+    card.onclick = () => {
+      if (!soundOn) {
+        soundOn = true;
+        soundIcon.textContent = "🔊";
+        bgm.play().catch(()=>{});
+      }
+      sPick.currentTime = 0;
+      sPick.play().catch(()=>{});
+
+      if (opt.next === "done") {
+        finishQuestions();
+      } else {
+        step = opt.next;
+        sOpen.currentTime = 0;
+        sOpen.play().catch(()=>{});
+        renderStep(step);
+      }
+    };
+
+    qGrid.appendChild(card);
+  });
+}
 
 /* ===============================
-   4️⃣ 78장 스프레드 생성
+   ADDITION STEP 4 시작
 ================================ */
-let selected = [];
 
-function initSpread() {
-  grid78.innerHTML = "";
-  selected = [];
+const triggerSection = document.getElementById("triggerSection");
+const bigCardSection = document.getElementById("bigCardSection");
+const spreadSection = document.getElementById("spreadSection");
+const grid78 = document.getElementById("grid78");
 
+function finishQuestions() {
+  qTitle.textContent = "";
+  qGrid.innerHTML = "";
+  triggerSection.classList.remove("hidden");
+
+  // 빅카드 + 스프레드 표시
+  bigCardSection.classList.remove("hidden");
+  spreadSection.classList.remove("hidden");
+
+  // 78장 생성
   for (let i = 0; i < 78; i++) {
     const d = document.createElement("div");
     d.className = "pick";
-    d.onclick = () => togglePick(d);
+    d.onclick = () => d.classList.toggle("sel");
     grid78.appendChild(d);
   }
-}
 
-function togglePick(el) {
-  if (el.classList.contains("sel")) {
-    el.classList.remove("sel");
-    selected = selected.filter(x => x !== el);
-    return;
-  }
-  if (selected.length >= 3) return;
-  el.classList.add("sel");
-  selected.push(el);
-  if (selected.length === 3) modal.classList.remove("hidden");
-}
-
-/* ===============================
-   5️⃣ 모달 진행
-================================ */
-btnGo.onclick = () => {
-  modal.classList.add("hidden");
-  prepareStage7();
-};
-
-/* ===============================
-   6️⃣ 채팅
-================================ */
-function addMsg(text, who) {
-  const d = document.createElement("div");
-  d.className = `msg ${who}`;
-  d.textContent = text;
-  chat.appendChild(d);
-  chat.scrollTop = chat.scrollHeight;
-}
-
-/* ===============================
-   7️⃣ 선택 후 재정렬 & 상태 고정
-================================ */
-function prepareStage7() {
-  // 스프레드 제거
-  spreadSection.classList.add("hidden");
-
-  // 스크롤 고정
-  document.body.style.overflow = "hidden";
-  window.scrollTo(0, 0);
-
-  addMsg("좋아. 이제 이 카드로 리딩을 시작할게.", "cat");
+  catMsg.innerHTML = `
+    좋아, 이제 준비가 됐어.<br>
+    <span>마음이 가는 카드 3장을 골라줘 🐾</span>
+  `;
 }
