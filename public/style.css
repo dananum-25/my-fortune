@@ -1,3 +1,10 @@
+.cat-area img {
+  width: 100%;
+  max-height: 320px;        /* 🔑 이게 핵심 */
+  object-fit: cover;       /* 위아래 잘라냄 */
+  border-radius: 12px;
+  display: block;
+}
 .big-card {
   width:110px;
   height:170px;
