@@ -10,11 +10,22 @@ body {
 .topbar {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 12px;
 }
 
 .sound-btn {
-  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  background: none;
+  border: none;
+  color: #fff;
+}
+
+.sound-label {
+  opacity: .85;
 }
 
 .app {
