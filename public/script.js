@@ -1,78 +1,72 @@
 const grid = document.getElementById("grid78");
-const spreadSection = document.getElementById("spreadSection");
+const spread = document.getElementById("spreadSection");
 const modal = document.getElementById("confirmModal");
 const btnGo = document.getElementById("btnGo");
-const soundBtn = document.getElementById("soundToggle");
+const selectedArea = document.getElementById("selectedArea");
+const chat = document.getElementById("chatContainer");
+const input = document.getElementById("userInput");
+const sendBtn = document.getElementById("sendBtn");
 
+/* 채팅 */
+function addMsg(text, who) {
+  const d = document.createElement("div");
+  d.className = `msg ${who}`;
+  d.textContent = text;
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
+}
+addMsg("마음이 가는 카드 3장을 골라줘.", "cat");
+
+sendBtn.onclick = send;
+input.onkeydown = e => e.key === "Enter" && send();
+function send() {
+  if (!input.value.trim()) return;
+  addMsg(input.value, "user");
+  input.value = "";
+}
+
+/* 카드 선택 */
 let selected = [];
 
-/* ===== 사운드 ===== */
-const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
-bgm.loop = true;
-
-const sfxSpread = new Audio("/sounds/tarot/spread_open.mp3");
-const sfxPick = new Audio("/sounds/tarot/pick.mp3");
-
-let soundOn = false;
-
-soundBtn.onclick = () => {
-  soundOn = !soundOn;
-  soundBtn.textContent = soundOn ? "🔊" : "🔇";
-
-  if (soundOn) {
-    bgm.play();
-    sfxSpread.play();
-  } else {
-    bgm.pause();
-    bgm.currentTime = 0;
-  }
-};
-
-/* ===== 78장 카드 생성 ===== */
 for (let i = 0; i < 78; i++) {
-  const card = document.createElement("div");
-  card.className = "pick";
-  card.onclick = () => togglePick(card);
-  grid.appendChild(card);
+  const d = document.createElement("div");
+  d.className = "pick";
+  d.onclick = () => togglePick(d);
+  grid.appendChild(d);
 }
 
-function togglePick(card) {
-  if (card.classList.contains("sel")) {
-    card.classList.remove("sel");
-    selected = selected.filter(c => c !== card);
+function togglePick(el) {
+  if (el.classList.contains("sel")) {
+    el.classList.remove("sel");
+    selected = selected.filter(x => x !== el);
     return;
   }
-
   if (selected.length >= 3) return;
-
-  card.classList.add("sel");
-  selected.push(card);
-
-  if (soundOn) {
-    sfxPick.currentTime = 0;
-    sfxPick.play();
-  }
-
-  if (selected.length === 3) {
-    modal.classList.remove("hidden");
-  }
+  el.classList.add("sel");
+  selected.push(el);
+  if (selected.length === 3) modal.classList.remove("hidden");
 }
 
-/* ===== 이대로 진행 (연출 1단계 종료) ===== */
+/* 이대로 진행 */
 btnGo.onclick = () => {
   modal.classList.add("hidden");
 
-  // 1️⃣ 스프레드 영역 제거
-  spreadSection.style.display = "none";
+  /* 🔒 스크롤 완전 차단 + 맨 위 */
+  document.body.style.overflow = "hidden";
+  window.scrollTo({ top: 0, behavior: "instant" });
 
-  // 2️⃣ 선택 카드 상태 고정 (아직 이동/연출 없음)
-  selected.forEach(card => {
-    card.classList.remove("sel");
-    card.style.pointerEvents = "none";
+  /* 스프레드 제거 */
+  spread.style.display = "none";
+
+  /* 선택 카드 재정렬 */
+  selectedArea.innerHTML = "";
+  selectedArea.classList.remove("hidden");
+
+  selected.forEach(() => {
+    const c = document.createElement("div");
+    c.className = "selected-card";
+    selectedArea.appendChild(c);
   });
 
-  // 3️⃣ 다음 단계 대기 플래그
-  window.__READY_FOR_STAGE_2__ = true;
-
-  console.log("연출 1단계 완료: 다음 단계 대기");
+  addMsg("좋아. 이제 이 카드들로 리딩을 시작할게.", "cat");
 };
