@@ -21,46 +21,43 @@
 
 <main class="app">
 
-  <!-- 고양이 -->
+  <!-- 1️⃣ 고양이 & 안내 -->
   <section class="cat-area">
-    <img src="/public/assets/cat_ai.webp" alt="AI 고양이 상담사" />
+    <img src="/assets/cat_ai.webp" alt="AI 고양이 상담사" />
     <p>
-      지금 가장 마음에 걸리는 고민을 말해줘.<br>
-      <span>예언이 아니라, 마음을 정리하는 상담이야 🐾</span>
+      지금 가장 마음에 걸리는 고민을 선택해줘.<br />
+      <span>질문을 정리한 뒤 카드를 펼칠게 🐾</span>
     </p>
   </section>
 
-  <!-- 질문 카드 영역 -->
-  <section id="questionStage" class="question-stage">
-    <div class="q-card">지금 가장 고민되는 주제는 무엇일까요?</div>
-    <div class="q-options">
-      <button class="q-opt">관계/연애</button>
-      <button class="q-opt">일/직업</button>
-      <button class="q-opt">금전</button>
-      <button class="q-opt">선택의 갈림길</button>
-      <button class="q-opt">마음 상태</button>
-    </div>
-    <div class="q-actions">
-      <button id="goTarot" class="primary hidden">타로 보기</button>
+  <!-- 2️⃣ 질문 좁히기 -->
+  <section id="questionStep" class="question-step">
+    <div class="q-title">어떤 주제가 가장 궁금한가요?</div>
+    <div class="q-grid">
+      <button class="q-card" data-q="love">연애</button>
+      <button class="q-card" data-q="money">금전</button>
+      <button class="q-card" data-q="job">직업</button>
+      <button class="q-card" data-q="relationship">인간관계</button>
+      <button class="q-card" data-q="future">앞으로의 흐름</button>
     </div>
   </section>
 
-  <!-- 🔮 빅카드 -->
-  <section class="tarot-stage hidden" id="tarotStage">
+  <!-- 3️⃣ 빅카드 -->
+  <section id="tarotStage" class="tarot-stage hidden">
     <div class="big-cards">
-      <div class="big-card"><div class="big-back"></div><div class="big-front"></div></div>
-      <div class="big-card"><div class="big-back"></div><div class="big-front"></div></div>
-      <div class="big-card"><div class="big-back"></div><div class="big-front"></div></div>
+      <div class="big-card"></div>
+      <div class="big-card"></div>
+      <div class="big-card"></div>
     </div>
   </section>
 
-  <!-- 78장 스프레드 -->
+  <!-- 4️⃣ 78장 스프레드 -->
   <section id="spreadSection" class="picker hidden">
     <div class="picker-title">마음이 가는 카드 3장을 골라줘</div>
     <div id="grid78" class="grid78"></div>
   </section>
 
-  <!-- 채팅 -->
+  <!-- 5️⃣ 채팅 -->
   <section class="chat-wrap">
     <div id="chatContainer" class="chat-container"></div>
   </section>
@@ -72,13 +69,12 @@
   <button id="sendBtn">전송</button>
 </footer>
 
-<!-- 확인 모달 -->
+<!-- 6️⃣ 확인 모달 -->
 <div id="confirmModal" class="modal hidden">
   <div class="modal-card">
     <h3>다 정하셨나요?</h3>
-    <p>이 카드로 리딩을 시작해도 괜찮을까요?</p>
-    <button id="btnKeep" class="ghost">다시 고를게요</button>
-    <button id="btnGo" class="primary">이대로 진행</button>
+    <p>이 카드로 리딩을 시작할게요.</p>
+    <button id="btnGo">이대로 진행</button>
   </div>
 </div>
 
