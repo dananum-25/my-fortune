@@ -1,99 +1,148 @@
-const grid = document.getElementById("grid78");
-const spread = document.getElementById("spreadSection");
-const modal = document.getElementById("confirmModal");
-const btnGo = document.getElementById("btnGo");
-const chat = document.getElementById("chatContainer");
-const input = document.getElementById("userInput");
-const sendBtn = document.getElementById("sendBtn");
-const soundBtn = document.getElementById("soundToggle");
+const spread = document.getElementById("spread");
+const confirmBtn = document.getElementById("confirmBtn");
+const selectedRow = document.getElementById("selectedRow");
 const bigCards = document.querySelectorAll(".big-card");
 
-/* ===== 사운드 ===== */
-const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
-bgm.loop = true; bgm.volume = 0.15;
-const sPick = new Audio("/sounds/tarot/pick.mp3");
-const sFire = new Audio("/sounds/tarot/fire.mp3");
-const sReveal = new Audio("/sounds/tarot/reveal.mp3");
+const bgm = document.getElementById("bgm");
+const sPick = document.getElementById("pickSound");
+const sFire = document.getElementById("fireSound");
+const sReveal = document.getElementById("revealSound");
 
-let soundOn = false;
-soundBtn.onclick = () => {
-  soundOn = !soundOn;
-  soundBtn.textContent = soundOn ? "🔊" : "🔇";
-  soundOn ? bgm.play() : bgm.pause();
+let soundOn = true;
+let selected = [];
+
+/* ===== 카드 DB ===== */
+
+const MAJORS = [
+  "00_the_fool.png","01_the_magician.png","02_the_high_priestess.png",
+  "03_the_empress.png","04_the_emperor.png","05_the_hierophant.png",
+  "06_the_lovers.png","07_the_chariot.png","08_strength.png",
+  "09_the_hermit.png","10_wheel_of_fortune.png","11_justice.png",
+  "12_the_hanged_man.png","13_death.png","14_temperance.png",
+  "15_the_devil.png","16_the_tower.png","17_the_star.png",
+  "18_the_moon.png","19_the_sun.png","20_judgement.png","21_the_world.png"
+];
+
+const SUITS = ["cups","wands","swords","pentacles"];
+const MINOR_NAMES = {
+  "01":"ace","02":"two","03":"three","04":"four","05":"five","06":"six",
+  "07":"seven","08":"eight","09":"nine","10":"ten",
+  "11":"page","12":"knight","13":"queen","14":"king"
 };
 
-/* ===== 채팅 ===== */
-function addMsg(t,w){const d=document.createElement("div");d.className=`msg ${w}`;d.textContent=t;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;}
-sendBtn.onclick=send;
-input.onkeydown=e=>e.key==="Enter"&&send();
-function send(){ if(!input.value.trim())return; addMsg(input.value,"user"); input.value=""; }
-addMsg("마음이 가는 카드 3장을 골라줘.","cat");
-
-/* ===== 카드 생성 ===== */
-let selected=[];
-for(let i=0;i<78;i++){
-  const d=document.createElement("div");
-  d.className="pick";
-  d.onclick=()=>togglePick(d);
-  grid.appendChild(d);
-}
-function togglePick(el){
-  if(el.classList.contains("sel")){
-    el.classList.remove("sel");
-    selected=selected.filter(x=>x!==el);
-    return;
+function draw78() {
+  if (Math.random() < 22/78) {
+    const f = MAJORS[Math.floor(Math.random()*22)];
+    return `/assets/tarot/majors/${f}`;
+  } else {
+    const suit = SUITS[Math.floor(Math.random()*4)];
+    const num = String(Math.floor(Math.random()*14)+1).padStart(2,"0");
+    return `/assets/tarot/minors/${suit}/${num}_${MINOR_NAMES[num]}.png`;
   }
-  if(selected.length>=3)return;
-  el.classList.add("sel");
-  selected.push(el);
-  if(soundOn) sPick.play();
-  if(selected.length===3) modal.classList.remove("hidden");
 }
 
-/* ===== 진행 ===== */
-btnGo.onclick=async()=>{
-  modal.classList.add("hidden");
-  await ritual();
-};
+/* ===== 스프레드 생성 ===== */
 
-async function ritual(){
-  document.querySelectorAll(".pick:not(.sel)").forEach(p=>p.classList.add("fade"));
-  await wait(600);
+for(let i=0;i<78;i++){
+  const c = document.createElement("div");
+  c.className = "card";
+  c.onclick = () => pickCard(c);
+  spread.appendChild(c);
+}
 
-  const targets=[...bigCards].map(c=>c.getBoundingClientRect());
+/* ===== 카드 선택 ===== */
 
-  selected.forEach((card,i)=>{
-    const from=card.getBoundingClientRect();
-    const to=targets[i];
-    const f=document.createElement("div");
-    f.className="fireball";
-    document.body.appendChild(f);
-    f.style.left=from.left+"px";
-    f.style.top=from.top+"px";
-    f.animate([
-      { transform:`translate(0,0)` },
-      { transform:`translate(${(to.left-from.left)/2}px,-180px)` },
-      { transform:`translate(${to.left-from.left}px,${to.top-from.top}px)` }
-    ],{duration:4200,easing:"ease-in-out",fill:"forwards"});
-    setTimeout(()=>f.remove(),4300);
+function pickCard(card){
+  if(card.classList.contains("sel")) return;
+  if(selected.length>=3) return;
+
+  card.classList.add("sel");
+  selected.push(card);
+
+  if(soundOn){
+    sPick.currentTime=0;
+    sPick.play();
+    setTimeout(()=>sPick.pause(),120);
+  }
+
+  if(selected.length===3){
+    confirmBtn.disabled=false;
+  }
+}
+
+/* ===== 선택 확정 ===== */
+
+confirmBtn.onclick = async ()=>{
+  spread.style.display="none";
+
+  selectedRow.innerHTML="";
+  selected.forEach(c=>{
+    c.classList.remove("sel");
+    selectedRow.appendChild(c);
   });
 
-  if(soundOn) sFire.play();
-  await wait(4300);
+  await wait(400);
 
-  bigCards.forEach(c=>c.classList.add("burning"));
-  await wait(2500);
-  bigCards.forEach(c=>c.classList.add("smoking"));
-  await wait(3000);
+  ritual();
+};
 
-  bigCards.forEach(c=>{
-    const front=c.querySelector(".front");
-    front.style.backgroundImage=`url('/assets/tarot/majors/00_the_fool.png')`;
+/* ===== 파이어볼 + 빅카드 ===== */
+
+function ritual(){
+  bigCards.forEach(card=>{
+    const img = draw78();
+    const front = card.querySelector(".front");
+    front.style.backgroundImage = `url('${img}')`;
     front.style.display="block";
   });
-  if(soundOn) sReveal.play();
-  spread.style.display="none";
-  addMsg("이제 이 카드들을 하나씩 읽어볼게.","cat");
+
+  const targets = [...bigCards].map(b=>b.getBoundingClientRect());
+
+  selected.forEach((card,i)=>{
+    const from = card.getBoundingClientRect();
+    const to = targets[i];
+    fireball(from,to);
+  });
 }
 
-const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function fireball(from,to){
+  const f = document.createElement("div");
+  f.className="fireball";
+  document.body.appendChild(f);
+
+  f.style.left = from.left+"px";
+  f.style.top = from.top+"px";
+
+  if(soundOn){
+    sFire.currentTime=0;
+    sFire.play();
+  }
+
+  f.animate([
+    {transform:"translate(0,0) scale(1)"},
+    {transform:`translate(${to.left-from.left}px, ${to.top-from.top}px) scale(1.8)`}
+  ],{
+    duration:1200,
+    easing:"ease-in-out"
+  }).onfinish=()=>{
+    f.remove();
+    if(soundOn){
+      sReveal.currentTime=0;
+      sReveal.play();
+    }
+  };
+}
+
+/* ===== 유틸 ===== */
+
+function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+/* ===== 사운드 ===== */
+
+document.getElementById("soundToggle").onclick=()=>{
+  soundOn=!soundOn;
+  if(soundOn) bgm.play(); else bgm.pause();
+};
+
+bgm.volume=0.4;
+bgm.play();
