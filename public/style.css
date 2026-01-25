@@ -31,58 +31,38 @@ body {
   max-width: 420px;
   border-radius: 12px;
 }
-.cat-area span { opacity: .85; }
+.cat-area span {
+  opacity: .85;
+}
 
 /* 질문 카드 */
 .question-section {
-  padding: 12px;
+  padding: 14px;
 }
+
 .q-title {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   font-size: 16px;
-  opacity: .9;
+  opacity: .95;
 }
+
 .q-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 12px;
 }
+
 .q-card {
-  padding: 18px 12px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #1c1c26, #12121a);
+  padding: 20px 14px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #1e1e2a, #12121a);
   border: 1px solid rgba(255,255,255,.08);
   text-align: center;
   font-size: 15px;
+  line-height: 1.4;
 }
+
 .q-card:active {
-  transform: scale(.98);
+  transform: scale(.97);
   border-color: rgba(255,210,120,.6);
-}
-
-/* 스프레드 */
-.picker {
-  padding: 10px 12px;
-}
-.hidden { display: none; }
-
-.picker-title {
-  margin-bottom: 8px;
-  opacity: .9;
-}
-.grid78 {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 6px;
-  max-height: 260px;
-  overflow-y: auto;
-}
-.pick {
-  aspect-ratio: 2/3;
-  background: url("/public/assets/tarot/back.png") center/cover no-repeat;
-  border-radius: 6px;
-}
-.pick.sel {
-  outline: 2px solid #ffd36b;
-  box-shadow: 0 0 10px rgba(255,210,120,.6);
 }
