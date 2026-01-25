@@ -1,88 +1,84 @@
+/* =========================
+   기존 스타일 (버전-1)
+   ========================= */
+
+* { box-sizing: border-box; }
+
 body {
-  margin:0;
-  background:#0b0712;
-  color:#fff;
-  font-family:system-ui;
-  text-align:center;
+  margin: 0;
+  background: #0b0b0f;
+  color: #fff;
+  font-family: system-ui, sans-serif;
 }
 
-header {
-  padding:12px;
-  font-weight:bold;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
 }
 
-.hero img {
-  width:100%;
-  max-width:420px;
-  border-radius:12px;
+.cat-area {
+  text-align: center;
+  padding: 12px;
 }
 
-.spread {
-  display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(70px,1fr));
-  gap:6px;
-  padding:12px;
+.cat-area img {
+  width: 92%;
+  max-width: 420px;
+  border-radius: 12px;
 }
 
-.card {
-  width:70px;
-  height:110px;
-  background:url("/assets/back.png") center/cover;
-  border-radius:8px;
-  cursor:pointer;
-  transition:transform .3s;
-}
-
-.card.sel {
-  transform:translateY(-12px);
-  box-shadow:0 0 12px gold;
-}
-
-.selected-row {
-  display:flex;
-  justify-content:center;
-  gap:14px;
-  margin:14px 0;
-}
-
-.selected-row .card {
-  width:90px;
-  height:140px;
+.tarot-stage {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0;
 }
 
 .big-cards {
-  display:flex;
-  justify-content:center;
-  gap:16px;
-  margin-top:20px;
+  display: flex;
+  gap: 14px;
 }
 
 .big-card {
-  width:120px;
-  height:180px;
-  background:#000;
-  border-radius:12px;
-  position:relative;
-  overflow:hidden;
+  width: 110px;
+  height: 170px;
+  background: url("/assets/tarot/back.png") center/cover no-repeat;
+  border-radius: 12px;
 }
 
-.big-card .front {
-  width:100%;
-  height:100%;
-  background-size:cover;
-  background-position:center;
-  display:none;
+/* =========================
+   🔮 Step 2-1 추가 애니메이션
+   (빅카드만 / 연출 1단계)
+   ========================= */
+
+/* 이 클래스는
+   "이대로 진행" 클릭 시
+   JS에서 추가될 예정 */
+.big-card.stage-glow {
+  animation: breatheGlow 5.6s ease-in-out infinite;
+  box-shadow:
+    0 0 22px rgba(180,140,255,0.35),
+    0 0 44px rgba(120,60,220,0.25);
 }
 
-.fireball {
-  position:fixed;
-  width:20px;
-  height:20px;
-  background:radial-gradient(circle, #ff0, #f00);
-  border-radius:50%;
-  pointer-events:none;
-  z-index:9999;
+/* 아주 느린 호흡 */
+@keyframes breatheGlow {
+  0% {
+    transform: scale(1);
+    box-shadow:
+      0 0 18px rgba(160,120,255,0.25),
+      0 0 36px rgba(100,40,200,0.18);
+  }
+  50% {
+    transform: scale(1.045);
+    box-shadow:
+      0 0 30px rgba(200,160,255,0.45),
+      0 0 60px rgba(140,80,255,0.35);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow:
+      0 0 18px rgba(160,120,255,0.25),
+      0 0 36px rgba(100,40,200,0.18);
+  }
 }
