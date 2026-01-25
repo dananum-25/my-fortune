@@ -127,3 +127,25 @@ async function ritual() {
 }
 
 const wait = ms => new Promise(r=>setTimeout(r,ms));
+/* 🔧 레이아웃 안정화 */
+.tarot-stage {
+  position: relative;
+  z-index: 2;
+}
+
+.picker {
+  position: relative;
+  z-index: 1;
+  margin-top: 8px;
+}
+
+/* 모바일에서 반드시 보이게 */
+.grid78 {
+  min-height: 200px;
+}
+
+/* 혹시 가려지는 경우 방지 */
+.app {
+  display: flex;
+  flex-direction: column;
+}
