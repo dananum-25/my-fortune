@@ -1,124 +1,173 @@
-/* ===============================
-   BASE: 사운드
-================================ */
-const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
+/**************************************************
+ * 1️⃣ 전역 상태
+ **************************************************/
+let questionStep = 0;
+let selectedAnswers = [];
+let selectedCards = [];
+let soundEnabled = false;
+
+/**************************************************
+ * 2️⃣ DOM 참조
+ **************************************************/
+const questionTitle = document.getElementById("question-title");
+const questionOptions = document.getElementById("question-options");
+const triggerSection = document.getElementById("trigger-section");
+const triggerYesBtn = document.getElementById("trigger-yes");
+const triggerResetBtn = document.getElementById("trigger-reset");
+
+const cardStage = document.getElementById("card-stage"); // 빅카드 + 스프레드 컨테이너
+const bigCardContainer = document.getElementById("big-cards");
+const spreadContainer = document.getElementById("spread-cards");
+
+/**************************************************
+ * 3️⃣ 사운드
+ **************************************************/
+const bgm = new Audio("/public/sounds/tarot/ambient_entry.mp3");
 bgm.loop = true;
-bgm.volume = 0.3;
 
-const sPick = new Audio("/sounds/tarot/pick.mp3");
-const sOpen = new Audio("/sounds/tarot/spread_open.mp3");
-
-let soundOn = false;
-const soundBtn = document.getElementById("soundToggle");
-const soundIcon = document.getElementById("soundIcon");
-
-soundBtn.onclick = () => {
-  soundOn = !soundOn;
-  soundIcon.textContent = soundOn ? "🔊" : "🔇";
-  if (soundOn) bgm.play().catch(()=>{});
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  if (soundEnabled) bgm.play();
   else bgm.pause();
-};
+}
 
-/* ===============================
-   BASE: 질문 데이터
-================================ */
+/**************************************************
+ * 4️⃣ 질문 데이터
+ **************************************************/
 const QUESTIONS = [
   {
     title: "어떤 주제에 대한 상담일까?",
-    options: [
-      { label: "연애 · 관계", next: 1 },
-      { label: "직업 · 진로", next: 1 },
-      { label: "금전 · 현실", next: 1 },
-      { label: "나 자신 · 마음", next: 1 }
-    ]
+    options: ["연애 · 관계", "직업 · 진로", "금전 · 현실", "나 자신 · 마음"]
   },
   {
-    title: "지금 상황은 어떤 상태에 가까울까?",
-    options: [
-      { label: "혼란스럽고 방향을 못 잡겠어", next: 2 },
-      { label: "선택의 기로에 서 있어", next: 2 },
-      { label: "이미 결정했지만 확신이 없어", next: 2 },
-      { label: "감정이 흔들리고 있어", next: 2 }
-    ]
+    title: "이 고민은 언제부터였을까?",
+    options: ["최근", "꽤 오래됨", "계속 반복됨"]
   },
   {
-    title: "카드에게 무엇을 묻고 싶을까?",
-    options: [
-      { label: "지금의 흐름을 알고 싶어", next: "done" },
-      { label: "내 선택이 맞는지 묻고 싶어", next: "done" },
-      { label: "조언이나 방향을 듣고 싶어", next: "done" },
-      { label: "이 상황의 핵심을 알고 싶어", next: "done" }
-    ]
+    title: "지금 가장 바라는 건?",
+    options: ["명확한 방향", "위로", "결단의 힌트"]
   }
 ];
 
-const qTitle = document.getElementById("qTitle");
-const qGrid = document.getElementById("qGrid");
-const catMsg = document.getElementById("catMessage");
+/**************************************************
+ * 5️⃣ 질문 렌더링
+ **************************************************/
+function renderQuestion() {
+  const q = QUESTIONS[questionStep];
+  questionTitle.textContent = q.title;
+  questionOptions.innerHTML = "";
 
-let step = 0;
-renderStep(step);
-
-function renderStep(idx) {
-  qTitle.textContent = QUESTIONS[idx].title;
-  qGrid.innerHTML = "";
-
-  QUESTIONS[idx].options.forEach(opt => {
-    const card = document.createElement("div");
-    card.className = "q-card";
-    card.textContent = opt.label;
-
-    card.onclick = () => {
-      if (!soundOn) {
-        soundOn = true;
-        soundIcon.textContent = "🔊";
-        bgm.play().catch(()=>{});
-      }
-      sPick.currentTime = 0;
-      sPick.play().catch(()=>{});
-
-      if (opt.next === "done") {
-        finishQuestions();
-      } else {
-        step = opt.next;
-        sOpen.currentTime = 0;
-        sOpen.play().catch(()=>{});
-        renderStep(step);
-      }
-    };
-
-    qGrid.appendChild(card);
+  q.options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.className = "option-card";
+    btn.textContent = opt;
+    btn.onclick = () => selectAnswer(opt);
+    questionOptions.appendChild(btn);
   });
 }
 
-/* ===============================
-   ADDITION STEP 4 시작
-================================ */
+/**************************************************
+ * 6️⃣ 질문 선택 처리
+ **************************************************/
+function selectAnswer(answer) {
+  selectedAnswers.push(answer);
+  questionStep++;
 
-const triggerSection = document.getElementById("triggerSection");
-const bigCardSection = document.getElementById("bigCardSection");
-const spreadSection = document.getElementById("spreadSection");
-const grid78 = document.getElementById("grid78");
-
-function finishQuestions() {
-  qTitle.textContent = "";
-  qGrid.innerHTML = "";
-  triggerSection.classList.remove("hidden");
-
-  // 빅카드 + 스프레드 표시
-  bigCardSection.classList.remove("hidden");
-  spreadSection.classList.remove("hidden");
-
-  // 78장 생성
-  for (let i = 0; i < 78; i++) {
-    const d = document.createElement("div");
-    d.className = "pick";
-    d.onclick = () => d.classList.toggle("sel");
-    grid78.appendChild(d);
+  if (questionStep < QUESTIONS.length) {
+    renderQuestion();
+  } else {
+    finishQuestions();
   }
-
-  catMsg.innerHTML = `
-    좋아, 이제 준비가 됐어.<br>
-    <span>마음이 가는 카드 3장을 골라줘 🐾</span>
-  `;
 }
+
+/**************************************************
+ * 7️⃣ 질문 종료 → 중간 트리거
+ **************************************************/
+function finishQuestions() {
+  questionTitle.textContent = "";
+  questionOptions.innerHTML = "";
+
+  triggerSection.classList.remove("hidden");
+}
+
+/**************************************************
+ * 8️⃣ 트리거 버튼
+ **************************************************/
+triggerYesBtn.onclick = () => {
+  triggerSection.classList.add("hidden");
+  startCardStage();
+};
+
+triggerResetBtn.onclick = () => {
+  resetAll();
+};
+
+/**************************************************
+ * 9️⃣ 카드 스테이지 시작 (🔥 핵심)
+ **************************************************/
+function startCardStage() {
+  cardStage.classList.remove("hidden");
+
+  createBigCards();
+  createSpread();
+}
+
+/**************************************************
+ * 🔟 빅카드 3장 생성
+ **************************************************/
+function createBigCards() {
+  bigCardContainer.innerHTML = "";
+
+  for (let i = 0; i < 3; i++) {
+    const card = document.createElement("div");
+    card.className = "big-card back";
+    bigCardContainer.appendChild(card);
+  }
+}
+
+/**************************************************
+ * 1️⃣1️⃣ 78장 스프레드 생성
+ **************************************************/
+function createSpread() {
+  spreadContainer.innerHTML = "";
+
+  for (let i = 0; i < 78; i++) {
+    const card = document.createElement("div");
+    card.className = "spread-card back";
+    card.onclick = () => selectCard(card);
+    spreadContainer.appendChild(card);
+  }
+}
+
+/**************************************************
+ * 1️⃣2️⃣ 카드 선택 (3장 제한)
+ **************************************************/
+function selectCard(card) {
+  if (selectedCards.includes(card)) return;
+  if (selectedCards.length >= 3) return;
+
+  card.classList.add("selected");
+  selectedCards.push(card);
+}
+
+/**************************************************
+ * 1️⃣3️⃣ 전체 초기화
+ **************************************************/
+function resetAll() {
+  questionStep = 0;
+  selectedAnswers = [];
+  selectedCards = [];
+
+  triggerSection.classList.add("hidden");
+  cardStage.classList.add("hidden");
+
+  bigCardContainer.innerHTML = "";
+  spreadContainer.innerHTML = "";
+
+  renderQuestion();
+}
+
+/**************************************************
+ * 1️⃣4️⃣ 최초 실행
+ **************************************************/
+renderQuestion();
