@@ -1,5 +1,5 @@
 /* ===============================
-   사운드
+   사운드 (초기 뮤트)
 ================================ */
 const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
 bgm.loop = true;
@@ -10,13 +10,16 @@ const sOpen = new Audio("/sounds/tarot/spread_open.mp3");
 
 let soundOn = false;
 const soundBtn = document.getElementById("soundToggle");
+const soundIcon = document.getElementById("soundIcon");
 
-soundBtn.onclick = () => {
+soundBtn.onclick = () => toggleSound();
+
+function toggleSound() {
   soundOn = !soundOn;
-  soundBtn.textContent = soundOn ? "🔊" : "🔇";
+  soundIcon.textContent = soundOn ? "🔊" : "🔇";
   if (soundOn) bgm.play().catch(()=>{});
   else bgm.pause();
-};
+}
 
 /* ===============================
    질문 데이터 (기타 없음)
@@ -59,19 +62,9 @@ const qGrid = document.getElementById("qGrid");
 const catMsg = document.getElementById("catMessage");
 
 let step = 0;
-
 renderStep(step);
 
 function renderStep(idx) {
-  if (!soundOn) {
-    soundOn = true;
-    soundBtn.textContent = "🔊";
-    bgm.play().catch(()=>{});
-  }
-
-  sOpen.currentTime = 0;
-  sOpen.play().catch(()=>{});
-
   qTitle.textContent = QUESTIONS[idx].title;
   qGrid.innerHTML = "";
 
@@ -81,6 +74,13 @@ function renderStep(idx) {
     card.textContent = opt.label;
 
     card.onclick = () => {
+      // 첫 인터랙션에서만 배경음 시작
+      if (!soundOn) {
+        soundOn = true;
+        soundIcon.textContent = "🔊";
+        bgm.play().catch(()=>{});
+      }
+
       sPick.currentTime = 0;
       sPick.play().catch(()=>{});
 
@@ -88,6 +88,8 @@ function renderStep(idx) {
         finishQuestions();
       } else {
         step = opt.next;
+        sOpen.currentTime = 0;
+        sOpen.play().catch(()=>{});
         renderStep(step);
       }
     };
