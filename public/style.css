@@ -1,3 +1,12 @@
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 20000; /* ★ 무조건 최상단 */
+  background: rgba(0,0,0,.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 * { box-sizing: border-box; }
 
 body {
