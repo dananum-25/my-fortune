@@ -8,175 +8,129 @@ body {
   font-family: system-ui, sans-serif;
 }
 
-.app {
-  display: flex;
-  flex-direction: column;
-}
-
 .topbar {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px;
+  display:flex;
+  justify-content:space-between;
+  padding:12px;
 }
-
-.sound-btn { font-size: 18px; }
 
 .cat-area {
-  text-align: center;
-  padding: 12px;
+  text-align:center;
+  padding:12px;
 }
 .cat-area img {
-  width: 92%;
-  max-width: 420px;
-  border-radius: 12px;
+  width:92%;
+  max-width:420px;
+  border-radius:12px;
 }
 
 .tarot-stage {
-  display: flex;
-  justify-content: center;
-  margin: 16px 0;
-  position: relative;
-  z-index: 3;
+  display:flex;
+  justify-content:center;
+  margin:16px 0;
 }
 
 .big-cards {
-  display: flex;
-  gap: 14px;
+  display:flex;
+  gap:14px;
 }
 
 .big-card {
-  width: 110px;
-  height: 170px;
-  position: relative;
+  width:110px;
+  height:170px;
+  position:relative;
 }
 
-.big-back,
-.big-front {
-  position: absolute;
-  inset: 0;
-  border-radius: 12px;
-  background-size: cover;
-  background-position: center;
-}
-
-.big-back {
-  background-image: url("/assets/tarot/back.png");
-  z-index: 1;
-}
-
-.big-front {
-  display: none;
-  z-index: 4;
-}
-
-.big-card.burning .big-back::before {
-  content:"";
+.big-card .back,
+.big-card .front {
   position:absolute;
-  inset:-30%;
-  background: radial-gradient(circle,
-    #ffd36b,
-    #ff7a00,
-    #b300ff,
-    transparent 70%);
-  filter: blur(8px);
-  animation: flame 3s ease-in-out forwards;
+  inset:0;
+  border-radius:12px;
+  background-size:cover;
+  background-position:center;
 }
 
-@keyframes flame {
-  0% { opacity:.3; }
-  50% { opacity:1; }
-  100% { opacity:.8; }
+.big-card .back {
+  background-image:url("/assets/tarot/back.png");
+  z-index:1;
 }
 
-.big-card.smoking .big-back::after {
-  content:"";
-  position:absolute;
-  inset:-40%;
-  background: radial-gradient(circle,
-    rgba(255,255,255,.8),
-    transparent 70%);
-  filter: blur(12px);
-  animation: smoke 3.5s ease-out forwards;
+.big-card .front {
+  display:none;
+  z-index:5;
 }
 
-@keyframes smoke {
-  0% { opacity:1; }
-  100% { opacity:0; transform:translateY(-60px); }
+.picker {
+  padding:10px 12px;
 }
-
-.picker { padding: 10px 12px; }
 
 .grid78 {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 6px;
-  max-height: 260px;
-  overflow-y: auto;
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:6px;
+  max-height:260px;
+  overflow-y:auto;
 }
 
 .pick {
-  aspect-ratio: 2 / 3;
-  background: url("/assets/tarot/back.png") center/cover no-repeat;
-  border-radius: 6px;
-  cursor: pointer;
+  aspect-ratio:2/3;
+  background:url("/assets/tarot/back.png") center/cover no-repeat;
+  border-radius:6px;
 }
 
 .pick.sel {
-  outline: 2px solid gold;
+  outline:2px solid gold;
+  box-shadow:0 0 10px rgba(255,220,120,.7);
 }
 
 .pick.fade {
-  opacity: 0;
-  transform: scale(.4);
-  transition: .6s ease;
+  opacity:0;
+  transform:scale(.6);
+  transition:.6s ease;
 }
 
 .chat-container {
-  padding: 12px;
-  min-height: 140px;
+  padding:12px;
+  min-height:120px;
 }
 
 .chat-input {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #111;
-  padding: 10px;
-  display: flex;
-  gap: 8px;
-  z-index: 900;
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#111;
+  padding:10px;
+  display:flex;
+  gap:8px;
 }
 
 .modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.75);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.7);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
 }
 
 .modal-card {
-  background: #1a1a1f;
-  padding: 24px;
-  border-radius: 14px;
+  background:#1a1a1f;
+  padding:20px;
+  border-radius:12px;
 }
 
-.hidden { display: none; }
+.hidden { display:none; }
 
+/* 🔥 파이어볼 */
 .fireball {
-  position: fixed;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: radial-gradient(circle,
-    #fff,
-    #ffb300,
-    #ff4d00,
-    #9b00ff);
-  box-shadow: 0 0 30px rgba(255,180,80,.9);
-  pointer-events: none;
-  z-index: 9998;
+  position:fixed;
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  background:radial-gradient(circle,#fff,#b07cff,#ffd36b,#7a00c8);
+  box-shadow:0 0 30px rgba(255,200,120,.9);
+  pointer-events:none;
+  z-index:9999;
 }
