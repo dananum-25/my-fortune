@@ -6,26 +6,22 @@ const chat = document.getElementById("chatContainer");
 const input = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
 const soundBtn = document.getElementById("soundToggle");
-const bigCards = document.querySelectorAll(".big-card");
 
-/* 🔊 모바일 대응 사운드 */
+/* 사운드 */
 let bgm = null;
 let soundOn = false;
 
 soundBtn.onclick = () => {
   soundOn = !soundOn;
   soundBtn.textContent = soundOn ? "🔊" : "🔇";
-
   if (soundOn) {
     bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
     bgm.loop = true;
     bgm.volume = 0.15;
     bgm.play().catch(()=>{});
   } else {
-    if (bgm) {
-      bgm.pause();
-      bgm = null;
-    }
+    if (bgm) bgm.pause();
+    bgm = null;
   }
 };
 
@@ -49,7 +45,7 @@ function send() {
 
 addMsg("마음이 가는 카드 3장을 골라줘.", "cat");
 
-/* 카드 생성 */
+/* 카드 */
 let selected = [];
 for (let i = 0; i < 78; i++) {
   const d = document.createElement("div");
@@ -72,8 +68,7 @@ function togglePick(el) {
 
 btnGo.onclick = () => {
   modal.classList.add("hidden");
-  document.querySelectorAll(".pick:not(.sel)")
-    .forEach(p => p.classList.add("fade"));
+  document.querySelectorAll(".pick:not(.sel)").forEach(p => p.classList.add("fade"));
   spread.style.display = "none";
   addMsg("이제 이 카드들을 하나씩 읽어볼게.", "cat");
 };
