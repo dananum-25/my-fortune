@@ -1,42 +1,66 @@
 /* =========================
-   SOUND SYSTEM
-========================= */
-let soundEnabled = false;
-let soundUnlocked = false;
-
-const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
-bgm.loop = true;
-bgm.volume = 0.18;
-
-const FX = {
-  pick: "/sounds/tarot/card_pick.mp3",
-  spread: "/sounds/tarot/spread_open.mp3",
-  fire: "/sounds/tarot/fire.mp3",
-  reveal: "/sounds/tarot/tarot_reveal.mp3"
-};
-
-function unlockSound() {
-  if (soundUnlocked) return;
-  const silent = new Audio("data:audio/mp3;base64,//uQxAAAA");
-  silent.play().catch(()=>{});
-  soundUnlocked = true;
-}
-
-function playFX(type) {
-  if (!soundEnabled || !soundUnlocked) return;
-  const a = new Audio(FX[type]);
-  a.volume = .8;
-  a.play().catch(()=>{});
-}
-
-/* =========================
    ELEMENTS
 ========================= */
 const grid = document.getElementById("grid78");
+const spreadSection = document.getElementById("spreadSection");
 const modal = document.getElementById("confirmModal");
 const btnGo = document.getElementById("btnGo");
 const bigCards = document.querySelectorAll(".big-card");
 const soundBtn = document.getElementById("soundToggle");
+
+const chat = document.getElementById("chatContainer");
+const input = document.getElementById("userInput");
+const sendBtn = document.getElementById("sendBtn");
+
+/* =========================
+   CHAT (복구)
+========================= */
+function addMsg(text, who) {
+  const d = document.createElement("div");
+  d.className = `msg ${who}`;
+  d.textContent = text;
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function send() {
+  if (!input.value.trim()) return;
+  addMsg(input.value, "user");
+  input.value = "";
+}
+
+sendBtn.onclick = send;
+input.addEventListener("keydown", e => {
+  if (e.key === "Enter") send();
+});
+
+addMsg("마음이 가는 카드 3장을 골라줘.", "cat");
+
+/* =========================
+   SOUND
+========================= */
+let soundEnabled = false;
+let unlocked = false;
+
+const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
+bgm.loop = true;
+bgm.volume = 0.2;
+
+function unlockSound() {
+  if (unlocked) return;
+  const s = new Audio("data:audio/mp3;base64,//uQxAAAA");
+  s.play().catch(()=>{});
+  unlocked = true;
+}
+
+soundBtn.onclick = () => {
+  unlockSound();
+  soundEnabled = !soundEnabled;
+  soundBtn.textContent = soundEnabled ? "🔊" : "🔇";
+  soundEnabled ? bgm.play().catch(()=>{}) : bgm.pause();
+};
+
+document.addEventListener("pointerdown", unlockSound, { once:true });
 
 /* =========================
    CARD TABLE
@@ -56,7 +80,7 @@ const MINORS = ["01_ace","02_two","03_three","04_four","05_five","06_six",
   "07_seven","08_eight","09_nine","10_ten","11_page","12_knight","13_queen","14_king"];
 
 function draw78() {
-  if (Math.random() < 22/78) {
+  if (Math.random() < 22/78 && MAJORS.length) {
     return `/assets/tarot/majors/${MAJORS.splice(Math.floor(Math.random()*MAJORS.length),1)[0]}`;
   }
   const suit = SUITS[Math.floor(Math.random()*4)];
@@ -73,62 +97,59 @@ for (let i=0;i<78;i++) {
   const d = document.createElement("div");
   d.className = "pick";
   d.onclick = () => {
-    if (d.classList.contains("sel")) return;
-    if (selected.length>=3) return;
+    if (selected.includes(d)) return;
+    if (selected.length >= 3) return;
     d.classList.add("sel");
     selected.push(d);
-    playFX("pick");
-    if (selected.length===3) modal.classList.remove("hidden");
+    if (selected.length === 3) modal.classList.remove("hidden");
   };
   grid.appendChild(d);
 }
 
 btnGo.onclick = async () => {
   modal.classList.add("hidden");
-  playFX("spread");
 
-  document.querySelectorAll(".pick:not(.sel)").forEach(p=>p.classList.add("fade"));
+  // 75장 제거
+  document.querySelectorAll(".pick:not(.sel)").forEach(p => p.classList.add("fade"));
   await wait(600);
 
-  selected.forEach((card,i)=>{
+  // 🔥 선택 카드 → 파이어볼
+  selected.forEach((card, i) => {
     const from = card.getBoundingClientRect();
     const to = bigCards[i].getBoundingClientRect();
 
     const fb = document.createElement("div");
-    fb.className="fireball";
+    fb.className = "fireball";
     document.body.appendChild(fb);
 
-    playFX("fire");
+    fb.style.left = from.left + from.width/2 - 22 + "px";
+    fb.style.top  = from.top  + from.height/2 - 22 + "px";
 
     fb.animate([
-      {transform:`translate(${from.left}px,${from.top}px)`},
-      {transform:`translate(${(from.left+to.left)/2}px,${from.top-160}px)`},
-      {transform:`translate(${to.left}px,${to.top}px)`}
-    ],{duration:3000,easing:"ease-in-out",fill:"forwards"});
+      { transform:"translate(0,0)" },
+      { transform:`translate(${(to.left-from.left)}px,${(to.top-from.top)}px)` }
+    ],{
+      duration:2600,
+      easing:"cubic-bezier(.3,.7,.4,1)",
+      fill:"forwards"
+    });
 
-    setTimeout(()=>fb.remove(),3100);
+    setTimeout(()=>fb.remove(),2700);
   });
 
-  await wait(3200);
+  await wait(2800);
 
-  bigCards.forEach(c=>{
-    const front=c.querySelector(".front");
-    front.style.backgroundImage=`url('${draw78()}')`;
-    front.style.display="block";
+  // 스프레드 완전 제거
+  spreadSection.style.display = "none";
+
+  // 카드 리빌
+  bigCards.forEach((c,i)=>{
+    const f = c.querySelector(".front");
+    f.style.backgroundImage = `url('${draw78()}')`;
+    f.style.display = "block";
   });
 
-  playFX("reveal");
+  addMsg("이제 이 카드들을 하나씩 읽어볼게.", "cat");
 };
 
-/* ========================= */
 const wait = ms => new Promise(r=>setTimeout(r,ms));
-
-soundBtn.onclick = () => {
-  unlockSound();
-  soundEnabled=!soundEnabled;
-  soundBtn.textContent=soundEnabled?"🔊":"🔇";
-  if (soundEnabled) bgm.play().catch(()=>{});
-  else bgm.pause();
-};
-
-document.addEventListener("pointerdown",unlockSound,{once:true});
