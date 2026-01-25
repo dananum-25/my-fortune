@@ -1,3 +1,4 @@
+/* ===== BASE 그대로 ===== */
 * { box-sizing: border-box; }
 
 body {
@@ -5,24 +6,29 @@ body {
   background: #0b0b0f;
   color: #fff;
   font-family: system-ui, sans-serif;
-  padding-bottom: 90px;
 }
 
-/* 상단 */
 .topbar {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 12px;
 }
 
 .sound-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
   background: none;
   border: none;
   color: #fff;
-  font-size: 14px;
 }
 
-/* 고양이 */
+.sound-label { opacity: .85; }
+
+.app { padding-bottom: 24px; }
+
 .cat-area {
   text-align: center;
   padding: 12px;
@@ -34,26 +40,47 @@ body {
 }
 .cat-area span { opacity: .85; }
 
-/* 질문 카드 */
-.question-step {
-  padding: 14px;
-}
+.question-section { padding: 14px; }
+
 .q-title {
-  text-align: center;
   margin-bottom: 12px;
+  font-size: 16px;
+  opacity: .95;
 }
+
 .q-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 12px;
 }
+
 .q-card {
-  padding: 16px;
-  background: #1a1a22;
-  border: 1px solid #2a2a35;
-  border-radius: 14px;
-  color: #fff;
+  padding: 20px 14px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #1e1e2a, #12121a);
+  border: 1px solid rgba(255,255,255,.08);
+  text-align: center;
   font-size: 15px;
+  line-height: 1.4;
+}
+.q-card:active {
+  transform: scale(.97);
+  border-color: rgba(255,210,120,.6);
+}
+
+/* ===== ADDITION ===== */
+
+.hidden { display: none; }
+
+/* 중간 트리거 */
+.trigger-section {
+  padding: 24px 16px;
+  text-align: center;
+}
+.trigger-text {
+  font-size: 16px;
+  line-height: 1.5;
+  opacity: .95;
 }
 
 /* 빅카드 */
@@ -69,13 +96,16 @@ body {
 .big-card {
   width: 110px;
   height: 170px;
-  background: url("/assets/tarot/back.png") center/cover no-repeat;
   border-radius: 12px;
+  background: url("/assets/tarot/back.png") center/cover no-repeat;
 }
 
-/* 스프레드 */
-.picker {
-  padding: 10px 12px;
+/* 78장 스프레드 */
+.picker { padding: 12px; }
+.picker-title {
+  margin-bottom: 8px;
+  font-size: 14px;
+  opacity: .9;
 }
 .grid78 {
   display: grid;
@@ -86,48 +116,9 @@ body {
 }
 .pick {
   aspect-ratio: 2/3;
-  background: url("/assets/tarot/back.png") center/cover no-repeat;
   border-radius: 6px;
+  background: url("/assets/tarot/back.png") center/cover no-repeat;
 }
 .pick.sel {
   outline: 2px solid #ffd36b;
 }
-
-/* 채팅 */
-.chat-container {
-  padding: 12px;
-  min-height: 140px;
-}
-.msg { margin-bottom: 6px; }
-.msg.user { text-align: right; opacity: .9; }
-
-/* 입력 */
-.chat-input {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #111;
-  padding: 10px;
-  display: flex;
-  gap: 8px;
-  z-index: 999;
-}
-
-/* 모달 */
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-.modal-card {
-  background: #1a1a1f;
-  padding: 20px;
-  border-radius: 12px;
-  text-align: center;
-}
-.hidden { display: none; }
