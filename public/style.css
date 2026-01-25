@@ -4,114 +4,74 @@ body {
   margin: 0;
   background: #0b0b0f;
   color: #fff;
-  font-family: system-ui, sans-serif;
-  padding-bottom: 90px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* 상단 */
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px;
+.app {
+  max-width: 430px;
+  margin: 0 auto;
+  padding-bottom: 24px;
 }
 
-/* 고양이 */
+/* 🐾 고양이 */
 .cat-area {
   text-align: center;
-  padding: 12px;
+  padding: 16px 12px 8px;
 }
 .cat-area img {
-  width: 92%;
-  max-width: 420px;
-  border-radius: 12px;
+  width: 90%;
+  max-width: 360px;
+  border-radius: 14px;
 }
-.cat-area span { opacity: .85; }
-
-/* 빅카드 */
-.tarot-stage {
-  display: flex;
-  justify-content: center;
-  margin: 16px 0;
+.cat-text {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-top: 12px;
 }
-.big-cards {
-  display: flex;
-  gap: 14px;
-}
-.big-card {
-  width: 110px;
-  height: 170px;
-  background: url("/public/assets/tarot/back.png") center/cover no-repeat;
-  border-radius: 12px;
+.cat-text span {
+  font-size: 13px;
+  opacity: 0.85;
 }
 
-/* 선택 카드 재정렬 영역 */
-.selected-area {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin: 14px 0;
-}
-.selected-card {
-  width: 90px;
-  height: 135px;
-  background: url("/public/assets/tarot/back.png") center/cover no-repeat;
-  border-radius: 10px;
-}
-
-/* 스프레드 */
-.picker { padding: 10px 12px; }
-.grid78 {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 6px;
-  max-height: 260px;
-  overflow-y: auto;
-}
-.pick {
-  aspect-ratio: 2/3;
-  background: url("/public/assets/tarot/back.png") center/cover no-repeat;
-  border-radius: 6px;
-}
-.pick.sel {
-  outline: 2px solid #ffd36b;
-}
-
-/* 채팅 */
-.chat-container {
+/* 질문 영역 */
+.question-area {
   padding: 12px;
-  min-height: 140px;
-}
-.msg { margin-bottom: 6px; }
-.msg.cat { opacity: .85; }
-.msg.user { text-align: right; }
-
-/* 입력 */
-.chat-input {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #111;
-  padding: 10px;
-  display: flex;
-  gap: 8px;
-  z-index: 999;
 }
 
-/* 모달 */
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000; /* 빅카드보다 위 */
+/* 질문 문장 */
+.question-title {
+  font-size: 15.5px;
+  margin-bottom: 14px;
+  line-height: 1.45;
 }
-.modal-card {
-  background: #1a1a1f;
-  padding: 20px;
-  border-radius: 12px;
+
+/* 카드 선택 그리드 */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+/* 카드형 선택지 */
+.select-card {
+  background: linear-gradient(
+    160deg,
+    #171724,
+    #10101a
+  );
+  border-radius: 14px;
+  padding: 16px 12px;
   text-align: center;
+  font-size: 14.5px;
+  line-height: 1.35;
+  border: 1px solid rgba(200, 170, 255, 0.18);
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
 }
-.hidden { display: none; }
+
+.select-card:hover,
+.select-card:active {
+  transform: translateY(-2px);
+  border-color: rgba(220, 190, 255, 0.55);
+  box-shadow: 0 6px 18px rgba(120, 80, 200, 0.35);
+}
