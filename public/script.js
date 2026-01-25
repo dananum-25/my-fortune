@@ -2,131 +2,114 @@ const grid = document.getElementById("grid78");
 const spread = document.getElementById("spreadSection");
 const modal = document.getElementById("confirmModal");
 const btnGo = document.getElementById("btnGo");
-const chat = document.getElementById("chatContainer");
-const input = document.getElementById("userInput");
-const sendBtn = document.getElementById("sendBtn");
+const selectedRow = document.getElementById("selectedRow");
+const bigCards = document.querySelectorAll(".big-card");
 const soundBtn = document.getElementById("soundToggle");
 
-const bigCards = document.querySelectorAll(".big-card");
-const bigFronts = document.querySelectorAll(".big-front");
-
-let selected = [];
-let deck = [...Array(78)].map((_, i) => i);
-
-/* 사운드 */
+/* 사운드 (버전1 유지) */
 const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
 bgm.loop = true;
+bgm.volume = 0.15;
 let soundOn = false;
 
 soundBtn.onclick = () => {
   soundOn = !soundOn;
   soundBtn.textContent = soundOn ? "🔊" : "🔇";
-  soundOn ? bgm.play().catch(()=>{}) : bgm.pause();
+  if (soundOn) bgm.play().catch(()=>{});
+  else bgm.pause();
 };
 
-/* 초기 멘트 */
-addMsg("마음이 가는 카드 3장을 골라줘.", "cat");
+/* 카드 DB */
+const MAJORS = [
+  "00_the_fool.png","01_the_magician.png","02_the_high_priestess.png",
+  "03_the_empress.png","04_the_emperor.png","05_the_hierophant.png",
+  "06_the_lovers.png","07_the_chariot.png","08_strength.png",
+  "09_the_hermit.png","10_wheel_of_fortune.png","11_justice.png",
+  "12_the_hanged_man.png","13_death.png","14_temperance.png",
+  "15_the_devil.png","16_the_tower.png","17_the_star.png",
+  "18_the_moon.png","19_the_sun.png","20_judgement.png","21_the_world.png"
+];
+const SUITS = ["cups","wands","swords","pentacles"];
+const MINOR_NAMES = {
+  "01":"ace","02":"two","03":"three","04":"four","05":"five","06":"six",
+  "07":"seven","08":"eight","09":"nine","10":"ten",
+  "11":"page","12":"knight","13":"queen","14":"king"
+};
 
-/* 카드 생성 */
-deck.forEach(() => {
-  const d = document.createElement("div");
-  d.className = "pick";
-  d.onclick = () => togglePick(d);
-  grid.appendChild(d);
+let deck = [];
+MAJORS.forEach(f => deck.push(`/assets/tarot/majors/${f}`));
+SUITS.forEach(suit => {
+  Object.keys(MINOR_NAMES).forEach(num => {
+    deck.push(`/assets/tarot/minors/${suit}/${num}_${MINOR_NAMES[num]}.png`);
+  });
 });
 
-function togglePick(el) {
-  if (el.classList.contains("sel")) {
-    el.classList.remove("sel");
-    selected = selected.filter(x => x !== el);
-    return;
-  }
-  if (selected.length >= 3) return;
-  el.classList.add("sel");
-  selected.push(el);
-  if (selected.length === 3) modal.classList.remove("hidden");
+/* 스프레드 생성 */
+let selected = [];
+for (let i = 0; i < 78; i++) {
+  const c = document.createElement("div");
+  c.className = "pick";
+  c.onclick = () => {
+    if (c.classList.contains("sel") || selected.length >= 3) return;
+    c.classList.add("sel");
+    selected.push(c);
+    if (selected.length === 3) modal.classList.remove("hidden");
+  };
+  grid.appendChild(c);
 }
 
+/* 진행 */
 btnGo.onclick = async () => {
   modal.classList.add("hidden");
-  await ritualSequence();
-};
 
-async function ritualSequence() {
+  // 스프레드 제거
+  spread.remove();
 
-  await wait(600);        // ① 정적
-  await wait(1800);       // ② 불씨 여운
+  // 선택 카드 재정렬
+  selected.forEach(card => {
+    card.classList.remove("sel");
+    selectedRow.appendChild(card);
+  });
 
-  const targets = [...bigCards].map(c => c.getBoundingClientRect());
+  await wait(2000);
+
+  // 파이어볼 이동
+  const targets = [...bigCards].map(b => b.getBoundingClientRect());
 
   selected.forEach((card, i) => {
     const from = card.getBoundingClientRect();
     const to = targets[i];
 
-    const fireball = document.createElement("div");
-    fireball.className = "fireball";
-    fireball.style.left = from.left + from.width/2 + "px";
-    fireball.style.top = from.top + from.height/2 + "px";
-    document.body.appendChild(fireball);
+    const fire = document.createElement("div");
+    fire.className = "fireball";
+    document.body.appendChild(fire);
+    fire.style.left = from.left + "px";
+    fire.style.top = from.top + "px";
 
-    fireball.animate([
-      { transform: "translate(0,0) scale(1)" },
-      {
-        transform:
-          `translate(${to.left - from.left}px, ${to.top - from.top}px) scale(1.3)`
-      }
-    ], {
-      duration: 2800,
-      easing: "cubic-bezier(.22,1,.36,1)",
-      fill: "forwards"
-    });
+    fire.animate([
+      { transform: "translate(0,0)" },
+      { transform: `translate(${to.left-from.left}px, ${to.top-from.top}px)` }
+    ], { duration: 3000, easing: "ease-in-out" });
 
-    setTimeout(() => fireball.remove(), 3000);
+    setTimeout(() => fire.remove(), 3000);
   });
 
-  document.querySelectorAll(".pick:not(.sel)").forEach(p => p.remove());
+  await wait(3000);
 
-  await wait(400);        // ④ 도착 정적
+  // 점화 → 연기
+  bigCards.forEach(b => b.classList.add("burning"));
+  await wait(2000);
+  bigCards.forEach(b => b.classList.add("smoking"));
+  await wait(2000);
 
-  bigCards.forEach(c => c.classList.add("burning"));
-  await wait(2600);       // ⑤ 활활
-
-  bigCards.forEach(c => c.classList.add("smoking"));
-  await wait(1600);       // ⑥ 연기
-
-  await wait(500);        // ⑦ 침묵
-
-  selected.forEach((_, i) => {
-    bigFronts[i].style.display = "block";
-    bigFronts[i].style.backgroundImage =
-      `url('/assets/tarot/majors/${draw()}.png')`;
+  // 앞면 리빌 (중복 없음)
+  bigCards.forEach((b) => {
+    const idx = Math.floor(Math.random() * deck.length);
+    const img = deck.splice(idx, 1)[0];
+    const front = b.querySelector(".big-front");
+    front.style.backgroundImage = `url('${img}')`;
+    front.style.display = "block";
   });
-
-  spread.style.display = "none";
-  addMsg("이제 이 카드들을 하나씩 읽어볼게.", "cat");
-}
-
-function draw() {
-  const i = Math.floor(Math.random() * deck.length);
-  return String(deck.splice(i, 1)[0]).padStart(2, "0");
-}
+};
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
-
-/* 채팅 */
-sendBtn.onclick = send;
-input.onkeydown = e => e.key === "Enter" && send();
-
-function send() {
-  if (!input.value.trim()) return;
-  addMsg(input.value, "user");
-  input.value = "";
-}
-
-function addMsg(text, who) {
-  const d = document.createElement("div");
-  d.className = "msg " + who;
-  d.textContent = text;
-  chat.appendChild(d);
-  chat.scrollTop = chat.scrollHeight;
-}
