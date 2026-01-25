@@ -1,4 +1,5 @@
 const grid = document.getElementById("grid78");
+const spreadSection = document.getElementById("spreadSection");
 const modal = document.getElementById("confirmModal");
 const btnGo = document.getElementById("btnGo");
 const soundBtn = document.getElementById("soundToggle");
@@ -57,8 +58,21 @@ function togglePick(card) {
   }
 }
 
-/* ===== 모달 진행 (연출 1단계 끝) ===== */
+/* ===== 이대로 진행 (연출 1단계 종료) ===== */
 btnGo.onclick = () => {
   modal.classList.add("hidden");
-  // ❗ 이후 연출은 다음 단계에서
+
+  // 1️⃣ 스프레드 영역 제거
+  spreadSection.style.display = "none";
+
+  // 2️⃣ 선택 카드 상태 고정 (아직 이동/연출 없음)
+  selected.forEach(card => {
+    card.classList.remove("sel");
+    card.style.pointerEvents = "none";
+  });
+
+  // 3️⃣ 다음 단계 대기 플래그
+  window.__READY_FOR_STAGE_2__ = true;
+
+  console.log("연출 1단계 완료: 다음 단계 대기");
 };
