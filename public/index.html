@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI 고양이 타로 상담</title>
 
-  <!-- 🔒 고정 메타 -->
+  <!-- 고정 메타 -->
   <meta name="naver-site-verification" content="20b0cc209520048d7c651297a28b316fe1de7cd8" />
   <meta name="google-site-verification" content="5FKwm4_bVWL9skvm5olmNjvPSIzR_tW75VT_0NpJ9VA" />
   <meta name="google-adsense-account" content="ca-pub-7356591276029815" />
@@ -21,10 +21,10 @@
 
 <main class="app">
 
-  <!-- 고양이 영역 -->
+  <!-- 고양이 -->
   <section class="cat-area">
-    <img src="/public/assets/cat_ai.webp" alt="AI 고양이 상담사" />
-    <p>
+    <img src="/assets/cat_ai.webp" alt="AI 고양이 상담사" />
+    <p id="catMessage">
       지금 가장 마음에 걸리는 고민을 골라줘.<br>
       <span>예언이 아니라, 마음을 정리하는 상담이야 🐾</span>
     </p>
@@ -32,19 +32,8 @@
 
   <!-- 질문 카드 영역 -->
   <section id="questionSection" class="question-section">
-    <div class="q-title">어떤 주제에 대한 상담일까?</div>
-    <div class="q-grid">
-      <div class="q-card" data-value="love">연애 · 관계</div>
-      <div class="q-card" data-value="job">직업 · 진로</div>
-      <div class="q-card" data-value="money">금전 · 현실</div>
-      <div class="q-card" data-value="self">나 자신 · 마음</div>
-    </div>
-  </section>
-
-  <!-- 78장 스프레드 -->
-  <section id="spreadSection" class="picker hidden">
-    <div class="picker-title">마음이 가는 카드 3장을 골라줘</div>
-    <div id="grid78" class="grid78"></div>
+    <div id="qTitle" class="q-title"></div>
+    <div id="qGrid" class="q-grid"></div>
   </section>
 
 </main>
