@@ -1,11 +1,10 @@
 const grid = document.getElementById("grid78");
-const spread = document.getElementById("spreadSection");
 const modal = document.getElementById("confirmModal");
 const btnGo = document.getElementById("btnGo");
 const bigCards = [...document.querySelectorAll(".big-card")];
 const fxLayer = document.getElementById("fx-layer");
 
-/* ===== 카드 덱 생성 (78장 고정, 중복 없음) ===== */
+/* 카드 덱 */
 const MAJORS = [
   "00_the_fool.png","01_the_magician.png","02_the_high_priestess.png",
   "03_the_empress.png","04_the_emperor.png","05_the_hierophant.png",
@@ -30,7 +29,7 @@ SUITS.forEach(s =>
   )
 );
 
-/* ===== 스프레드 생성 ===== */
+/* 스프레드 */
 let selected = [];
 for (let i = 0; i < 78; i++) {
   const d = document.createElement("div");
@@ -49,26 +48,27 @@ for (let i = 0; i < 78; i++) {
   grid.appendChild(d);
 }
 
-/* ===== 진행 ===== */
 btnGo.onclick = async () => {
   modal.classList.add("hidden");
 
-  // 75장 제거
-  document.querySelectorAll(".pick:not(.sel)")
-    .forEach(p => p.remove());
+  /* 75장 제거 */
+  document.querySelectorAll(".pick:not(.sel)").forEach(p => p.remove());
 
-  // 선택된 3장 재정렬 (빅카드 아래)
-  const baseY = bigCards[0].getBoundingClientRect().bottom + 20;
+  /* 선택 카드 재정렬 (크기 복구) */
+  const baseY = bigCards[0].getBoundingClientRect().bottom + 24;
   selected.forEach((card, i) => {
     const r = bigCards[i].getBoundingClientRect();
     card.style.position = "fixed";
+    card.style.width = "80px";
+    card.style.height = "120px";
     card.style.left = r.left + "px";
     card.style.top = baseY + "px";
+    card.style.transform = "scale(1)";
   });
 
   await wait(600);
 
-  // 파이어볼
+  /* 파이어볼 */
   selected.forEach((card, i) => {
     const from = card.getBoundingClientRect();
     const to = bigCards[i].getBoundingClientRect();
@@ -88,7 +88,14 @@ btnGo.onclick = async () => {
 
   await wait(4200);
 
-  // 카드 리빌 (중복 없음)
+  /* 🔥 점화 → 💨 연기 */
+  bigCards.forEach(c => c.classList.add("burning"));
+  await wait(2800);
+  bigCards.forEach(c => c.classList.add("smoking"));
+
+  await wait(3400);
+
+  /* 앞면 리빌 */
   bigCards.forEach(c => {
     const idx = Math.floor(Math.random() * deck.length);
     const img = deck.splice(idx, 1)[0];
@@ -96,8 +103,6 @@ btnGo.onclick = async () => {
     front.style.backgroundImage = `url('${img}')`;
     front.style.display = "block";
   });
-
-  spread.style.display = "none";
 };
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
