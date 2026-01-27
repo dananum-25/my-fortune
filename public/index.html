@@ -4,45 +4,66 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI 고양이 타로 상담</title>
-  <link rel="stylesheet" href="/style.css" />
+
+  <!-- 🔒 고정 메타 -->
+  <meta name="naver-site-verification" content="20b0cc209520048d7c651297a28b316fe1de7cd8" />
+  <meta name="google-site-verification" content="5FKwm4_bVWL9skvm5olmNjvPSIzR_tW75VT_0NpJ9VA" />
+  <meta name="google-adsense-account" content="ca-pub-7356591276029815">
+
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<header class="top-bar">
-  <h1>🐾 AI 고양이 타로 상담</h1>
-  <button id="soundToggle">Sound 🔇</button>
+<header class="topbar">
+  <div class="brand">🐾 AI 고양이 타로 상담</div>
+  <button id="soundToggle" class="sound-btn">사운드 🔇</button>
 </header>
 
-<!-- 1️⃣ 질문 단계 -->
-<section id="questionStage" class="stage">
-  <img src="/assets/cat_ai.webp" class="cat-img" />
-  <p class="main-text">
-    지금 가장 마음에 걸리는 고민을 떠올려보세요.<br />
-    예언이 아니라, 마음을 정리하는 상담이에요 🐾
-  </p>
-  <button id="startPick" class="primary-btn">
-    예스, 카드 선택
-  </button>
-</section>
+<main class="app">
 
-<!-- 2️⃣ 카드 선택 안내 -->
-<section id="pickGuide" class="stage hidden">
-  <p class="main-text">
-    지금 선택을 생각하며<br />
-    마음이 가는 카드 3장을 골라주세요
-  </p>
-</section>
+  <!-- 1️⃣ 고양이 영역 -->
+  <section class="cat-area">
+    <img src="/assets/cat_ai.webp" alt="AI 고양이 상담사" />
+    <p id="catText">
+      지금 가장 마음에 걸리는 고민이 어떤 분야인지 골라줘.
+    </p>
+  </section>
 
-<!-- 3️⃣ 스프레드 -->
-<section id="spreadStage" class="hidden">
-  <div id="spread" class="spread-grid"></div>
-</section>
+  <!-- 2️⃣ 질문 단계 -->
+  <section id="questionArea" class="question-area"></section>
 
-<!-- 파이어볼 -->
-<div id="fireball"></div>
+  <!-- 3️⃣ 전환 트리거 -->
+  <section id="transitionArea" class="transition hidden">
+    <p>지금 선택을 생각하며 카드를 3장 골라볼까요?</p>
+    <button id="goCard">YES, 카드 선택으로</button>
+    <button id="resetAll">처음으로</button>
+  </section>
 
-<audio id="bgm" src="/sounds/ambient_entry.mp3" loop></audio>
+  <!-- 4️⃣ 빅카드 -->
+  <section id="bigCardStage" class="tarot-stage hidden">
+    <div class="big-cards">
+      <div class="big-card"></div>
+      <div class="big-card"></div>
+      <div class="big-card"></div>
+    </div>
+  </section>
 
-<script src="/script.js"></script>
+  <!-- 5️⃣ 78장 스프레드 -->
+  <section id="spreadSection" class="picker hidden">
+    <div class="picker-title">마음이 가는 카드 3장을 골라줘</div>
+    <div id="grid78" class="grid78"></div>
+  </section>
+
+</main>
+
+<!-- 6️⃣ 확인 모달 -->
+<div id="confirmModal" class="modal hidden">
+  <div class="modal-card">
+    <h3>다 정하셨나요?</h3>
+    <button id="confirmPick">이대로 진행</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
