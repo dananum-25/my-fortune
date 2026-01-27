@@ -17,18 +17,9 @@ document.getElementById("soundToggle").onclick = () => {
    1. 질문 데이터
 ================================ */
 const QUESTIONS = [
-  {
-    text: "어떤 분야의 고민인가요?",
-    options: ["연애", "직장/일", "금전", "관계"]
-  },
-  {
-    text: "이 고민은 언제쯤의 이야기인가요?",
-    options: ["과거", "현재", "미래"]
-  },
-  {
-    text: "지금 가장 알고 싶은 것은?",
-    options: ["방향성", "조언", "상대의 마음", "결과"]
-  }
+  { text: "어떤 분야의 고민인가요?", options: ["연애", "직장/일", "금전", "관계"] },
+  { text: "이 고민은 언제쯤의 이야기인가요?", options: ["과거", "현재", "미래"] },
+  { text: "지금 가장 알고 싶은 것은?", options: ["방향성", "조언", "상대의 마음", "결과"] }
 ];
 
 let step = 0;
@@ -48,7 +39,7 @@ function renderQuestion() {
   q.options.forEach(opt => {
     const btn = document.createElement("button");
     btn.textContent = opt;
-    btn.onclick = () => nextStep();
+    btn.onclick = nextStep;
     questionArea.appendChild(btn);
   });
 }
@@ -114,9 +105,17 @@ function togglePick(card) {
 }
 
 /* ===============================
-   5. 확정 (연출은 다음 단계)
+   5. 확정 → 앞면 공개 (연출 최소)
 ================================ */
 confirmPick.onclick = () => {
   modal.classList.add("hidden");
-  alert("다음 단계에서 카드 연출 시작");
+  spread.classList.add("hidden");
+
+  const cards = document.querySelectorAll(".big-card");
+  cards.forEach((c, i) => {
+    setTimeout(() => {
+      c.style.backgroundImage =
+        `url('/assets/tarot/majors/0${i}.png')`;
+    }, i * 500);
+  });
 };
