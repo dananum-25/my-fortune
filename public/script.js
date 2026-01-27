@@ -32,6 +32,7 @@ const transitionArea = document.getElementById("transitionArea");
 function renderQuestion() {
   questionArea.innerHTML = "";
   const q = QUESTIONS[step];
+
   const p = document.createElement("p");
   p.textContent = q.text;
   questionArea.appendChild(p);
@@ -66,9 +67,34 @@ const spread = document.getElementById("spreadSection");
 const grid = document.getElementById("grid78");
 const modal = document.getElementById("confirmModal");
 const confirmPick = document.getElementById("confirmPick");
+const bigCards = document.querySelectorAll(".big-card");
 
 let selected = [];
 
+/* ===============================
+   4. 카드 파일 테이블 (실제 경로 기준)
+================================ */
+const MAJORS = [
+  "00_the_fool.png","01_the_magician.png","02_the_high_priestess.png",
+  "03_the_empress.png","04_the_emperor.png","05_the_hierophant.png",
+  "06_the_lovers.png","07_the_chariot.png","08_strength.png",
+  "09_the_hermit.png","10_wheel_of_fortune.png","11_justice.png",
+  "12_the_hanged_man.png","13_death.png","14_temperance.png",
+  "15_the_devil.png","16_the_tower.png","17_the_star.png",
+  "18_the_moon.png","19_the_sun.png","20_judgement.png",
+  "21_the_world.png"
+];
+
+const SUITS = ["cups","wands","swords","pentacles"];
+const MINOR_NAMES = {
+  "01":"ace","02":"two","03":"three","04":"four","05":"five","06":"six",
+  "07":"seven","08":"eight","09":"nine","10":"ten",
+  "11":"page","12":"knight","13":"queen","14":"king"
+};
+
+/* ===============================
+   5. 카드 선택 시작
+================================ */
 goCardBtn.onclick = () => {
   transitionArea.classList.add("hidden");
   bigStage.classList.remove("hidden");
@@ -78,9 +104,6 @@ goCardBtn.onclick = () => {
 
 resetBtn.onclick = () => location.reload();
 
-/* ===============================
-   4. 스프레드 생성
-================================ */
 function initSpread() {
   grid.innerHTML = "";
   selected = [];
@@ -105,17 +128,39 @@ function togglePick(card) {
 }
 
 /* ===============================
-   5. 확정 → 앞면 공개 (연출 최소)
+   6. 확정 → 카드 앞면 공개
 ================================ */
 confirmPick.onclick = () => {
   modal.classList.add("hidden");
   spread.classList.add("hidden");
 
-  const cards = document.querySelectorAll(".big-card");
-  cards.forEach((c, i) => {
+  const deck = build78Deck();
+
+  bigCards.forEach((card, i) => {
+    const img = deck.splice(Math.floor(Math.random()*deck.length),1)[0];
     setTimeout(() => {
-      c.style.backgroundImage =
-        `url('/assets/tarot/majors/0${i}.png')`;
+      card.style.backgroundImage = `url('${img}')`;
     }, i * 500);
   });
 };
+
+/* ===============================
+   7. 78장 덱 생성 (중복 없음)
+================================ */
+function build78Deck() {
+  const deck = [];
+
+  MAJORS.forEach(f =>
+    deck.push(`/assets/tarot/majors/${f}`)
+  );
+
+  SUITS.forEach(suit => {
+    Object.keys(MINOR_NAMES).forEach(num => {
+      deck.push(
+        `/assets/tarot/minors/${suit}/${num}_${MINOR_NAMES[num]}.png`
+      );
+    });
+  });
+
+  return deck;
+}
