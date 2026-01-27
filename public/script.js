@@ -1,92 +1,122 @@
-const grid = document.getElementById("grid78");
-const spread = document.getElementById("spreadSection");
-const modal = document.getElementById("confirmModal");
-const btnGo = document.getElementById("btnGo");
-const chat = document.getElementById("chatContainer");
-const input = document.getElementById("userInput");
-const sendBtn = document.getElementById("sendBtn");
-const soundBtn = document.getElementById("soundToggle");
-const bigCards = document.querySelectorAll(".big-card");
-
-let selected = [];
-let deck = [...Array(78)].map((_, i) => i);
-
-// 🔊 사운드 (버튼으로만 재생)
+/* ===============================
+   0. 사운드
+================================ */
 const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
 bgm.loop = true;
-let soundOn = false;
+bgm.volume = 0.15;
+let muted = true;
 
-soundBtn.onclick = () => {
-  soundOn = !soundOn;
-  soundBtn.textContent = soundOn ? "🔊" : "🔇";
-  if (soundOn) bgm.play();
-  else bgm.pause();
+document.getElementById("soundToggle").onclick = () => {
+  muted = !muted;
+  document.getElementById("soundToggle").textContent =
+    muted ? "사운드 🔇" : "사운드 🔊";
+  muted ? bgm.pause() : bgm.play().catch(()=>{});
 };
 
-// 초기 메시지
-addMsg("마음이 가는 카드 3장을 골라줘.", "cat");
+/* ===============================
+   1. 질문 데이터
+================================ */
+const QUESTIONS = [
+  {
+    text: "어떤 분야의 고민인가요?",
+    options: ["연애", "직장/일", "금전", "관계"]
+  },
+  {
+    text: "이 고민은 언제쯤의 이야기인가요?",
+    options: ["과거", "현재", "미래"]
+  },
+  {
+    text: "지금 가장 알고 싶은 것은?",
+    options: ["방향성", "조언", "상대의 마음", "결과"]
+  }
+];
 
-// 카드 생성
-deck.forEach(() => {
-  const d = document.createElement("div");
-  d.className = "pick";
-  d.onclick = () => togglePick(d);
-  grid.appendChild(d);
-});
+let step = 0;
+const questionArea = document.getElementById("questionArea");
+const transitionArea = document.getElementById("transitionArea");
 
-function togglePick(el) {
-  if (el.classList.contains("sel")) {
-    el.classList.remove("sel");
-    selected = selected.filter(x => x !== el);
+/* ===============================
+   2. 질문 렌더
+================================ */
+function renderQuestion() {
+  questionArea.innerHTML = "";
+  const q = QUESTIONS[step];
+  const p = document.createElement("p");
+  p.textContent = q.text;
+  questionArea.appendChild(p);
+
+  q.options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.textContent = opt;
+    btn.onclick = () => nextStep();
+    questionArea.appendChild(btn);
+  });
+}
+
+function nextStep() {
+  step++;
+  if (step < QUESTIONS.length) {
+    renderQuestion();
+  } else {
+    questionArea.classList.add("hidden");
+    transitionArea.classList.remove("hidden");
+  }
+}
+
+renderQuestion();
+
+/* ===============================
+   3. 카드 영역
+================================ */
+const goCardBtn = document.getElementById("goCard");
+const resetBtn = document.getElementById("resetAll");
+const bigStage = document.getElementById("bigCardStage");
+const spread = document.getElementById("spreadSection");
+const grid = document.getElementById("grid78");
+const modal = document.getElementById("confirmModal");
+const confirmPick = document.getElementById("confirmPick");
+
+let selected = [];
+
+goCardBtn.onclick = () => {
+  transitionArea.classList.add("hidden");
+  bigStage.classList.remove("hidden");
+  spread.classList.remove("hidden");
+  initSpread();
+};
+
+resetBtn.onclick = () => location.reload();
+
+/* ===============================
+   4. 스프레드 생성
+================================ */
+function initSpread() {
+  grid.innerHTML = "";
+  selected = [];
+  for (let i = 0; i < 78; i++) {
+    const d = document.createElement("div");
+    d.className = "pick";
+    d.onclick = () => togglePick(d);
+    grid.appendChild(d);
+  }
+}
+
+function togglePick(card) {
+  if (card.classList.contains("sel")) {
+    card.classList.remove("sel");
+    selected = selected.filter(c => c !== card);
     return;
   }
   if (selected.length >= 3) return;
-  el.classList.add("sel");
-  selected.push(el);
+  card.classList.add("sel");
+  selected.push(card);
   if (selected.length === 3) modal.classList.remove("hidden");
 }
 
-btnGo.onclick = () => {
+/* ===============================
+   5. 확정 (연출은 다음 단계)
+================================ */
+confirmPick.onclick = () => {
   modal.classList.add("hidden");
-  reveal();
+  alert("다음 단계에서 카드 연출 시작");
 };
-
-function reveal() {
-  document.querySelectorAll(".pick:not(.sel)")
-    .forEach(p => p.classList.add("fade"));
-
-  selected.forEach((_, i) => {
-    setTimeout(() => {
-      bigCards[i].style.backgroundImage =
-        `url('/assets/tarot/majors/${rand()}.png')`;
-    }, 900 + i * 300);
-  });
-
-  setTimeout(() => {
-    spread.style.display = "none";
-    addMsg("이제 이 카드들을 하나씩 읽어볼게.", "cat");
-  }, 1600);
-}
-
-function rand() {
-  const i = Math.floor(Math.random() * deck.length);
-  return String(deck.splice(i, 1)[0]).padStart(2, "0");
-}
-
-// 채팅 전송 (완전 복구)
-sendBtn.onclick = send;
-input.onkeydown = e => e.key === "Enter" && send();
-
-function send() {
-  if (!input.value.trim()) return;
-  addMsg(input.value, "user");
-  input.value = "";
-}
-
-function addMsg(text, who) {
-  const d = document.createElement("div");
-  d.className = `msg ${who}`;
-  d.textContent = text;
-  chat.appendChild(d);
-  chat.scrollTop = chat.scrollHeight;
-}
