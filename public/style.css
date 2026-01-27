@@ -1,104 +1,68 @@
-* { box-sizing: border-box; }
-
 body {
   margin: 0;
-  background: #0b0b0f;
-  color: #fff;
   font-family: system-ui, sans-serif;
+  background: radial-gradient(#111, #000);
+  color: #fff;
 }
 
-.topbar {
+header {
   display: flex;
   justify-content: space-between;
-  padding: 12px;
+  padding: 10px;
 }
 
-.sound-btn {
-  font-size: 14px;
-}
-
-.cat-area {
-  text-align: center;
-  padding: 14px;
-}
-.cat-area img {
-  width: 92%;
-  max-width: 420px;
-  border-radius: 14px;
-}
-
-.question-area,
-.transition {
-  padding: 14px;
+.screen {
+  display: none;
+  padding: 20px;
   text-align: center;
 }
 
-.question-area button,
-.transition button {
+.screen.active {
   display: block;
-  width: 100%;
-  margin: 8px 0;
-  padding: 14px;
-  border-radius: 12px;
-  border: none;
-  background: #1e1e2a;
+}
+
+.cat {
+  width: 80%;
+  max-width: 300px;
+  margin: 20px auto;
+}
+
+.primary {
+  background: #7c5cff;
   color: #fff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
 }
 
-.tarot-stage {
-  display: flex;
-  justify-content: center;
-  margin: 18px 0;
+#options button {
+  display: block;
+  margin: 10px auto;
+  width: 80%;
 }
 
-.big-cards {
-  display: flex;
-  gap: 14px;
-}
-
-.big-card {
-  width: 110px;
-  height: 170px;
-  background: url("/assets/tarot/back.png") center/cover no-repeat;
-  border-radius: 12px;
-}
-
-.picker {
-  padding: 12px;
-}
-
-.grid78 {
+#cardGrid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 6px;
-  max-height: 260px;
-  overflow-y: auto;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
 }
 
-.pick {
-  aspect-ratio: 2/3;
-  background: url("/assets/tarot/back.png") center/cover no-repeat;
-  border-radius: 6px;
-}
-
-.pick.sel {
-  outline: 2px solid gold;
+.card {
+  background: #222;
+  border-radius: 8px;
+  padding-top: 140%;
 }
 
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
+  background: rgba(0,0,0,0.7);
 }
 
-.modal-card {
-  background: #1a1a1f;
+.modalBox {
+  background: #222;
+  margin: 40% auto;
   padding: 20px;
-  border-radius: 14px;
+  width: 80%;
+  border-radius: 12px;
 }
-
-.hidden { display: none; }
