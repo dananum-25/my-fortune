@@ -1,122 +1,110 @@
-/* ===============================
-   0. 사운드
-================================ */
-const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
-bgm.loop = true;
-bgm.volume = 0.15;
-let muted = true;
+let step = 0;
+let selectedCards = [];
+let soundOn = false;
+
+const screens = document.querySelectorAll(".screen");
+const questionText = document.getElementById("questionText");
+const optionsDiv = document.getElementById("options");
+const cardGrid = document.getElementById("cardGrid");
+const selectedView = document.getElementById("selectedCards");
+const readingText = document.getElementById("readingText");
+const flipSound = document.getElementById("flipSound");
 
 document.getElementById("soundToggle").onclick = () => {
-  muted = !muted;
-  document.getElementById("soundToggle").textContent =
-    muted ? "사운드 🔇" : "사운드 🔊";
-  muted ? bgm.pause() : bgm.play().catch(()=>{});
+  soundOn = !soundOn;
+  document.getElementById("soundToggle").innerText =
+    soundOn ? "Sound 🔊" : "Sound 🔇";
 };
 
-/* ===============================
-   1. 질문 데이터
-================================ */
-const QUESTIONS = [
+const questions = [
   {
-    text: "어떤 분야의 고민인가요?",
-    options: ["연애", "직장/일", "금전", "관계"]
+    q: "어떤 주제의 고민인가요?",
+    o: ["연애·관계", "일·진로", "돈·현실", "나 자신"]
   },
   {
-    text: "이 고민은 언제쯤의 이야기인가요?",
-    options: ["과거", "현재", "미래"]
+    q: "이 고민은 언제부터였나요?",
+    o: ["최근", "조금 전부터", "오래됨"]
   },
   {
-    text: "지금 가장 알고 싶은 것은?",
-    options: ["방향성", "조언", "상대의 마음", "결과"]
+    q: "지금 마음은 어떤가요?",
+    o: ["불안", "혼란", "답답", "차분"]
   }
 ];
 
-let step = 0;
-const questionArea = document.getElementById("questionArea");
-const transitionArea = document.getElementById("transitionArea");
+function show(id) {
+  screens.forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
 
-/* ===============================
-   2. 질문 렌더
-================================ */
+function goToQuestions() {
+  step = 0;
+  show("questions");
+  renderQuestion();
+}
+
 function renderQuestion() {
-  questionArea.innerHTML = "";
-  const q = QUESTIONS[step];
-  const p = document.createElement("p");
-  p.textContent = q.text;
-  questionArea.appendChild(p);
-
-  q.options.forEach(opt => {
-    const btn = document.createElement("button");
-    btn.textContent = opt;
-    btn.onclick = () => nextStep();
-    questionArea.appendChild(btn);
+  const q = questions[step];
+  questionText.innerText = q.q;
+  optionsDiv.innerHTML = "";
+  q.o.forEach(opt => {
+    const b = document.createElement("button");
+    b.innerText = opt;
+    b.onclick = () => nextQuestion();
+    optionsDiv.appendChild(b);
   });
 }
 
-function nextStep() {
+function nextQuestion() {
   step++;
-  if (step < QUESTIONS.length) {
+  if (step < questions.length) {
     renderQuestion();
   } else {
-    questionArea.classList.add("hidden");
-    transitionArea.classList.remove("hidden");
+    show("midTrigger");
   }
 }
 
-renderQuestion();
-
-/* ===============================
-   3. 카드 영역
-================================ */
-const goCardBtn = document.getElementById("goCard");
-const resetBtn = document.getElementById("resetAll");
-const bigStage = document.getElementById("bigCardStage");
-const spread = document.getElementById("spreadSection");
-const grid = document.getElementById("grid78");
-const modal = document.getElementById("confirmModal");
-const confirmPick = document.getElementById("confirmPick");
-
-let selected = [];
-
-goCardBtn.onclick = () => {
-  transitionArea.classList.add("hidden");
-  bigStage.classList.remove("hidden");
-  spread.classList.remove("hidden");
-  initSpread();
-};
-
-resetBtn.onclick = () => location.reload();
-
-/* ===============================
-   4. 스프레드 생성
-================================ */
-function initSpread() {
-  grid.innerHTML = "";
-  selected = [];
+function goToSpread() {
+  show("spread");
+  cardGrid.innerHTML = "";
+  selectedCards = [];
   for (let i = 0; i < 78; i++) {
-    const d = document.createElement("div");
-    d.className = "pick";
-    d.onclick = () => togglePick(d);
-    grid.appendChild(d);
+    const c = document.createElement("div");
+    c.className = "card";
+    c.onclick = () => {
+      if (selectedCards.length < 3 && !selectedCards.includes(i)) {
+        selectedCards.push(i);
+        c.style.opacity = 0.5;
+        if (selectedCards.length === 3) {
+          show("confirm");
+        }
+      }
+    };
+    cardGrid.appendChild(c);
   }
 }
 
-function togglePick(card) {
-  if (card.classList.contains("sel")) {
-    card.classList.remove("sel");
-    selected = selected.filter(c => c !== card);
-    return;
-  }
-  if (selected.length >= 3) return;
-  card.classList.add("sel");
-  selected.push(card);
-  if (selected.length === 3) modal.classList.remove("hidden");
+function redoSelect() {
+  show("spread");
 }
 
-/* ===============================
-   5. 확정 (연출은 다음 단계)
-================================ */
-confirmPick.onclick = () => {
-  modal.classList.add("hidden");
-  alert("다음 단계에서 카드 연출 시작");
-};
+function startReveal() {
+  document.body.style.overflow = "hidden";
+  show("reading");
+  selectedView.innerHTML = "";
+  selectedCards.forEach((c, i) => {
+    setTimeout(() => {
+      if (soundOn) flipSound.play();
+      const card = document.createElement("div");
+      card.className = "card";
+      selectedView.appendChild(card);
+    }, i * 800);
+  });
+  setTimeout(() => {
+    readingText.innerText =
+      "이 카드는 지금의 흐름을 비추는 상징이에요.\n천천히 자신의 마음과 연결해보세요.";
+  }, 3000);
+}
+
+function resetAll() {
+  location.reload();
+}
