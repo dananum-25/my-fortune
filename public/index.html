@@ -2,69 +2,61 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI 고양이 타로 상담</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
+  <header class="topbar">
+    <div class="title">🐾 AI 고양이 타로 상담</div>
+    <button id="soundToggle" class="sound-btn" aria-label="sound toggle">
+      Sound
+    </button>
+  </header>
 
-<header>
-  <h1>🐾 AI 고양이 타로 상담</h1>
-  <button id="soundToggle">Sound 🔇</button>
-</header>
+  <main class="app">
+    <section class="hero">
+      <img id="catImg" class="cat-img" src="/assets/cat_ai.webp" alt="AI 고양이 상담사" />
+      <div class="hero-text">
+        <h1>🌄 AI 고양이 상담사</h1>
+        <p class="desc">
+          지금 가장 마음에 걸리는 고민을 떠올려보세요.<br />
+          예언이 아니라, 마음을 정리하는 상담이에요 🐾
+        </p>
+      </div>
+    </section>
 
-<main id="app">
+    <section id="qna" class="qna"></section>
 
-  <!-- [0] 인트로 -->
-  <section id="intro" class="screen active">
-    <img src="./assets/cat_ai.webp" class="cat"/>
-    <p class="guide">
-      지금 가장 마음에 걸리는 고민을 떠올려보세요.<br/>
-      예언이 아니라, 마음을 정리하는 상담이에요.
-    </p>
-    <button class="primary" onclick="goToQuestions()">시작하기</button>
-  </section>
+    <section id="spreadSection" class="spread-section">
+      <h2 id="spreadTitle" class="spread-title">마음이 가는 카드 3장을 골라주세요</h2>
+      <div id="spread" class="spread"></div>
+    </section>
 
-  <!-- [1~3] 질문 -->
-  <section id="questions" class="screen">
-    <p id="questionText"></p>
-    <div id="options"></div>
-  </section>
+    <section id="selectedSection" class="selected-section hidden">
+      <div class="selected-title">지금 떠오르는 고민을 마음속으로 정리해보세요.<br/>이제 이 카드들을 하나씩 읽어볼게요.</div>
+      <div id="selectedRow" class="selected-row"></div>
+    </section>
 
-  <!-- [4] 중간 트리거 -->
-  <section id="midTrigger" class="screen modal">
-    <div class="modalBox">
-      <p>지금 선택을 생각하며<br/>카드를 3장 선택해볼까요?</p>
-      <button class="primary" onclick="goToSpread()">YES</button>
-      <button onclick="resetAll()">처음으로</button>
+    <section id="bigCardSection" class="bigcard-section hidden">
+      <div class="bigcard-wrap">
+        <img id="bigCard" class="bigcard" src="" alt="big card" />
+      </div>
+      <div id="readingBox" class="reading-box"></div>
+    </section>
+
+    <div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+      <div class="modal-card">
+        <h3>다 정하셨나요?</h3>
+        <p>이 카드로 리딩을 시작해도 괜찮을까요?</p>
+        <div class="modal-actions">
+          <button id="resetBtn" class="btn ghost">다시 고를게요</button>
+          <button id="confirmBtn" class="btn primary">이대로 진행</button>
+        </div>
+      </div>
     </div>
-  </section>
+  </main>
 
-  <!-- [5] 스프레드 -->
-  <section id="spread" class="screen">
-    <p>마음이 가는 카드 3장을 골라주세요</p>
-    <div id="cardGrid"></div>
-  </section>
-
-  <!-- [6] 선택 완료 -->
-  <section id="confirm" class="screen modal">
-    <div class="modalBox">
-      <p>다 정하셨나요?</p>
-      <button onclick="redoSelect()">다시 고를게요</button>
-      <button class="primary" onclick="startReveal()">이대로 진행</button>
-    </div>
-  </section>
-
-  <!-- [7~9] 리딩 -->
-  <section id="reading" class="screen">
-    <div id="selectedCards"></div>
-    <div id="readingText"></div>
-  </section>
-
-</main>
-
-<audio id="flipSound" src="./assets/flip.mp3"></audio>
-
-<script src="script.js"></script>
+  <script src="./script.js"></script>
 </body>
 </html>
