@@ -1,12 +1,12 @@
 /* =====================================================
-   0. 사운드 (LOCK)
+   0. 사운드
 ===================================================== */
 const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
 bgm.loop = true;
 bgm.volume = 0.15;
 
-const sPick = new Audio("/sounds/tarot/card_pick.mp3");
-const sFire = new Audio("/sounds/tarot/fire_whoosh.mp3");
+const sPick   = new Audio("/sounds/tarot/card_pick.mp3");
+const sFire   = new Audio("/sounds/tarot/fire_whoosh.mp3");
 const sIgnite = new Audio("/sounds/tarot/fire_ignite.mp3");
 const sReveal = new Audio("/sounds/tarot/reveal_soft.mp3");
 
@@ -27,7 +27,7 @@ function play(sound){
 }
 
 /* =====================================================
-   1. 카드 덱 (LOCK · 절대 수정 금지)
+   1. 카드 덱 (메이저 + 마이너 전체)
 ===================================================== */
 const MAJORS = [
   "majors/00_the_fool","majors/01_the_magician","majors/02_the_high_priestess",
@@ -40,33 +40,23 @@ const MAJORS = [
   "majors/21_the_world"
 ];
 
-const MINORS = [
-  // cups
-  "cups/01_ace","cups/02_two","cups/03_three","cups/04_four",
-  "cups/05_five","cups/06_six","cups/07_seven","cups/08_eight",
-  "cups/09_nine","cups/10_ten","cups/11_page","cups/12_knight",
-  "cups/13_queen","cups/14_king",
-  // wands
-  "wands/01_ace","wands/02_two","wands/03_three","wands/04_four",
-  "wands/05_five","wands/06_six","wands/07_seven","wands/08_eight",
-  "wands/09_nine","wands/10_ten","wands/11_page","wands/12_knight",
-  "wands/13_queen","wands/14_king",
-  // swords
-  "swords/01_ace","swords/02_two","swords/03_three","swords/04_four",
-  "swords/05_five","swords/06_six","swords/07_seven","swords/08_eight",
-  "swords/09_nine","swords/10_ten","swords/11_page","swords/12_knight",
-  "swords/13_queen","swords/14_king",
-  // pentacles
-  "pentacles/01_ace","pentacles/02_two","pentacles/03_three","pentacles/04_four",
-  "pentacles/05_five","pentacles/06_six","pentacles/07_seven","pentacles/08_eight",
-  "pentacles/09_nine","pentacles/10_ten","pentacles/11_page","pentacles/12_knight",
-  "pentacles/13_queen","pentacles/14_king"
+const SUITS = ["cups","wands","swords","pentacles"];
+const RANKS = [
+  "01_ace","02_two","03_three","04_four","05_five","06_six","07_seven",
+  "08_eight","09_nine","10_ten","11_page","12_knight","13_queen","14_king"
 ];
 
-let DECK = [...MAJORS, ...MINORS];
+const MINORS = [];
+SUITS.forEach(s=>{
+  RANKS.forEach(r=>{
+    MINORS.push(`${s}/${r}`);
+  });
+});
+
+let DECK = [...MAJORS, ...MINORS]; // 78장
 
 /* =====================================================
-   2. 질문 단계 (BASE 그대로)
+   2. 질문 단계 (BASE 유지)
 ===================================================== */
 const QUESTIONS = [
   { text:"어떤 분야의 고민인가요?", options:["연애","직장/일","금전","관계"] },
@@ -147,51 +137,56 @@ function pick(card){
 }
 
 /* =====================================================
-   4. 확정 → 연출 전체
+   4. 확정 → 연출
 ===================================================== */
 confirmBtn.onclick = async ()=>{
   modal.classList.add("hidden");
 
-  // 75장 제거
+  /* ① 스크롤 초기화 + 잠금 */
+  window.scrollTo(0,0);
+  document.body.style.overflow = "hidden";
+
+  /* ② 75장 제거 */
   document.querySelectorAll(".pick:not(.sel)").forEach(c=>{
-    c.style.transition="0.8s";
+    c.style.transition="0.6s";
     c.style.opacity=0;
   });
 
-  await wait(1000);
+  await wait(800);
 
-  // 선택 3장 재정렬 (빅카드 하단)
+  /* ③ 선택 3장 재정렬 (원래 카드 크기 유지) */
   const baseY = bigStage.getBoundingClientRect().bottom + 20;
-  selected.forEach((c,i)=>{
-    const r=c.getBoundingClientRect();
-    c.style.position="fixed";
-    c.style.left = `${window.innerWidth/2 - 90 + i*90}px`;
-    c.style.top = `${baseY}px`;
-    c.style.zIndex=999;
-  });
 
-  // 스크롤 잠금
-  document.body.style.overflow="hidden";
+  selected.forEach((c,i)=>{
+    const r = c.getBoundingClientRect();
+    c.style.position="fixed";
+    c.style.width = `${r.width}px`;
+    c.style.height = `${r.height}px`;
+    c.style.left = `${window.innerWidth/2 - r.width*1.5 + i*(r.width+12)}px`;
+    c.style.top = `${baseY}px`;
+    c.style.zIndex = 1000;
+  });
 
   await wait(2000);
 
-  // 파이어볼 생성 & 이동
+  /* ④ 파이어볼 */
   const bigCards = document.querySelectorAll(".big-card");
+
   selected.forEach((c,i)=>{
-    const fire=document.createElement("div");
-    fire.className="fireball";
+    const fire = document.createElement("div");
+    fire.className = "fireball";
     document.body.appendChild(fire);
 
-    const from=c.getBoundingClientRect();
-    const to=bigCards[i].getBoundingClientRect();
+    const from = c.getBoundingClientRect();
+    const to = bigCards[i].getBoundingClientRect();
 
-    fire.style.left=`${from.left+40}px`;
-    fire.style.top=`${from.top+40}px`;
+    fire.style.left = `${from.left + from.width/2}px`;
+    fire.style.top  = `${from.top  + from.height/2}px`;
 
     play(sFire);
 
     fire.animate([
-      { transform:`translate(0,0)` },
+      { transform:"translate(0,0)" },
       { transform:`translate(${to.left-from.left}px, ${to.top-from.top}px)` }
     ],{ duration:3000, easing:"ease-in-out", fill:"forwards" });
 
@@ -204,22 +199,18 @@ confirmBtn.onclick = async ()=>{
   await wait(3200);
   play(sIgnite);
 
-  // 빅카드 점화
-  bigCards.forEach(b=>{
-    b.classList.add("burning");
-  });
-
+  /* ⑤ 빅카드 점화 */
+  bigCards.forEach(b=>b.classList.add("burning"));
   await wait(2000);
 
-  // 연기
+  /* ⑥ 연기 */
   bigCards.forEach(b=>{
     b.classList.remove("burning");
     b.classList.add("smoking");
   });
-
   await wait(2000);
 
-  // 앞면 공개 (중복 없음)
+  /* ⑦ 앞면 공개 (마이너 포함, 중복 없음) */
   bigCards.forEach(b=>{
     const i = Math.floor(Math.random()*DECK.length);
     const card = DECK.splice(i,1)[0];
@@ -227,9 +218,14 @@ confirmBtn.onclick = async ()=>{
   });
 
   play(sReveal);
+
+  /* ⑧ 채팅 활성화 */
+  document.body.style.overflow="auto";
+  const chat = document.getElementById("chatContainer");
+  if(chat){
+    chat.style.display = "block";
+  }
 };
 
-/* =====================================================
-   util
-===================================================== */
+/* util */
 const wait = ms => new Promise(r=>setTimeout(r,ms));
