@@ -267,3 +267,9 @@ document.getElementById("confirmPick").onclick = async ()=>{
 };
 
 const wait = ms => new Promise(r=>setTimeout(r,ms));
+const CATEGORY_MAP = {
+  "연애": "love",
+  "직장/일": "career",
+  "금전": "money",
+  "관계": "relationship"
+};
