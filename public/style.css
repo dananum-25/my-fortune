@@ -297,3 +297,135 @@ body.lock-scroll {
   from { transform: translateY(0); opacity: .9; }
   to   { transform: translateY(-60px); opacity: 0; }
 }
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #0b0b0f;
+  color: #fff;
+  font-family: system-ui, sans-serif;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+}
+
+.sound-btn { font-size: 14px; }
+
+.cat-area {
+  text-align: center;
+  padding: 14px;
+}
+.cat-area img {
+  width: 92%;
+  max-width: 420px;
+  border-radius: 14px;
+}
+
+.question-area,
+.transition {
+  padding: 14px;
+  text-align: center;
+}
+
+.question-area button,
+.transition button {
+  display: block;
+  width: 100%;
+  margin: 8px 0;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: #1e1e2a;
+  color: #fff;
+}
+
+.tarot-stage {
+  display: flex;
+  justify-content: center;
+  margin: 18px 0;
+}
+
+.big-cards { display: flex; gap: 14px; }
+
+.big-card {
+  width: 110px;
+  height: 170px;
+  background: url("/assets/tarot/back.png") center/cover no-repeat;
+  border-radius: 12px;
+  position: relative;
+}
+
+.picker { padding: 12px; }
+
+.grid78 {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.pick {
+  aspect-ratio: 2/3;
+  background: url("/assets/tarot/back.png") center/cover no-repeat;
+  border-radius: 6px;
+}
+
+.pick.sel { outline: 2px solid gold; }
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-card {
+  background: #1a1a1f;
+  padding: 20px;
+  border-radius: 14px;
+}
+
+.chat {
+  padding: 20px;
+  text-align: center;
+}
+
+.hidden { display: none; }
+
+/* 🔥 연출 */
+.fireball {
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle, #ff0, #f00, transparent);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 2000;
+}
+
+.big-card.burning::after {
+  content:"";
+  position:absolute;
+  inset:-10px;
+  background: radial-gradient(circle, rgba(255,120,0,.6), transparent);
+  animation: burn 1s infinite alternate;
+}
+
+.big-card.smoking::after {
+  content:"";
+  position:absolute;
+  inset:-10px;
+  background: radial-gradient(circle, rgba(200,200,200,.4), transparent);
+}
+
+@keyframes burn {
+  from { opacity:.6; }
+  to { opacity:1; }
+}
