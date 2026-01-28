@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI 고양이 타로 상담</title>
 
+  <!-- 고정 메타 -->
   <meta name="naver-site-verification" content="20b0cc209520048d7c651297a28b316fe1de7cd8" />
   <meta name="google-site-verification" content="5FKwm4_bVWL9skvm5olmNjvPSIzR_tW75VT_0NpJ9VA" />
   <meta name="google-adsense-account" content="ca-pub-7356591276029815">
@@ -20,21 +21,23 @@
 
 <main class="app">
 
+  <!-- 1. 고양이 -->
   <section class="cat-area">
     <img src="/assets/cat_ai.webp" alt="AI 고양이 상담사" />
-    <p id="catText">
-      지금 가장 마음에 걸리는 고민이 어떤 분야인지 골라줘.
-    </p>
+    <p id="catText">지금 가장 마음에 걸리는 고민이 어떤 분야인지 골라줘.</p>
   </section>
 
+  <!-- 2. 질문 -->
   <section id="questionArea" class="question-area"></section>
 
+  <!-- 3. 전환 -->
   <section id="transitionArea" class="transition hidden">
     <p>지금 선택을 생각하며 카드를 3장 골라볼까요?</p>
     <button id="goCard">YES, 카드 선택으로</button>
     <button id="resetAll">처음으로</button>
   </section>
 
+  <!-- 4. 빅카드 -->
   <section id="bigCardStage" class="tarot-stage hidden">
     <div class="big-cards">
       <div class="big-card"></div>
@@ -43,13 +46,20 @@
     </div>
   </section>
 
+  <!-- 5. 78장 스프레드 -->
   <section id="spreadSection" class="picker hidden">
     <div class="picker-title">마음이 가는 카드 3장을 골라줘</div>
     <div id="grid78" class="grid78"></div>
   </section>
 
+  <!-- 채팅 -->
+  <section id="chatContainer" class="chat hidden">
+    <p>🔮 리딩이 시작됩니다…</p>
+  </section>
+
 </main>
 
+<!-- 6. 모달 -->
 <div id="confirmModal" class="modal hidden">
   <div class="modal-card">
     <h3>다 정하셨나요?</h3>
