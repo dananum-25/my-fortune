@@ -1,14 +1,14 @@
 /* =====================================================
-0. 사운드
+0. 사운드 (실제 mp3 파일명 기준 – FIX)
 ===================================================== */
 const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
 bgm.loop = true;
 bgm.volume = 0.15;
 
 const sPick   = new Audio("/sounds/tarot/card_pick.mp3");
-const sFire   = new Audio("/sounds/tarot/fire_whoosh.mp3");
-const sIgnite = new Audio("/sounds/tarot/fire_ignite.mp3");
-const sReveal = new Audio("/sounds/tarot/reveal_soft.mp3");
+const sFire   = new Audio("/sounds/tarot/fire.mp3");
+const sIgnite = new Audio("/sounds/tarot/fire.mp3");
+const sReveal = new Audio("/sounds/tarot/reveal.mp3");
 
 let muted = true;
 const soundBtn = document.getElementById("soundToggle");
@@ -27,30 +27,17 @@ function play(sound){
 }
 
 /* =====================================================
-API 설정
-===================================================== */
-const API_URL =
-"https://script.google.com/macros/s/AKfycbyKuUjCrc70j4lR6X6DWv-LjW_g5MRg3z1m49fN_diQ0VdUQE9DTRU9QdNS2Bii_hw-/exec";
-
-/* 카드 경로 → card_id */
-function cardPathToId(path){
-  return path
-    .replace("/assets/tarot/","")
-    .replace("majors/","")
-    .replace("minors/","")
-    .replace(/\.png$/,"");
-}
-
-/* =====================================================
 1. 질문 단계
 ===================================================== */
 const QUESTIONS = [
-  { text:"어떤 분야의 고민인가요?", options:["연애","직장/일","금전","관계"] },
-  { text:"이 고민은 언제쯤의 이야기인가요?", options:["과거","현재","미래"] },
-  { text:"지금 가장 알고 싶은 것은?", options:["방향성","조언","상대의 마음","결과"] }
+  { text:"어떤 분야의 고민인가요?", options:["love","career","money","relationship"] },
+  { text:"이 고민은 언제쯤의 이야기인가요?", options:["past","present","future"] },
+  { text:"지금 가장 알고 싶은 것은?", options:["direction","advice","feeling","result"] }
 ];
 
 let step = 0;
+let selectedCategory = QUESTIONS[0].options[0];
+
 const qArea = document.getElementById("questionArea");
 const tArea = document.getElementById("transitionArea");
 
@@ -64,7 +51,10 @@ function renderQ(){
   q.options.forEach(o=>{
     const b = document.createElement("button");
     b.textContent = o;
-    b.onclick = nextQ;
+    b.onclick = ()=>{
+      if(step === 0) selectedCategory = o;
+      nextQ();
+    };
     qArea.appendChild(b);
   });
 }
@@ -103,12 +93,12 @@ const MINOR_NAMES = {
 
 function build78Deck(){
   const d = [];
-  MAJORS.forEach(f => d.push(`/assets/tarot/majors/${f}`));
-  SUITS.forEach(s =>
+  MAJORS.forEach(f => d.push(`majors/${f}`));
+  SUITS.forEach(s=>{
     Object.keys(MINOR_NAMES).forEach(n=>{
-      d.push(`/assets/tarot/minors/${s}/${n}_${MINOR_NAMES[n]}.png`);
-    })
-  );
+      d.push(`minors/${s}/${n}_${MINOR_NAMES[n]}.png`);
+    });
+  });
   return d;
 }
 
@@ -158,11 +148,10 @@ function pick(card){
 }
 
 /* =====================================================
-4. 확정 → 연출 + 리딩
+4. 확정 → 연출
 ===================================================== */
 document.getElementById("confirmPick").onclick = async ()=>{
   modal.classList.add("hidden");
-
   window.scrollTo(0,0);
   document.body.classList.add("lock-scroll");
 
@@ -180,9 +169,7 @@ document.getElementById("confirmPick").onclick = async ()=>{
     c.style.position = "fixed";
     c.style.width  = `${CARD_W}px`;
     c.style.height = `${CARD_H}px`;
-    c.style.left = `${
-      window.innerWidth/2 - CARD_W*1.5 + i*(CARD_W+16)
-    }px`;
+    c.style.left = `${window.innerWidth/2 - CARD_W*1.5 + i*(CARD_W+16)}px`;
     c.style.top = `${baseY}px`;
     c.style.zIndex = 1000;
   });
@@ -190,7 +177,7 @@ document.getElementById("confirmPick").onclick = async ()=>{
   await wait(2000);
 
   const deck = build78Deck();
-  const chosenPaths = [];
+  const pickedCards = [];
 
   selected.forEach((c,i)=>{
     const fire = document.createElement("div");
@@ -210,6 +197,9 @@ document.getElementById("confirmPick").onclick = async ()=>{
       { transform:`translate(${to.left-from.left}px,${to.top-from.top}px)` }
     ],{ duration:3000, easing:"ease-in-out", fill:"forwards" });
 
+    const cardId = deck.splice(Math.floor(Math.random()*deck.length),1)[0];
+    pickedCards.push(cardId.replace(".png",""));
+
     setTimeout(()=>{
       fire.remove();
       c.remove();
@@ -228,48 +218,51 @@ document.getElementById("confirmPick").onclick = async ()=>{
   });
   await wait(2000);
 
-  bigCards.forEach(b=>{
-    const i = Math.floor(Math.random()*deck.length);
-    const img = deck.splice(i,1)[0];
-    chosenPaths.push(img);
-    b.style.backgroundImage = `url('${img}')`;
+  bigCards.forEach((b,i)=>{
+    b.style.backgroundImage = `url('/assets/tarot/${pickedCards[i]}.png')`;
   });
 
   play(sReveal);
 
-  /* ===============================
-     리딩 API 호출
-  ================================ */
-  const cardIds = chosenPaths.map(cardPathToId);
+  await fetchReading(selectedCategory, pickedCards);
 
-  const res = await fetch(API_URL,{
-    method:"POST",
-    body:new URLSearchParams({
-      category: QUESTIONS[0].options[0],
-      cards: JSON.stringify(cardIds)
-    })
-  });
+  document.body.classList.remove("lock-scroll");
+};
 
-  const data = await res.json();
+/* =====================================================
+5. 리딩 API 연동 (GAS)
+===================================================== */
+const READING_API =
+"https://script.google.com/macros/s/AKfycbyKuUjCrc70j4lR6X6DWv-LjW_g5MRg3z1m49fN_diQ0VdUQE9DTRU9QdNS2Bii_hw-/exec";
 
-  if(data.status==="success"){
+async function fetchReading(category, cards){
+  chat.classList.remove("hidden");
+  chat.innerHTML = "<p>🔮 리딩 중입니다…</p>";
+
+  try{
+    const res = await fetch(READING_API,{
+      method:"POST",
+      body:new URLSearchParams({
+        category,
+        cards: JSON.stringify(cards)
+      })
+    });
+    const data = await res.json();
+
+    if(data.status !== "success") throw new Error(data.message);
+
     chat.innerHTML = `
-      <p>🔮 리딩 결과</p>
+      <h3>🔮 리딩 결과</h3>
       <p><strong>과거</strong><br>${data.reading.past}</p>
       <p><strong>현재</strong><br>${data.reading.present}</p>
       <p><strong>미래</strong><br>${data.reading.future}</p>
     `;
+    chat.scrollIntoView({behavior:"smooth"});
+
+  }catch(e){
+    chat.innerHTML = `<p>⚠️ 리딩을 불러오지 못했습니다.</p>`;
   }
+}
 
-  chat.classList.remove("hidden");
-  chat.scrollIntoView({behavior:"smooth",block:"center"});
-  document.body.classList.remove("lock-scroll");
-};
-
+/* util */
 const wait = ms => new Promise(r=>setTimeout(r,ms));
-const CATEGORY_MAP = {
-  "연애": "love",
-  "직장/일": "career",
-  "금전": "money",
-  "관계": "relationship"
-};
