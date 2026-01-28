@@ -27,6 +27,21 @@ function play(sound){
 }
 
 /* =====================================================
+API 설정
+===================================================== */
+const API_URL =
+"https://script.google.com/macros/s/AKfycbyKuUjCrc70j4lR6X6DWv-LjW_g5MRg3z1m49fN_diQ0VdUQE9DTRU9QdNS2Bii_hw-/exec";
+
+/* 카드 경로 → card_id */
+function cardPathToId(path){
+  return path
+    .replace("/assets/tarot/","")
+    .replace("majors/","")
+    .replace("minors/","")
+    .replace(/\.png$/,"");
+}
+
+/* =====================================================
 1. 질문 단계
 ===================================================== */
 const QUESTIONS = [
@@ -143,7 +158,7 @@ function pick(card){
 }
 
 /* =====================================================
-4. 확정 → 전체 연출
+4. 확정 → 연출 + 리딩
 ===================================================== */
 document.getElementById("confirmPick").onclick = async ()=>{
   modal.classList.add("hidden");
@@ -151,14 +166,12 @@ document.getElementById("confirmPick").onclick = async ()=>{
   window.scrollTo(0,0);
   document.body.classList.add("lock-scroll");
 
-  // 75장 제거
   document.querySelectorAll(".pick:not(.sel)").forEach(c=>{
     c.classList.add("fade");
   });
 
   await wait(800);
 
-  // 3장 재정렬 (크기 고정)
   const CARD_W = 90;
   const CARD_H = 135;
   const baseY = bigStage.getBoundingClientRect().bottom + 20;
@@ -176,8 +189,8 @@ document.getElementById("confirmPick").onclick = async ()=>{
 
   await wait(2000);
 
-  // 파이어볼
   const deck = build78Deck();
+  const chosenPaths = [];
 
   selected.forEach((c,i)=>{
     const fire = document.createElement("div");
@@ -206,34 +219,51 @@ document.getElementById("confirmPick").onclick = async ()=>{
   await wait(3200);
   play(sIgnite);
 
-  // 점화
   bigCards.forEach(b=>b.classList.add("burning"));
   await wait(2000);
 
-  // 연기
   bigCards.forEach(b=>{
     b.classList.remove("burning");
     b.classList.add("smoking");
   });
   await wait(2000);
 
-  // 앞면 공개 (메이저 + 마이너)
   bigCards.forEach(b=>{
     const i = Math.floor(Math.random()*deck.length);
     const img = deck.splice(i,1)[0];
+    chosenPaths.push(img);
     b.style.backgroundImage = `url('${img}')`;
   });
 
   play(sReveal);
 
-  // 채팅 활성화
-  chat.classList.remove("hidden");
-  chat.scrollIntoView({behavior:"smooth", block:"center"});
-  chat.style.opacity = 0;
-  requestAnimationFrame(()=>chat.style.opacity = 1);
+  /* ===============================
+     리딩 API 호출
+  ================================ */
+  const cardIds = chosenPaths.map(cardPathToId);
 
+  const res = await fetch(API_URL,{
+    method:"POST",
+    body:new URLSearchParams({
+      category: QUESTIONS[0].options[0],
+      cards: JSON.stringify(cardIds)
+    })
+  });
+
+  const data = await res.json();
+
+  if(data.status==="success"){
+    chat.innerHTML = `
+      <p>🔮 리딩 결과</p>
+      <p><strong>과거</strong><br>${data.reading.past}</p>
+      <p><strong>현재</strong><br>${data.reading.present}</p>
+      <p><strong>미래</strong><br>${data.reading.future}</p>
+    `;
+  }
+
+  chat.classList.remove("hidden");
+  chat.scrollIntoView({behavior:"smooth",block:"center"});
   document.body.classList.remove("lock-scroll");
 };
 
-/* util */
 const wait = ms => new Promise(r=>setTimeout(r,ms));
