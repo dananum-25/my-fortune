@@ -233,7 +233,7 @@ document.getElementById("confirmPick").onclick = async ()=>{
 5. 리딩 API 연동 (GAS)
 ===================================================== */
 const READING_API =
-"https://script.google.com/macros/s/AKfycbyKuUjCrc70j4lR6X6DWv-LjW_g5MRg3z1m49fN_diQ0VdUQE9DTRU9QdNS2Bii_hw-/exec";
+"https://script.google.com/macros/s/AKfycbxuT3nl9XONwLdQXrrGLVnORv8QK-x9MPD2TwzrfDSAdyHK00SUDANcnGZA3U5S2JP_/exec";
 
 async function fetchReading(category, cards){
   chat.classList.remove("hidden");
