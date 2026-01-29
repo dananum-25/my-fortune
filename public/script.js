@@ -30,29 +30,16 @@ function play(sound){
 1. 질문 단계
 ===================================================== */
 
-/* 🔑 표시용 한글 라벨 */
+/* 표시용 한글 */
 const LABELS = {
-  love: "연애",
-  career: "직업 / 진로",
-  money: "금전",
-  relationship: "관계",
-
-  past: "과거",
-  present: "현재",
-  future: "미래",
-
-  direction: "방향성",
-  advice: "조언",
-  feeling: "상대의 마음",
-  result: "결과"
+  love:"연애", career:"직업 / 진로", money:"금전", relationship:"관계",
+  past:"과거", present:"현재", future:"미래",
+  direction:"방향성", advice:"조언", feeling:"상대의 마음", result:"결과"
 };
 
-/* 🔑 category → GAS 전달용 한글 */
+/* GAS 전달용 */
 const CATEGORY_MAP = {
-  love: "연애",
-  career: "직업",
-  money: "금전",
-  relationship: "관계"
+  love:"연애", career:"직업", money:"금전", relationship:"관계"
 };
 
 const QUESTIONS = [
@@ -70,16 +57,15 @@ const tArea = document.getElementById("transitionArea");
 function renderQ(){
   qArea.innerHTML = "";
   const q = QUESTIONS[step];
-
   const p = document.createElement("p");
   p.textContent = q.text;
   qArea.appendChild(p);
 
   q.options.forEach(o=>{
     const b = document.createElement("button");
-    b.textContent = LABELS[o] || o;   // ✅ 화면은 한글
+    b.textContent = LABELS[o];
     b.onclick = ()=>{
-      if(step === 0) selectedCategory = o; // 내부 값은 그대로
+      if(step === 0) selectedCategory = o;
       nextQ();
     };
     qArea.appendChild(b);
@@ -88,14 +74,12 @@ function renderQ(){
 
 function nextQ(){
   step++;
-  if(step < QUESTIONS.length){
-    renderQ();
-  } else {
+  if(step < QUESTIONS.length) renderQ();
+  else {
     qArea.classList.add("hidden");
     tArea.classList.remove("hidden");
   }
 }
-
 renderQ();
 
 /* =====================================================
@@ -120,7 +104,7 @@ const MINOR_NAMES = {
 
 function build78Deck(){
   const d = [];
-  MAJORS.forEach(f => d.push(`majors/${f}`));
+  MAJORS.forEach(f=>d.push(`majors/${f}`));
   SUITS.forEach(s=>{
     Object.keys(MINOR_NAMES).forEach(n=>{
       d.push(`minors/${s}/${n}_${MINOR_NAMES[n]}.png`);
@@ -175,30 +159,26 @@ function pick(card){
 }
 
 /* =====================================================
-4. 확정 → 연출
+4. 확정 → 연출 (기존 그대로)
 ===================================================== */
 document.getElementById("confirmPick").onclick = async ()=>{
   modal.classList.add("hidden");
   window.scrollTo(0,0);
   document.body.classList.add("lock-scroll");
 
-  document.querySelectorAll(".pick:not(.sel)").forEach(c=>{
-    c.classList.add("fade");
-  });
-
+  document.querySelectorAll(".pick:not(.sel)").forEach(c=>c.classList.add("fade"));
   await wait(800);
 
-  const CARD_W = 90;
-  const CARD_H = 135;
+  const CARD_W = 90, CARD_H = 135;
   const baseY = bigStage.getBoundingClientRect().bottom + 20;
 
   selected.forEach((c,i)=>{
-    c.style.position = "fixed";
-    c.style.width  = `${CARD_W}px`;
-    c.style.height = `${CARD_H}px`;
-    c.style.left = `${window.innerWidth/2 - CARD_W*1.5 + i*(CARD_W+16)}px`;
-    c.style.top = `${baseY}px`;
-    c.style.zIndex = 1000;
+    c.style.position="fixed";
+    c.style.width=`${CARD_W}px`;
+    c.style.height=`${CARD_H}px`;
+    c.style.left=`${window.innerWidth/2 - CARD_W*1.5 + i*(CARD_W+16)}px`;
+    c.style.top=`${baseY}px`;
+    c.style.zIndex=1000;
   });
 
   await wait(2000);
@@ -207,30 +187,26 @@ document.getElementById("confirmPick").onclick = async ()=>{
   const pickedCards = [];
 
   selected.forEach((c,i)=>{
-    const fire = document.createElement("div");
-    fire.className = "fireball";
+    const fire=document.createElement("div");
+    fire.className="fireball";
     document.body.appendChild(fire);
 
-    const from = c.getBoundingClientRect();
-    const to   = bigCards[i].getBoundingClientRect();
+    const from=c.getBoundingClientRect();
+    const to=bigCards[i].getBoundingClientRect();
 
-    fire.style.left = `${from.left + from.width/2}px`;
-    fire.style.top  = `${from.top  + from.height/2}px`;
-
+    fire.style.left=`${from.left+from.width/2}px`;
+    fire.style.top=`${from.top+from.height/2}px`;
     play(sFire);
 
     fire.animate([
-      { transform:"translate(0,0)" },
-      { transform:`translate(${to.left-from.left}px,${to.top-from.top}px)` }
-    ],{ duration:3000, easing:"ease-in-out", fill:"forwards" });
+      {transform:"translate(0,0)"},
+      {transform:`translate(${to.left-from.left}px,${to.top-from.top}px)`}
+    ],{duration:3000,easing:"ease-in-out",fill:"forwards"});
 
     const cardId = deck.splice(Math.floor(Math.random()*deck.length),1)[0];
     pickedCards.push(cardId.replace(".png",""));
 
-    setTimeout(()=>{
-      fire.remove();
-      c.remove();
-    },3000);
+    setTimeout(()=>{ fire.remove(); c.remove(); },3000);
   });
 
   await wait(3200);
@@ -238,58 +214,73 @@ document.getElementById("confirmPick").onclick = async ()=>{
 
   bigCards.forEach(b=>b.classList.add("burning"));
   await wait(2000);
-
-  bigCards.forEach(b=>{
-    b.classList.remove("burning");
-    b.classList.add("smoking");
-  });
+  bigCards.forEach(b=>{ b.classList.remove("burning"); b.classList.add("smoking"); });
   await wait(2000);
 
   bigCards.forEach((b,i)=>{
-    b.style.backgroundImage = `url('/assets/tarot/${pickedCards[i]}.png')`;
+    b.style.backgroundImage=`url('/assets/tarot/${pickedCards[i]}.png')`;
   });
 
   play(sReveal);
 
-  /* ✅ category를 한글로 변환해서 GAS 호출 */
   await fetchReading(CATEGORY_MAP[selectedCategory], pickedCards);
-
   document.body.classList.remove("lock-scroll");
 };
 
 /* =====================================================
-5. 리딩 API 연동 (GAS)
+5. 광고 게이트 + 리딩 API
 ===================================================== */
 const READING_API =
 "https://script.google.com/macros/s/AKfycbxRMEg6K8_s-oz-7S24qYWjes9gtkrprJEBurP_JWLWcUhjdzshg-tvQOoec77dsoRN/exec";
 
+let cachedReadingHTML = "";
+
 async function fetchReading(category, cards){
-  chat.classList.remove("hidden");
-  chat.innerHTML = "<p>🔮 리딩 중입니다…</p>";
+  chat.classList.add("hidden");
 
-  try{
-    const res = await fetch(READING_API,{
-      method:"POST",
-      body:new URLSearchParams({
-        category,
-        cards: JSON.stringify(cards)
-      })
-    });
-    const data = await res.json();
+  const res = await fetch(READING_API,{
+    method:"POST",
+    body:new URLSearchParams({
+      category,
+      cards: JSON.stringify(cards)
+    })
+  });
+  const data = await res.json();
+  if(data.status !== "success") return;
 
-    if(data.status !== "success") throw new Error(data.message);
+  cachedReadingHTML = `
+    <h3>🔮 리딩 결과</h3>
+    <p><strong>과거</strong><br>${data.reading.past}</p>
+    <p><strong>현재</strong><br>${data.reading.present}</p>
+    <p><strong>미래</strong><br>${data.reading.future}</p>
+  `;
 
-    chat.innerHTML = `
-      <h3>🔮 리딩 결과</h3>
-      <p><strong>과거</strong><br>${data.reading.past}</p>
-      <p><strong>현재</strong><br>${data.reading.present}</p>
-      <p><strong>미래</strong><br>${data.reading.future}</p>
+  showAdGate();
+}
+
+/* 광고 게이트 */
+function showAdGate(){
+  let gate = document.getElementById("adGate");
+  if(!gate){
+    gate = document.createElement("div");
+    gate.id="adGate";
+    gate.innerHTML=`
+      <p>🔒 카드 해석을 보려면 광고를 확인해주세요</p>
+      <a href="https://capable-kataifi-46f1ad.netlify.app/" target="_blank">
+        <button>광고 보기</button>
+      </a>
+      <button id="backToReading">카드 해석 보러가기</button>
     `;
-    chat.scrollIntoView({behavior:"smooth"});
-
-  }catch(e){
-    chat.innerHTML = `<p>⚠️ 리딩을 불러오지 못했습니다.</p>`;
+    document.body.appendChild(gate);
   }
+  gate.classList.remove("hidden");
+
+  document.getElementById("backToReading").onclick=()=>{
+    gate.classList.add("hidden");
+    chat.innerHTML=cachedReadingHTML;
+    chat.classList.remove("hidden");
+    chat.scrollIntoView({behavior:"smooth"});
+  };
 }
 
 /* util */
