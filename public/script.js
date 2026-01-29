@@ -29,6 +29,32 @@ function play(sound){
 /* =====================================================
 1. 질문 단계
 ===================================================== */
+
+/* 🔑 표시용 한글 라벨 */
+const LABELS = {
+  love: "연애",
+  career: "직업 / 진로",
+  money: "금전",
+  relationship: "관계",
+
+  past: "과거",
+  present: "현재",
+  future: "미래",
+
+  direction: "방향성",
+  advice: "조언",
+  feeling: "상대의 마음",
+  result: "결과"
+};
+
+/* 🔑 category → GAS 전달용 한글 */
+const CATEGORY_MAP = {
+  love: "연애",
+  career: "직업",
+  money: "금전",
+  relationship: "관계"
+};
+
 const QUESTIONS = [
   { text:"어떤 분야의 고민인가요?", options:["love","career","money","relationship"] },
   { text:"이 고민은 언제쯤의 이야기인가요?", options:["past","present","future"] },
@@ -44,15 +70,16 @@ const tArea = document.getElementById("transitionArea");
 function renderQ(){
   qArea.innerHTML = "";
   const q = QUESTIONS[step];
+
   const p = document.createElement("p");
   p.textContent = q.text;
   qArea.appendChild(p);
 
   q.options.forEach(o=>{
     const b = document.createElement("button");
-    b.textContent = o;
+    b.textContent = LABELS[o] || o;   // ✅ 화면은 한글
     b.onclick = ()=>{
-      if(step === 0) selectedCategory = o;
+      if(step === 0) selectedCategory = o; // 내부 값은 그대로
       nextQ();
     };
     qArea.appendChild(b);
@@ -224,7 +251,8 @@ document.getElementById("confirmPick").onclick = async ()=>{
 
   play(sReveal);
 
-  await fetchReading(selectedCategory, pickedCards);
+  /* ✅ category를 한글로 변환해서 GAS 호출 */
+  await fetchReading(CATEGORY_MAP[selectedCategory], pickedCards);
 
   document.body.classList.remove("lock-scroll");
 };
