@@ -30,7 +30,7 @@ function play(sound){
 1. 질문 단계
 ===================================================== */
 
-/* 🔑 표시용 한글 라벨 */
+/* 🔑 화면 표시용 한글 */
 const LABELS = {
   love: "연애",
   career: "직업 / 진로",
@@ -47,7 +47,7 @@ const LABELS = {
   result: "결과"
 };
 
-/* 🔑 category → GAS 전달용 한글 */
+/* 🔑 GAS 전달용 category (한글 고정) */
 const CATEGORY_MAP = {
   love: "연애",
   career: "직업",
@@ -77,9 +77,9 @@ function renderQ(){
 
   q.options.forEach(o=>{
     const b = document.createElement("button");
-    b.textContent = LABELS[o] || o;   // ✅ 화면은 한글
+    b.textContent = LABELS[o] || o;
     b.onclick = ()=>{
-      if(step === 0) selectedCategory = o; // 내부 값은 그대로
+      if(step === 0) selectedCategory = o;
       nextQ();
     };
     qArea.appendChild(b);
@@ -99,7 +99,7 @@ function nextQ(){
 renderQ();
 
 /* =====================================================
-2. 카드 덱 (락)
+2. 카드 덱 (78장 고정)
 ===================================================== */
 const MAJORS = [
   "00_the_fool.png","01_the_magician.png","02_the_high_priestess.png",
@@ -120,10 +120,10 @@ const MINOR_NAMES = {
 
 function build78Deck(){
   const d = [];
-  MAJORS.forEach(f => d.push(`majors/${f}`));
+  MAJORS.forEach(f => d.push(`major_${f.slice(0,2)}`));
   SUITS.forEach(s=>{
     Object.keys(MINOR_NAMES).forEach(n=>{
-      d.push(`minors/${s}/${n}_${MINOR_NAMES[n]}.png`);
+      d.push(`${s}_${n}`);
     });
   });
   return d;
@@ -188,62 +188,13 @@ document.getElementById("confirmPick").onclick = async ()=>{
 
   await wait(800);
 
-  const CARD_W = 90;
-  const CARD_H = 135;
-  const baseY = bigStage.getBoundingClientRect().bottom + 20;
-
-  selected.forEach((c,i)=>{
-    c.style.position = "fixed";
-    c.style.width  = `${CARD_W}px`;
-    c.style.height = `${CARD_H}px`;
-    c.style.left = `${window.innerWidth/2 - CARD_W*1.5 + i*(CARD_W+16)}px`;
-    c.style.top = `${baseY}px`;
-    c.style.zIndex = 1000;
-  });
-
-  await wait(2000);
-
   const deck = build78Deck();
   const pickedCards = [];
 
   selected.forEach((c,i)=>{
-    const fire = document.createElement("div");
-    fire.className = "fireball";
-    document.body.appendChild(fire);
-
-    const from = c.getBoundingClientRect();
-    const to   = bigCards[i].getBoundingClientRect();
-
-    fire.style.left = `${from.left + from.width/2}px`;
-    fire.style.top  = `${from.top  + from.height/2}px`;
-
-    play(sFire);
-
-    fire.animate([
-      { transform:"translate(0,0)" },
-      { transform:`translate(${to.left-from.left}px,${to.top-from.top}px)` }
-    ],{ duration:3000, easing:"ease-in-out", fill:"forwards" });
-
     const cardId = deck.splice(Math.floor(Math.random()*deck.length),1)[0];
-    pickedCards.push(cardId.replace(".png",""));
-
-    setTimeout(()=>{
-      fire.remove();
-      c.remove();
-    },3000);
+    pickedCards.push(cardId);
   });
-
-  await wait(3200);
-  play(sIgnite);
-
-  bigCards.forEach(b=>b.classList.add("burning"));
-  await wait(2000);
-
-  bigCards.forEach(b=>{
-    b.classList.remove("burning");
-    b.classList.add("smoking");
-  });
-  await wait(2000);
 
   bigCards.forEach((b,i)=>{
     b.style.backgroundImage = `url('/assets/tarot/${pickedCards[i]}.png')`;
@@ -251,8 +202,10 @@ document.getElementById("confirmPick").onclick = async ()=>{
 
   play(sReveal);
 
-  /* ✅ category를 한글로 변환해서 GAS 호출 */
-  await fetchReading(CATEGORY_MAP[selectedCategory], pickedCards);
+  await fetchReading(
+    CATEGORY_MAP[selectedCategory],
+    pickedCards
+  );
 
   document.body.classList.remove("lock-scroll");
 };
@@ -270,13 +223,16 @@ async function fetchReading(category, cards){
   try{
     const res = await fetch(READING_API,{
       method:"POST",
-      body:new URLSearchParams({
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify({
         category,
-        cards: JSON.stringify(cards)
+        cards
       })
     });
-    const data = await res.json();
 
+    const data = await res.json();
     if(data.status !== "success") throw new Error(data.message);
 
     chat.innerHTML = `
@@ -288,6 +244,7 @@ async function fetchReading(category, cards){
     chat.scrollIntoView({behavior:"smooth"});
 
   }catch(e){
+    console.error(e);
     chat.innerHTML = `<p>⚠️ 리딩을 불러오지 못했습니다.</p>`;
   }
 }
