@@ -56,6 +56,42 @@ body {
   gap: 14px;
 }
 
+.big-cards.v7-layout {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+  height: 420px;
+}
+
+.big-card {
+  position: absolute;
+  width: 88px;
+  height: 135px;
+  background: url("/assets/tarot/back.png") center/cover no-repeat;
+  border-radius: 12px;
+  transition: opacity .4s ease, transform .6s ease;
+}
+
+/* ───────── 슬롯 좌표 ───────── */
+.slot-1 { top: 0; left: 50%; transform: translateX(-50%); }
+
+.slot-2 { top: 0; left: 0; }
+.slot-3 { top: 0; right: 0; }
+
+.slot-6 { top: 150px; left: 50%; transform: translateX(-50%); }
+
+.slot-4 { bottom: 0; left: 0; }
+.slot-5 { bottom: 0; right: 0; }
+
+.slot-7 { bottom: 0; left: 50%; transform: translateX(-50%); }
+
+/* 히든 처리 */
+.big-card.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .big-card {
   width: 110px;
   height: 170px;
