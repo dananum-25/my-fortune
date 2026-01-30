@@ -27,7 +27,7 @@ function play(sound){
 }
 
 /* =====================================================
-1. 질문 단계 (한글 표현 / 내부 키 분리)
+1. 질문 단계 (한글 표시 / 내부 key 분리)
 ===================================================== */
 const LABELS = {
   love: "연애",
@@ -63,11 +63,11 @@ let selectedCategory = null;
 let selectedTime = null;
 let selectedDepth = null;
 
-/* 🔒 핵심 상태 */
+/* 🔒 리딩 버전 & 카드 수 */
 let readingVersion = "V3";
 let maxPickCount = 3;
 
-/* 질문 → 카드 장수 매핑 (락) */
+/* 질문3 → 버전 결정 (락) */
 function applyReadingDepth(depth){
   switch(depth){
     case "direction":
@@ -162,9 +162,8 @@ function build78Deck(){
 }
 
 /* =====================================================
-3. 스프레드 & 슬롯 정의 (🔥 핵심)
+3. 슬롯 정의 (🔥 핵심 고정)
 ===================================================== */
-const SLOT_ORDER = [2,1,3,6,4,7,5]; // v7 기준 고정
 const SLOT_MAP = {
   V1: [1],
   V3: [2,1,3],
@@ -219,7 +218,7 @@ function pick(card){
 }
 
 /* =====================================================
-4. 확정 → 연출 (파이어볼 / 점화 / 연기)
+4. 확정 → 연출 (파이어볼 → 점화 → 연기)
 ===================================================== */
 document.getElementById("confirmPick").onclick = async ()=>{
   modal.classList.add("hidden");
@@ -230,10 +229,9 @@ document.getElementById("confirmPick").onclick = async ()=>{
 
   const deck = build78Deck();
   const pickedCards = [];
-
   const activeSlots = SLOT_MAP[readingVersion];
 
-  // 히든 처리
+  /* 슬롯 히든 처리 */
   bigCards.forEach(card=>{
     const slot = Number(card.className.match(/slot-(\d)/)[1]);
     if(!activeSlots.includes(slot)){
@@ -244,7 +242,7 @@ document.getElementById("confirmPick").onclick = async ()=>{
     }
   });
 
-  // 파이어볼
+  /* 파이어볼 발사 */
   selected.forEach((c,i)=>{
     const slotNum = activeSlots[i];
     const target = document.querySelector(`.slot-${slotNum}`);
@@ -299,7 +297,7 @@ document.getElementById("confirmPick").onclick = async ()=>{
 };
 
 /* =====================================================
-5. 리딩 API
+5. 리딩 API (최신 URL 반영)
 ===================================================== */
 const READING_API =
 "https://script.google.com/macros/s/AKfycbwLsinoFy1xUaTNNqqHKRTIUSA9sOb-xsHbOXBkoIkovfMmTDRDH57FYHr184a3tojx/exec";
