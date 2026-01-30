@@ -27,8 +27,10 @@ function play(sound){
 }
 
 /* =====================================================
-1. 질문 단계
+1. 질문 단계 (프론트 한글 고정)
 ===================================================== */
+
+/* 🔹 프론트 표시용 */
 const LABELS = {
   love: "연애",
   career: "직업 / 진로",
@@ -45,11 +47,19 @@ const LABELS = {
   result: "결과"
 };
 
+/* 🔹 GAS 전달용 한글 */
 const CATEGORY_MAP = {
   love: "연애",
   career: "직업",
   money: "금전",
   relationship: "관계"
+};
+
+const DEPTH_KR = {
+  direction: "방향성",
+  advice: "조언",
+  feeling: "상대의 마음",
+  result: "결과"
 };
 
 const QUESTIONS = [
@@ -60,17 +70,15 @@ const QUESTIONS = [
 
 let step = 0;
 let selectedCategory = null;
-let selectedDepth = null;
+let selectedDepthKey = null;
+let selectedDepthKR  = null;
 
-/* 🔥 리딩 핵심 상태 */
+/* 🔥 리딩 버전 상태 */
 let readingVersion = "V3";
 let maxPickCount = 3;
 
-const qArea = document.getElementById("questionArea");
-const tArea = document.getElementById("transitionArea");
-
-function applyReadingDepth(depth){
-  switch(depth){
+function applyReadingDepth(depthKey){
+  switch(depthKey){
     case "direction":
       readingVersion = "V1";
       maxPickCount = 1;
@@ -90,6 +98,9 @@ function applyReadingDepth(depth){
   }
 }
 
+const qArea = document.getElementById("questionArea");
+const tArea = document.getElementById("transitionArea");
+
 function renderQ(){
   qArea.innerHTML = "";
   const q = QUESTIONS[step];
@@ -98,14 +109,15 @@ function renderQ(){
   p.textContent = q.text;
   qArea.appendChild(p);
 
-  q.options.forEach(o=>{
+  q.options.forEach(key=>{
     const b = document.createElement("button");
-    b.textContent = LABELS[o] || o;
+    b.textContent = LABELS[key]; // ✅ 항상 한글
     b.onclick = ()=>{
-      if(step === 0) selectedCategory = o;
+      if(step === 0) selectedCategory = key;
       if(step === 2){
-        selectedDepth = o;
-        applyReadingDepth(o);
+        selectedDepthKey = key;
+        selectedDepthKR  = DEPTH_KR[key];
+        applyReadingDepth(key);
       }
       nextQ();
     };
@@ -120,6 +132,9 @@ function nextQ(){
   } else {
     qArea.classList.add("hidden");
     tArea.classList.remove("hidden");
+
+    tArea.querySelector("p").textContent =
+      `지금 선택을 생각하며 카드를 ${maxPickCount}장 골라볼까요?`;
   }
 }
 
@@ -157,16 +172,8 @@ function build78Deck(){
 }
 
 /* =====================================================
-3. 스프레드 & 슬롯 제어
+3. 스프레드
 ===================================================== */
-const SLOT_ORDER = [2,1,3,6,4,7,5]; // 🔒 락
-const SLOT_MAP = {
-  V1: [1],
-  V3: [2,1,3],
-  V5: [2,1,3,4,5],
-  V7: [1,2,3,4,5,6,7]
-};
-
 const grid     = document.getElementById("grid78");
 const spread   = document.getElementById("spreadSection");
 const bigStage = document.getElementById("bigCardStage");
@@ -217,26 +224,13 @@ function pick(card){
   }
 }
 
-function applySlotVisibility(){
-  const allowed = SLOT_MAP[readingVersion];
-  bigCards.forEach(card=>{
-    const slot = Number(card.className.match(/slot-(\d)/)?.[1]);
-    if(!allowed.includes(slot)){
-      card.classList.add("hidden");
-    }else{
-      card.classList.remove("hidden");
-    }
-  });
-}
-
 /* =====================================================
 4. 확정 → 연출
 ===================================================== */
 document.getElementById("confirmPick").onclick = async ()=>{
   modal.classList.add("hidden");
+  window.scrollTo(0,0);
   document.body.classList.add("lock-scroll");
-
-  applySlotVisibility();
 
   document.querySelectorAll(".pick:not(.sel)").forEach(c=>{
     c.classList.add("fade");
@@ -246,56 +240,29 @@ document.getElementById("confirmPick").onclick = async ()=>{
 
   const deck = build78Deck();
   const pickedCards = [];
-  selected.forEach(()=> {
-    const id = deck.splice(Math.floor(Math.random()*deck.length),1)[0];
-    pickedCards.push(id.replace(".png",""));
+
+  selected.forEach((c,i)=>{
+    const cardId = deck.splice(Math.floor(Math.random()*deck.length),1)[0];
+    pickedCards.push(cardId.replace(".png",""));
   });
 
-  for(let i=0;i<pickedCards.length;i++){
-    const slotNum = SLOT_ORDER[i];
-    const target = document.querySelector(`.slot-${slotNum}`);
-    const from = selected[i].getBoundingClientRect();
-    const to = target.getBoundingClientRect();
-
-    const fire = document.createElement("div");
-    fire.className = "fireball";
-    document.body.appendChild(fire);
-
-    fire.style.left = `${from.left + from.width/2}px`;
-    fire.style.top  = `${from.top + from.height/2}px`;
-
-    play(sFire);
-
-    fire.animate([
-      { transform:"translate(0,0)" },
-      { transform:`translate(${to.left-from.left}px,${to.top-from.top}px)` }
-    ],{ duration:2500, easing:"ease-in-out", fill:"forwards" });
-
-    setTimeout(()=>fire.remove(),2500);
-  }
-
-  await wait(2600);
-  play(sIgnite);
-
-  bigCards.forEach(b=>!b.classList.contains("hidden") && b.classList.add("burning"));
-  await wait(1800);
-
-  bigCards.forEach(b=>{
-    b.classList.remove("burning");
-    !b.classList.contains("hidden") && b.classList.add("smoking");
-  });
-
-  await wait(2000);
-
-  SLOT_ORDER.forEach((slot,i)=>{
-    if(i < pickedCards.length){
-      const b = document.querySelector(`.slot-${slot}`);
-      b.style.backgroundImage = `url('/assets/tarot/${pickedCards[i]}.png')`;
+  bigCards.forEach((b,i)=>{
+    if(i < maxPickCount){
+      b.style.backgroundImage =
+        `url('/assets/tarot/${pickedCards[i]}.png')`;
+    } else {
+      b.classList.add("hidden");
     }
   });
 
   play(sReveal);
-  await fetchReading(CATEGORY_MAP[selectedCategory], pickedCards);
+
+  await fetchReading(
+    CATEGORY_MAP[selectedCategory],
+    readingVersion,
+    selectedDepthKR,
+    pickedCards
+  );
 
   document.body.classList.remove("lock-scroll");
 };
@@ -306,17 +273,22 @@ document.getElementById("confirmPick").onclick = async ()=>{
 const READING_API =
 "https://script.google.com/macros/s/AKfycbxRMEg6K8_s-oz-7S24qYWjes9gtkrprJEBurP_JWLWcUhjdzshg-tvQOoec77dsoRN/exec";
 
-async function fetchReading(category, cards){
+async function fetchReading(category, version, depthKR, cards){
   chat.classList.remove("hidden");
   chat.innerHTML = "<p>🔮 리딩 중입니다…</p>";
+
+  const payload = {
+    category,
+    version,
+    depth_type: depthKR,
+    cards
+  };
 
   try{
     const res = await fetch(READING_API,{
       method:"POST",
-      body:new URLSearchParams({
-        category,
-        cards: JSON.stringify(cards)
-      })
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify(payload)
     });
 
     const data = await res.json();
@@ -324,11 +296,14 @@ async function fetchReading(category, cards){
 
     chat.innerHTML = `
       <h3>🔮 리딩 결과</h3>
-      <p>${JSON.stringify(data.reading, null, 2)}</p>
+      ${data.output.map(t=>`<p>${t}</p>`).join("")}
     `;
+    chat.scrollIntoView({behavior:"smooth"});
+
   }catch(e){
-    chat.innerHTML = `<p>⚠️ 리딩 실패</p>`;
+    chat.innerHTML = `<p>⚠️ 리딩을 불러오지 못했습니다.</p>`;
   }
 }
 
+/* util */
 const wait = ms => new Promise(r=>setTimeout(r,ms));
