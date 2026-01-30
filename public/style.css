@@ -1,5 +1,5 @@
 /* ===============================
-   BASE
+   RESET & BASE
 ================================ */
 * { box-sizing: border-box; }
 
@@ -10,34 +10,58 @@ body {
   font-family: system-ui, sans-serif;
 }
 
-body.lock-scroll { overflow: hidden; }
+body.lock-scroll {
+  overflow: hidden;
+}
 
+/* ===============================
+   TOP BAR
+================================ */
 .topbar {
   display: flex;
   justify-content: space-between;
-  padding: 12px;
+  align-items: center;
+  padding: 12px 14px;
 }
 
-.sound-btn { font-size: 14px; }
+.sound-btn {
+  font-size: 14px;
+  background: none;
+  border: none;
+  color: #fff;
+}
 
+/* ===============================
+   CAT AREA
+================================ */
 .cat-area {
   text-align: center;
-  padding: 14px;
+  padding: 12px 10px 6px;
 }
+
 .cat-area img {
   width: 92%;
   max-width: 420px;
   border-radius: 14px;
 }
 
+#catText {
+  margin-top: 10px;
+  line-height: 1.4;
+}
+
+/* ===============================
+   QUESTION / TRANSITION
+================================ */
 .question-area,
 .transition {
-  padding: 14px;
+  padding: 12px;
   text-align: center;
 }
 
 .question-area button,
 .transition button {
+  display: block;
   width: 100%;
   margin: 8px 0;
   padding: 14px;
@@ -45,76 +69,93 @@ body.lock-scroll { overflow: hidden; }
   border: none;
   background: #1e1e2a;
   color: #fff;
+  font-size: 15px;
 }
 
 /* ===============================
-   BIG CARD STAGE (락)
+   BIG CARD STAGE
 ================================ */
 .tarot-stage {
   display: flex;
   justify-content: center;
-  margin: 18px 0;
+  margin: 8px 0 4px;
 }
 
 .big-cards.v7-layout {
   position: relative;
   width: 100%;
   max-width: 360px;
-  height: 420px;
+  height: 300px; /* 🔑 스크롤 방지 핵심 */
   margin: 0 auto;
 }
 
-/* 🔥 빅카드 (50% 축소 / 안 잘림) */
+/* 공통 빅카드 */
 .big-card {
   position: absolute;
-  width: 90px;     /* 기존 대비 축소 */
-  height: 140px;   /* 기존 대비 축소 */
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain; /* ✅ 절대 자르지 않음 */
-  border-radius: 12px;
+  width: 140px;
+  height: 210px;
+  background: url("/assets/tarot/back.png") center center no-repeat;
+  background-size: contain; /* 🔥 절대 자르지 않음 */
+  border-radius: 14px;
   transition: opacity .4s ease, transform .6s ease;
+  transform-origin: center center;
+  z-index: 5;
 }
 
-/* ===== 슬롯 좌표 (락 선언 그대로) ===== */
-.slot-1 { top: 0; left: 50%; transform: translateX(-50%); }
-.slot-2 { top: 0; left: 0; }
-.slot-3 { top: 0; right: 0; }
+/* 슬롯 좌표 (락) */
+.slot-1 { top: 0; left: 50%; transform: translateX(-50%) scale(0.5); }
 
-.slot-6 { top: 150px; left: 50%; transform: translateX(-50%); }
+.slot-2 { top: 0; left: 0; transform: scale(0.5); }
+.slot-3 { top: 0; right: 0; transform: scale(0.5); }
 
-.slot-4 { bottom: 0; left: 0; }
-.slot-5 { bottom: 0; right: 0; }
-.slot-7 { bottom: 0; left: 50%; transform: translateX(-50%); }
+.slot-6 { top: 110px; left: 50%; transform: translateX(-50%) scale(0.5); }
 
-/* 히든 */
+.slot-4 { bottom: 0; left: 0; transform: scale(0.5); }
+.slot-5 { bottom: 0; right: 0; transform: scale(0.5); }
+
+.slot-7 { bottom: 0; left: 50%; transform: translateX(-50%) scale(0.5); }
+
+/* 히든 슬롯 */
 .big-card.hidden {
   opacity: 0;
   pointer-events: none;
 }
 
 /* ===============================
-   PICKER
+   PICKER (78장)
 ================================ */
-.picker { padding: 12px; }
+.picker {
+  padding: 6px 10px 10px;
+}
+
+.picker-title {
+  margin-bottom: 6px;
+  text-align: center;
+}
 
 .grid78 {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 6px;
-  max-height: 260px;
+  max-height: 200px;
   overflow-y: auto;
 }
 
 .pick {
-  aspect-ratio: 2/3;
+  aspect-ratio: 2 / 3;
   background: url("/assets/tarot/back.png") center/cover no-repeat;
   border-radius: 6px;
-  transition: transform .6s ease, opacity .6s ease;
+  transition: transform .4s ease, opacity .4s ease;
 }
 
-.pick.sel { outline: 2px solid gold; }
-.pick.fade { opacity: 0; transform: scale(0.5); }
+.pick.sel {
+  outline: 2px solid gold;
+}
+
+.pick.fade {
+  opacity: 0;
+  transform: scale(0.5);
+}
 
 /* ===============================
    MODAL
@@ -133,17 +174,18 @@ body.lock-scroll { overflow: hidden; }
   background: #1a1a1f;
   padding: 20px;
   border-radius: 14px;
+  width: 80%;
+  max-width: 300px;
+  text-align: center;
 }
 
-.hidden { display: none; }
-
 /* ===============================
-   EFFECTS
+   FIREBALL
 ================================ */
 .fireball {
   position: fixed;
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: radial-gradient(circle,
     #fff1c1,
@@ -158,6 +200,9 @@ body.lock-scroll { overflow: hidden; }
   pointer-events: none;
 }
 
+/* ===============================
+   BURN / SMOKE
+================================ */
 .big-card.burning::before {
   content: "";
   position: absolute;
@@ -168,7 +213,7 @@ body.lock-scroll { overflow: hidden; }
     rgba(120,0,200,.5),
     transparent 70%
   );
-  animation: burnPulse 3s ease-in-out forwards;
+  animation: burnPulse 2.2s ease-in-out forwards;
 }
 
 @keyframes burnPulse {
@@ -186,10 +231,25 @@ body.lock-scroll { overflow: hidden; }
     rgba(180,180,200,.5),
     transparent 75%
   );
-  animation: smokeRise 3s ease-out forwards;
+  animation: smokeRise 2.6s ease-out forwards;
 }
 
 @keyframes smokeRise {
   from { transform: translateY(0); opacity: .9; }
-  to   { transform: translateY(-60px); opacity: 0; }
+  to   { transform: translateY(-50px); opacity: 0; }
+}
+
+/* ===============================
+   CHAT (리딩 영역)
+================================ */
+.chat {
+  padding: 14px 12px 24px;
+  text-align: center;
+}
+
+/* ===============================
+   UTIL
+================================ */
+.hidden {
+  display: none;
 }
