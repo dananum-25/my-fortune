@@ -271,7 +271,7 @@ document.getElementById("confirmPick").onclick=async()=>{
 /* =====================================================
 5. 리딩 API
 ===================================================== */
-const READING_API="https://script.google.com/macros/s/AKfycbwLsinoFy1xUaTNNqqHKRTIUSA9sOb-xsHbOXBkoIkovfMmTDRDH57FYHr184a3tojx/exec";
+const READING_API="https://script.google.com/macros/s/AKfycbwg-Iwu08Y7pIjX-jj4s_XWTaZbaD9GerRjQrg0PCEz5h-qbFT3FmHbYVNBM_5VzhwK/exec";
 
 async function fetchReading(category,cards,version){
   chat.classList.remove("hidden");
