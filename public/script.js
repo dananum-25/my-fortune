@@ -29,8 +29,6 @@ function play(sound){
 /* =====================================================
 1. 질문 단계
 ===================================================== */
-
-/* 표시용 한글 라벨 */
 const LABELS = {
   love: "연애",
   career: "직업 / 진로",
@@ -47,7 +45,6 @@ const LABELS = {
   result: "결과"
 };
 
-/* category → GAS 전달용 */
 const CATEGORY_MAP = {
   love: "연애",
   career: "직업",
@@ -65,7 +62,7 @@ let step = 0;
 let selectedCategory = null;
 let selectedDepth = null;
 
-/* 🔥 핵심 상태 */
+/* 🔥 리딩 핵심 상태 */
 let readingVersion = "V3";
 let maxPickCount = 3;
 
@@ -160,12 +157,20 @@ function build78Deck(){
 }
 
 /* =====================================================
-3. 스프레드
+3. 스프레드 & 슬롯 제어
 ===================================================== */
+const SLOT_ORDER = [2,1,3,6,4,7,5]; // 🔒 락
+const SLOT_MAP = {
+  V1: [1],
+  V3: [2,1,3],
+  V5: [2,1,3,4,5],
+  V7: [1,2,3,4,5,6,7]
+};
+
 const grid     = document.getElementById("grid78");
 const spread   = document.getElementById("spreadSection");
 const bigStage = document.getElementById("bigCardStage");
-const bigCards = document.querySelectorAll(".big-card"); // 최대 7장 구조 전제
+const bigCards = document.querySelectorAll(".big-card");
 const modal    = document.getElementById("confirmModal");
 const chat     = document.getElementById("chatContainer");
 
@@ -212,13 +217,26 @@ function pick(card){
   }
 }
 
+function applySlotVisibility(){
+  const allowed = SLOT_MAP[readingVersion];
+  bigCards.forEach(card=>{
+    const slot = Number(card.className.match(/slot-(\d)/)?.[1]);
+    if(!allowed.includes(slot)){
+      card.classList.add("hidden");
+    }else{
+      card.classList.remove("hidden");
+    }
+  });
+}
+
 /* =====================================================
 4. 확정 → 연출
 ===================================================== */
 document.getElementById("confirmPick").onclick = async ()=>{
   modal.classList.add("hidden");
-  window.scrollTo(0,0);
   document.body.classList.add("lock-scroll");
+
+  applySlotVisibility();
 
   document.querySelectorAll(".pick:not(.sel)").forEach(c=>{
     c.classList.add("fade");
@@ -226,87 +244,64 @@ document.getElementById("confirmPick").onclick = async ()=>{
 
   await wait(800);
 
-  const CARD_W = 90;
-  const CARD_H = 135;
-  const baseY = bigStage.getBoundingClientRect().bottom + 20;
-
-  selected.forEach((c,i)=>{
-    c.style.position = "fixed";
-    c.style.width  = `${CARD_W}px`;
-    c.style.height = `${CARD_H}px`;
-    c.style.left = `${window.innerWidth/2 - CARD_W*1.5 + i*(CARD_W+16)}px`;
-    c.style.top = `${baseY}px`;
-    c.style.zIndex = 1000;
-  });
-
-  await wait(2000);
-
   const deck = build78Deck();
   const pickedCards = [];
+  selected.forEach(()=> {
+    const id = deck.splice(Math.floor(Math.random()*deck.length),1)[0];
+    pickedCards.push(id.replace(".png",""));
+  });
 
-  selected.forEach((c,i)=>{
+  for(let i=0;i<pickedCards.length;i++){
+    const slotNum = SLOT_ORDER[i];
+    const target = document.querySelector(`.slot-${slotNum}`);
+    const from = selected[i].getBoundingClientRect();
+    const to = target.getBoundingClientRect();
+
     const fire = document.createElement("div");
     fire.className = "fireball";
     document.body.appendChild(fire);
 
-    const from = c.getBoundingClientRect();
-    const to   = bigCards[i].getBoundingClientRect();
-
     fire.style.left = `${from.left + from.width/2}px`;
-    fire.style.top  = `${from.top  + from.height/2}px`;
+    fire.style.top  = `${from.top + from.height/2}px`;
 
     play(sFire);
 
     fire.animate([
       { transform:"translate(0,0)" },
       { transform:`translate(${to.left-from.left}px,${to.top-from.top}px)` }
-    ],{ duration:3000, easing:"ease-in-out", fill:"forwards" });
+    ],{ duration:2500, easing:"ease-in-out", fill:"forwards" });
 
-    const cardId = deck.splice(Math.floor(Math.random()*deck.length),1)[0];
-    pickedCards.push(cardId.replace(".png",""));
+    setTimeout(()=>fire.remove(),2500);
+  }
 
-    setTimeout(()=>{
-      fire.remove();
-      c.remove();
-    },3000);
-  });
-
-  await wait(3200);
+  await wait(2600);
   play(sIgnite);
 
-  bigCards.forEach((b,i)=>{
-    if(i < maxPickCount){
-      b.classList.add("burning");
-    } else {
-      b.style.display = "none"; // 히든 처리
-    }
-  });
-
-  await wait(2000);
+  bigCards.forEach(b=>!b.classList.contains("hidden") && b.classList.add("burning"));
+  await wait(1800);
 
   bigCards.forEach(b=>{
     b.classList.remove("burning");
-    b.classList.add("smoking");
+    !b.classList.contains("hidden") && b.classList.add("smoking");
   });
 
   await wait(2000);
 
-  bigCards.forEach((b,i)=>{
-    if(i < maxPickCount){
-      b.style.backgroundImage =
-        `url('/assets/tarot/${pickedCards[i]}.png')`;
+  SLOT_ORDER.forEach((slot,i)=>{
+    if(i < pickedCards.length){
+      const b = document.querySelector(`.slot-${slot}`);
+      b.style.backgroundImage = `url('/assets/tarot/${pickedCards[i]}.png')`;
     }
   });
 
   play(sReveal);
-
   await fetchReading(CATEGORY_MAP[selectedCategory], pickedCards);
 
   document.body.classList.remove("lock-scroll");
 };
 
 /* =====================================================
-5. 리딩 API 연동
+5. 리딩 API
 ===================================================== */
 const READING_API =
 "https://script.google.com/macros/s/AKfycbxRMEg6K8_s-oz-7S24qYWjes9gtkrprJEBurP_JWLWcUhjdzshg-tvQOoec77dsoRN/exec";
@@ -329,16 +324,11 @@ async function fetchReading(category, cards){
 
     chat.innerHTML = `
       <h3>🔮 리딩 결과</h3>
-      <p><strong>과거</strong><br>${data.reading.past}</p>
-      <p><strong>현재</strong><br>${data.reading.present}</p>
-      <p><strong>미래</strong><br>${data.reading.future}</p>
+      <p>${JSON.stringify(data.reading, null, 2)}</p>
     `;
-    chat.scrollIntoView({behavior:"smooth"});
-
   }catch(e){
-    chat.innerHTML = `<p>⚠️ 리딩을 불러오지 못했습니다.</p>`;
+    chat.innerHTML = `<p>⚠️ 리딩 실패</p>`;
   }
 }
 
-/* util */
 const wait = ms => new Promise(r=>setTimeout(r,ms));
