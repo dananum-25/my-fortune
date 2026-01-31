@@ -27,11 +27,9 @@ function play(sound){
 }
 
 /* =====================================================
-1. 질문 단계
+1. 질문
 ===================================================== */
 const catTextEl = document.getElementById("catText");
-const qArea = document.getElementById("questionArea");
-const tArea = document.getElementById("transitionArea");
 
 const LABELS = {
   love:"연애", career:"직업 / 진로", money:"금전", relationship:"관계",
@@ -51,8 +49,6 @@ const QUESTIONS = [
 
 let step = 0;
 let selectedCategory = null;
-let selectedDepth = null;
-
 let readingVersion = "V3";
 let maxPickCount = 3;
 
@@ -62,6 +58,9 @@ function applyReadingDepth(depth){
   if(depth==="feeling"){ readingVersion="V5"; maxPickCount=5; }
   if(depth==="result"){ readingVersion="V7"; maxPickCount=7; }
 }
+
+const qArea = document.getElementById("questionArea");
+const tArea = document.getElementById("transitionArea");
 
 function renderQ(){
   qArea.innerHTML = "";
@@ -73,23 +72,19 @@ function renderQ(){
     b.textContent = LABELS[o];
     b.onclick = ()=>{
       if(step===0) selectedCategory=o;
-      if(step===2){ selectedDepth=o; applyReadingDepth(o); }
-      nextQ();
+      if(step===2) applyReadingDepth(o);
+      step++;
+      step < QUESTIONS.length ? renderQ() : finishQuestions();
     };
     qArea.appendChild(b);
   });
 }
 
-function nextQ(){
-  step++;
-  if(step < QUESTIONS.length){
-    renderQ();
-  }else{
-    qArea.classList.add("hidden");
-    tArea.classList.remove("hidden");
-    tArea.querySelector("p").textContent =
-      `지금 선택을 생각하며 카드를 ${maxPickCount}장 골라줘.`;
-  }
+function finishQuestions(){
+  qArea.classList.add("hidden");
+  tArea.classList.remove("hidden");
+  tArea.querySelector("p").textContent =
+    `지금 선택을 생각하며 카드를 ${maxPickCount}장 골라줘.`;
 }
 
 renderQ();
@@ -105,48 +100,71 @@ const SLOT_SEQUENCE = {
 };
 
 /* =====================================================
-3. 카드 덱
+3. 덱
 ===================================================== */
 function build78Deck(){
   const d=[];
-  for(let i=0;i<78;i++) d.push(`card_${i}`);
+  [
+    "00_the_fool","01_the_magician","02_the_high_priestess","03_the_empress",
+    "04_the_emperor","05_the_hierophant","06_the_lovers","07_the_chariot",
+    "08_strength","09_the_hermit","10_wheel_of_fortune","11_justice",
+    "12_the_hanged_man","13_death","14_temperance","15_the_devil",
+    "16_the_tower","17_the_star","18_the_moon","19_the_sun",
+    "20_judgement","21_the_world"
+  ].forEach(n=>d.push(`majors/${n}.png`));
+
+  ["cups","wands","swords","pentacles"].forEach(s=>{
+    for(let i=1;i<=14;i++){
+      d.push(`minors/${s}/${String(i).padStart(2,"0")}.png`);
+    }
+  });
   return d;
 }
 
 /* =====================================================
-4. DOM refs
+4. DOM
 ===================================================== */
-const grid = document.getElementById("grid78");
-const spread = document.getElementById("spreadSection");
-const bigStage = document.getElementById("bigCardStage");
-const bigCards = document.querySelectorAll(".big-card");
-const modal = document.getElementById("confirmModal");
-const chat = document.getElementById("chatContainer");
+const grid=document.getElementById("grid78");
+const spread=document.getElementById("spreadSection");
+const bigStage=document.getElementById("bigCardStage");
+const bigCards=document.querySelectorAll(".big-card");
+const modal=document.getElementById("confirmModal");
+const chat=document.getElementById("chatContainer");
 
 let selected=[];
 
 /* =====================================================
-5. 슬롯 표시
+5. 재정렬
 ===================================================== */
-function applySlotVisibility(cardList){
-  const active = SLOT_SEQUENCE[readingVersion];
-  cardList.forEach(c=>{
-    const m = c.className.match(/slot-(\d)/);
-    if(!m) return;
-    const slot = Number(m[1]);
-    if(!active.includes(slot)){
-      c.classList.add("hidden");
-    }else{
-      c.classList.remove("hidden","burning","smoking");
-      c.style.opacity = "0";
-      c.style.backgroundImage = "url('/assets/tarot/back.png')";
-    }
+let reorderArea=null;
+function showReorder(cards){
+  if(reorderArea) reorderArea.remove();
+
+  reorderArea=document.createElement("div");
+  reorderArea.className="reorder-area";
+
+  cards.forEach(c=>{
+    const d=document.createElement("div");
+    d.className="reorder-card";
+    d.style.backgroundImage=`url('/assets/tarot/${c}.png')`;
+    reorderArea.appendChild(d);
   });
+
+  bigStage.insertAdjacentElement("afterend",reorderArea);
 }
 
 /* =====================================================
 6. 카드 선택
 ===================================================== */
+document.getElementById("goCard").onclick=()=>{
+  tArea.classList.add("hidden");
+  bigStage.classList.remove("hidden");
+  spread.classList.remove("hidden");
+  document.querySelector(".picker-title").textContent =
+    `마음이 가는 카드 ${maxPickCount}장을 골라줘`;
+  initSpread();
+};
+
 function initSpread(){
   grid.innerHTML="";
   selected=[];
@@ -172,46 +190,95 @@ function pick(card){
 }
 
 /* =====================================================
-7. 시작
-===================================================== */
-document.getElementById("goCard").onclick=()=>{
-  tArea.classList.add("hidden");
-  bigStage.classList.remove("hidden");
-  spread.classList.remove("hidden");
-
-  document.querySelector(".picker-title").textContent =
-    `마음이 가는 카드 ${maxPickCount}장을 골라줘`;
-
-  applySlotVisibility(bigCards);
-  initSpread();
-};
-
-document.getElementById("resetAll").onclick=()=>location.reload();
-
-/* =====================================================
-8. 확정 → 빅카드 표시
+7. 확정 → 연출
 ===================================================== */
 document.getElementById("confirmPick").onclick=async()=>{
   modal.classList.add("hidden");
 
-  const deck = build78Deck();
-  const picked=[];
-  selected.forEach(()=>{
-    picked.push(deck.splice(Math.random()*deck.length|0,1)[0]);
+  document.querySelectorAll(".pick:not(.sel)").forEach(c=>c.classList.add("fade"));
+  await wait(450);
+
+  const deck=build78Deck();
+  const picked=selected.map(()=>deck.splice(Math.random()*deck.length|0,1)[0].replace(".png",""));
+
+  showReorder(picked);
+  await wait(900);
+  reorderArea.remove();
+
+  await fireToBigCards(picked);
+
+  chat.classList.remove("hidden");
+  chat.innerHTML="<p>🔮 리딩 중입니다…</p>";
+
+  await fetchReading(CATEGORY_MAP[selectedCategory],picked,readingVersion);
+};
+
+/* =====================================================
+8. 파이어볼 → 빅카드
+===================================================== */
+async function fireToBigCards(cards){
+  const slots=SLOT_SEQUENCE[readingVersion];
+
+  bigCards.forEach(b=>{
+    b.classList.remove("hidden","burning","smoking");
+    b.style.backgroundImage="url('/assets/tarot/back.png')";
   });
 
-  applySlotVisibility(bigCards);
-  await wait(500);
+  selected.forEach((c,i)=>{
+    const slot=document.querySelector(`.slot-${slots[i]}`);
+    const fire=document.createElement("div");
+    fire.className="fireball";
+    document.body.appendChild(fire);
 
-  const active = SLOT_SEQUENCE[readingVersion];
-  active.forEach((slot,i)=>{
-    const b=document.querySelector(`.slot-${slot}`);
-    b.style.backgroundImage=`url('/assets/tarot/${picked[i]}.png')`;
-    b.style.opacity="1";
+    const a=c.getBoundingClientRect();
+    const b=slot.getBoundingClientRect();
+
+    fire.style.left=`${a.left+a.width/2}px`;
+    fire.style.top=`${a.top+a.height/2}px`;
+
+    play(sFire);
+
+    fire.animate([
+      {transform:"translate(0,0)"},
+      {transform:`translate(${b.left-a.left}px,${b.top-a.top}px)`}
+    ],{duration:1100,easing:"ease-in-out",fill:"forwards"});
+
+    setTimeout(()=>fire.remove(),1200);
+  });
+
+  await wait(1100);
+  play(sIgnite);
+
+  slots.forEach(s=>document.querySelector(`.slot-${s}`).classList.add("burning"));
+  await wait(900);
+
+  slots.forEach((s,i)=>{
+    const b=document.querySelector(`.slot-${s}`);
+    b.classList.remove("burning");
     b.classList.add("smoking");
+    b.style.backgroundImage=`url('/assets/tarot/${cards[i]}.png')`;
   });
 
   play(sReveal);
-};
+}
 
-const wait = ms => new Promise(r=>setTimeout(r,ms));
+/* =====================================================
+9. API
+===================================================== */
+const READING_API =
+"https://script.google.com/macros/s/AKfycbx_WT8AGg2sVcI1EPpqDHWNXsBUtlaTOPovbCTN1Is63n3cIC8zLo2w-efI5-gMLt-h/exec";
+
+async function fetchReading(category,cards,version){
+  try{
+    const r=await fetch(READING_API,{
+      method:"POST",
+      body:new URLSearchParams({category,version,cards:JSON.stringify(cards)})
+    });
+    const d=await r.json();
+    chat.innerHTML=`<h3>🔮 리딩 결과</h3>${d.html}`;
+  }catch(e){
+    chat.innerHTML="<p>⚠️ 리딩 실패</p>";
+  }
+}
+
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
