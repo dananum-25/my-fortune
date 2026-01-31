@@ -375,7 +375,7 @@ async function fireToBigCards(pickedCards){
 9. 리딩 API
 ===================================================== */
 const READING_API =
-"https://script.google.com/macros/s/AKfycbwLsinoFy1xUaTNNqqHKRTIUSA9sOb-xsHbOXBkoIkovfMmTDRDH57FYHr184a3tojx/exec";
+"https://script.google.com/macros/s/AKfycbwYZKc3jBvkIPxcoL9MszjEYgvRRYbCg7wx6CWsTobc2kQK_xO--rjsSWouTNw9B45d/exec";
 
 async function fetchReading(category, cards, version){
   try{
