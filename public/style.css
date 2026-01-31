@@ -1,82 +1,85 @@
 *{box-sizing:border-box}
-
 body{
   margin:0;
   background:#0b0b0f;
   color:#fff;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif
+  font-family:system-ui,-apple-system,Segoe UI,Roboto;
 }
+.hidden{display:none!important}
+.lock-scroll{overflow:hidden}
 
-body.lock-scroll{overflow:hidden}
-
-.topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 14px}
-.brand{font-weight:700}
-.sound-btn{padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff}
-
-.cat-area{text-align:center;padding:10px 14px}
-.cat-area img{width:92%;max-width:420px;border-radius:14px}
-#catText{font-size:22px;font-weight:800}
-
-.question-area,.transition{text-align:center;padding:10px 14px}
-.question-area button,.transition button{
-  width:100%;padding:18px;margin:10px 0;border-radius:16px;
-  border:none;background:#1e1e2a;color:#fff;font-size:18px
-}
-
-.tarot-stage{padding:6px 10px}
-.big-cards.v7-layout{
+/* BIG CARD */
+.big-cards{
   position:relative;
-  width:100%;
+  width:92vw;
   max-width:420px;
-  height:420px;
-  margin:0 auto
+  height:460px;
+  margin:0 auto;
 }
-
 .big-card{
   position:absolute;
   width:130px;
   height:195px;
-  border-radius:14px;
   background:center/contain no-repeat;
-  filter:drop-shadow(0 10px 22px rgba(0,0,0,.55))
+  border-radius:14px;
+  filter:drop-shadow(0 10px 22px rgba(0,0,0,.55));
 }
+.slot-1{left:50%;top:18%;transform:translate(-50%,-50%)}
+.slot-2{left:12%;top:18%}
+.slot-3{right:12%;top:18%}
+.slot-6{left:50%;top:50%;transform:translate(-50%,-50%)}
+.slot-4{left:12%;top:82%}
+.slot-7{left:50%;top:82%;transform:translate(-50%,-50%)}
+.slot-5{right:12%;top:82%}
 
-.slot-1{left:50%;top:15%}
-.slot-2{left:15%;top:15%}
-.slot-3{left:85%;top:15%}
-.slot-6{left:50%;top:50%}
-.slot-4{left:15%;top:85%}
-.slot-7{left:50%;top:85%}
-.slot-5{left:85%;top:85%}
-
-.picker{padding:8px 12px}
-.grid78{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;max-height:34vh;overflow:auto}
-.pick{aspect-ratio:2/3;background:center/contain no-repeat;border-radius:10px}
+/* PICK */
+.grid78{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:8px;
+  max-height:36vh;
+  overflow:auto;
+}
+.pick{
+  aspect-ratio:2/3;
+  background:center/contain no-repeat url("/assets/tarot/back.png");
+  border-radius:10px;
+}
 .pick.sel{outline:2px solid gold}
 
+/* REORDER */
+.reorder-area{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  margin:12px 0;
+}
+.reorder-card{
+  width:90px;
+  height:135px;
+  background:center/contain no-repeat;
+  border-radius:10px;
+}
+
+/* FIRE */
 .fireball{
-  position:fixed;width:42px;height:42px;border-radius:50%;
-  background:radial-gradient(circle,#fff1c1,#ffb703,#ff5400,#b5179e);
-  box-shadow:0 0 25px rgba(255,180,0,.9);
-  z-index:9999
+  position:fixed;
+  width:40px;height:40px;
+  border-radius:50%;
+  background:radial-gradient(circle,#fff,#ff9800,#ff3d00);
+  z-index:9999;
 }
 
+/* EFFECTS */
 .big-card.burning::before{
-  content:"";position:absolute;inset:-25%;
-  background:radial-gradient(circle,rgba(255,200,80,.9),transparent 70%);
-  animation:burn 1.2s
+  content:"";
+  position:absolute;
+  inset:-20%;
+  background:radial-gradient(circle,rgba(255,160,0,.9),transparent 70%);
 }
-@keyframes burn{from{opacity:.2}to{opacity:1}}
-
 .big-card.smoking::after{
-  content:"";position:absolute;inset:-35%;
-  background:radial-gradient(circle at bottom,rgba(240,240,255,.7),transparent 75%);
-  animation:smoke 1.5s
+  content:"";
+  position:absolute;
+  inset:-30%;
+  background:radial-gradient(circle,rgba(200,200,255,.7),transparent 70%);
 }
-@keyframes smoke{to{opacity:0;transform:translateY(-60px)}}
-
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center}
-.modal-card{background:#1a1a1f;padding:18px;border-radius:16px;width:86vw;max-width:360px;text-align:center}
-.hidden{display:none!important}
-
-.chat{padding:14px}
