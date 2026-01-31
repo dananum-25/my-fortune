@@ -21,51 +21,47 @@
 
 <main class="app">
 
-  <!-- 1. 고양이 -->
+  <!-- 고양이 -->
   <section class="cat-area">
     <img src="/assets/cat_ai.webp" alt="AI 고양이 상담사" />
     <p id="catText">지금 가장 마음에 걸리는 고민이 어떤 분야인지 골라줘.</p>
   </section>
 
-  <!-- 2. 질문 -->
-  <section id="questionArea" class="question-area"></section>
+  <!-- 질문 카드 영역 -->
+  <section id="questionArea" class="question-area card-select"></section>
 
-  <!-- 3. 전환 -->
+  <!-- 전환 -->
   <section id="transitionArea" class="transition hidden">
-    <p>지금 선택을 생각하며 카드를 3장 골라볼까요?</p>
-    <button id="goCard">YES, 카드 선택으로</button>
+    <p></p>
+    <button id="goCard">카드 선택으로</button>
     <button id="resetAll">처음으로</button>
   </section>
 
-  <!-- 4. 빅카드 -->
+  <!-- 빅카드 -->
   <section id="bigCardStage" class="tarot-stage hidden">
     <div class="big-cards v7-layout">
-    <div class="big-card slot-2"></div>
-    <div class="big-card slot-1"></div>
-    <div class="big-card slot-3"></div>
-
-    <div class="big-card slot-6"></div>
-
-    <div class="big-card slot-4"></div>
-    <div class="big-card slot-7"></div>
-    <div class="big-card slot-5"></div>
-   </div>
+      <div class="big-card slot-2"></div>
+      <div class="big-card slot-1"></div>
+      <div class="big-card slot-3"></div>
+      <div class="big-card slot-6"></div>
+      <div class="big-card slot-4"></div>
+      <div class="big-card slot-7"></div>
+      <div class="big-card slot-5"></div>
+    </div>
   </section>
 
-  <!-- 5. 78장 스프레드 -->
+  <!-- 78장 -->
   <section id="spreadSection" class="picker hidden">
-    <div class="picker-title">마음이 가는 카드 3장을 골라줘</div>
+    <div class="picker-title"></div>
     <div id="grid78" class="grid78"></div>
   </section>
 
-  <!-- 채팅 -->
-  <section id="chatContainer" class="chat hidden">
-    <p>🔮 리딩이 시작됩니다…</p>
-  </section>
+  <!-- 리딩 -->
+  <section id="chatContainer" class="chat hidden"></section>
 
 </main>
 
-<!-- 6. 모달 -->
+<!-- 모달 -->
 <div id="confirmModal" class="modal hidden">
   <div class="modal-card">
     <h3>다 정하셨나요?</h3>
