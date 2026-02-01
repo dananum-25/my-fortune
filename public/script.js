@@ -200,19 +200,19 @@ document.getElementById("confirmPick").onclick = async ()=>{
     return deck.splice(Math.random()*deck.length|0,1)[0].replace(".png","");
   });
 
-  /* 🔒 재정렬 초기화 (보이지 않게) */
-  reorderCards.forEach(c=>{
-    c.style.backgroundImage = "url('/assets/tarot/back.png')";
-  });
+/* 🔒 재정렬 초기화 (이미지 절대 건드리지 않음) */
+reorderCards.forEach(c=>{
+  c.style.opacity = "0";
+});
 
-  reorderStage.classList.remove("hidden");
-  await wait(500);
+reorderStage.classList.remove("hidden");
+await wait(50);
 
-  /* 재정렬 카드 표시 */
-  SLOT_SEQUENCE[readingVersion].forEach((slot,i)=>{
-    const card = reorderStage.querySelector(`.reorder-card.slot-${slot}`);
-    card.style.backgroundImage = `url('/assets/tarot/${pickedCards[i]}.png')`;
-  });
+/* 재정렬 카드 표시 (앞면 절대 넣지 않음) */
+SLOT_SEQUENCE[readingVersion].forEach(slot=>{
+  const card = reorderStage.querySelector(`.reorder-card.slot-${slot}`);
+  card.style.opacity = "1";
+});
 
   await wait(900);
   reorderStage.classList.add("hidden");
