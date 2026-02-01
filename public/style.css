@@ -344,7 +344,13 @@ body.lock-scroll{ overflow:hidden; }
   position: relative;
   margin-top: 32px;   /* 👈 빅카드 아래로 밀어냄 */
 }
-
+.reorder-stage{
+  width:100%;
+  max-width:360px;
+  aspect-ratio: 3 / 4;
+  margin: 0 auto;
+  position: relative;
+}
 .reorder-cards{
   position:relative;
   width:100%;
