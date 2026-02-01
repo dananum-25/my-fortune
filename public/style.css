@@ -65,14 +65,12 @@ body.lock-scroll{ overflow:hidden; }
   text-align:center;
 }
 
-.question-area p{ margin:0 0 10px; opacity:.92; }
-
 .question-area button,
 .transition button{
   display:block;
   width:100%;
-  margin:10px 0;
-  padding:18px 14px;
+  margin:12px 0;
+  padding:20px 14px;
   border-radius:16px;
   border:none;
   background:#1e1e2a;
@@ -87,36 +85,32 @@ body.lock-scroll{ overflow:hidden; }
 }
 
 /* ===============================
-   BIG CARD STAGE (좌표 고정)
-   V7 기준:
+   BIG CARD STAGE (초기 정상 기준)
    2 1 3
    . 6 .
    4 7 5
 ================================ */
 .tarot-stage{
-  display:block;
-  padding:6px 10px 0;
+  padding:8px 10px 0;
 }
 
 .big-cards.v7-layout{
   position:relative;
-  width:min(92vw, 380px);
-  height: min(52vh, 420px);  /* 상단 빈공간 최소화 */
-  margin:6px auto 0;
+  width:100%;
+  max-width:420px;
+  aspect-ratio: 3 / 4;
+  margin:8px auto 0;
 }
 
-/* 🔥 빅카드: 원본 유지, "비율만 50% 축소" -> scale로 처리 */
+/* ✅ 초창기 기준 빅카드 */
 .big-card{
   position:absolute;
-  width:160px;              /* 원본 기준 크기 */
-  height:240px;
+  width:30%;
+  aspect-ratio: 2 / 3;
   border-radius:14px;
-  background: url("/assets/tarot/back.png") center/contain no-repeat; /* ✅ 자르지 않음 */
+  background: url("/assets/tarot/back.png") center / contain no-repeat;
   filter: drop-shadow(0 10px 22px rgba(0,0,0,.55));
-  transform: translate(-50%, -50%) scale(.5); /* ✅ 50% 축소 */
-  transform-origin:center;
-  transition: opacity .35s ease, transform .6s ease;
-  will-change: transform, opacity;
+  transition: opacity .35s ease;
 }
 
 .big-card.hidden{
@@ -124,16 +118,16 @@ body.lock-scroll{ overflow:hidden; }
   pointer-events:none;
 }
 
-/* 슬롯 좌표 (절대 고정) */
-.slot-1{ left:50%; top:18%; }
-.slot-2{ left:18%; top:18%; }
-.slot-3{ left:82%; top:18%; }
+/* 슬롯 좌표 (좌상단 기준 / 겹침 없음) */
+.slot-2{ left:0%;   top:0%; }
+.slot-1{ left:35%;  top:0%; }
+.slot-3{ left:70%;  top:0%; }
 
-.slot-6{ left:50%; top:52%; }
+.slot-6{ left:35%;  top:34%; }
 
-.slot-4{ left:18%; top:86%; }
-.slot-7{ left:50%; top:86%; }
-.slot-5{ left:82%; top:86%; }
+.slot-4{ left:0%;   top:68%; }
+.slot-7{ left:35%;  top:68%; }
+.slot-5{ left:70%;  top:68%; }
 
 /* ===============================
    PICKER (78 GRID)
@@ -148,27 +142,26 @@ body.lock-scroll{ overflow:hidden; }
   text-align:left;
 }
 
-/* 스크롤 최소화: 화면 하단에 딱 붙게 */
 .grid78{
   display:grid;
   grid-template-columns: repeat(6, 1fr);
   gap:8px;
-  max-height: 34vh;
+  max-height:34vh;
   overflow-y:auto;
   padding-bottom:2px;
 }
 
 .pick{
   width:100%;
-  aspect-ratio: 2 / 3;
-  background: url("/assets/tarot/back.png") center/contain no-repeat; /* ✅ 자르지 않음 */
+  aspect-ratio:2 / 3;
+  background: url("/assets/tarot/back.png") center / contain no-repeat;
   border-radius:10px;
   transition: transform .25s ease, opacity .35s ease;
 }
 
 .pick.sel{
   outline:2px solid gold;
-  outline-offset: 2px;
+  outline-offset:2px;
   transform: translateY(-2px);
 }
 
@@ -178,22 +171,20 @@ body.lock-scroll{ overflow:hidden; }
 }
 
 /* ===============================
-   REORDER (선택 후 재정렬 영역)
-   - 파이어볼 이후 이 영역 제거하고
-   - 같은 위치에 리딩 결과 삽입
+   REORDER
 ================================ */
 .reorder-area{
   display:flex;
   justify-content:center;
-  gap:16px;
-  margin:10px 0 0;
+  gap:12px;
+  margin:12px 0 0;
 }
 
 .reorder-card{
-  width:96px;
-  height:144px;
-  border-radius:12px;
-  background: url("/assets/tarot/back.png") center/contain no-repeat;
+  width:72px;
+  aspect-ratio:2 / 3;
+  border-radius:10px;
+  background: url("/assets/tarot/back.png") center / contain no-repeat;
   filter: drop-shadow(0 8px 16px rgba(0,0,0,.5));
 }
 
@@ -215,17 +206,15 @@ body.lock-scroll{ overflow:hidden; }
 .modal-card{
   width:min(86vw, 360px);
   background:#1a1a1f;
-  padding:18px 18px 14px;
+  padding:18px;
   border-radius:16px;
   text-align:center;
   border:1px solid rgba(255,255,255,.1);
 }
 
-.modal-card h3{ margin:4px 0 12px; }
-
 .modal-card button{
   width:100%;
-  padding:14px 12px;
+  padding:14px;
   border-radius:12px;
   border:none;
   background:#f5f5f7;
@@ -236,7 +225,7 @@ body.lock-scroll{ overflow:hidden; }
 .hidden{ display:none !important; }
 
 /* ===============================
-   FIREBALL + BURN/SMOKE
+   FIRE / EFFECT
 ================================ */
 .fireball{
   position:fixed;
@@ -244,7 +233,7 @@ body.lock-scroll{ overflow:hidden; }
   height:42px;
   border-radius:50%;
   background: radial-gradient(circle, #fff1c1, #ffb703, #ff5400, #b5179e);
-  box-shadow: 0 0 25px rgba(255,180,0,.9), 0 0 45px rgba(255,80,0,.8);
+  box-shadow:0 0 25px rgba(255,180,0,.9), 0 0 45px rgba(255,80,0,.8);
   z-index:9998;
   pointer-events:none;
 }
@@ -252,71 +241,49 @@ body.lock-scroll{ overflow:hidden; }
 .big-card.burning::before{
   content:"";
   position:absolute;
-  inset:-25%;
+  inset:-20%;
   background: radial-gradient(circle,
     rgba(255,200,80,.9),
     rgba(255,120,0,.7),
-    rgba(120,0,200,.5),
     transparent 70%
   );
-  animation: burnPulse 2.2s ease-in-out forwards;
+  animation: burnPulse 2s ease-in-out forwards;
   border-radius:18px;
 }
 
 @keyframes burnPulse{
-  0%{ opacity:.35; }
-  60%{ opacity:1; }
-  100%{ opacity:.55; }
+  0%{ opacity:.3; }
+  100%{ opacity:.8; }
 }
 
 .big-card.smoking::after{
   content:"";
   position:absolute;
-  inset:-35%;
+  inset:-30%;
   background: radial-gradient(circle at bottom,
-    rgba(240,240,255,.75),
-    rgba(180,180,200,.45),
+    rgba(240,240,255,.7),
     transparent 75%
   );
-  animation: smokeRise 2.4s ease-out forwards;
+  animation: smokeRise 2.2s ease-out forwards;
   border-radius:18px;
 }
 
 @keyframes smokeRise{
-  from{ transform: translateY(0); opacity:.85; }
-  to{ transform: translateY(-60px); opacity:0; }
+  from{ transform: translateY(0); opacity:.8; }
+  to{ transform: translateY(-50px); opacity:0; }
 }
 
 /* ===============================
-   CHAT / READING
+   CHAT
 ================================ */
 .chat{
-  padding:14px 14px 6px;
+  padding:14px;
 }
 
 .reading-result{
   margin-top:10px;
   padding:14px;
   background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.1);
   border-radius:16px;
-}
-
-.reading-card{
-  padding:10px 0;
-  border-bottom:1px solid rgba(255,255,255,.08);
-}
-
-.reading-card:last-child{ border-bottom:none; }
-
-.reading-card h4{
-  margin:0 0 6px;
-  font-size:16px;
-  opacity:.92;
-}
-
-.reading-card p{
-  margin:0;
-  line-height:1.5;
-  opacity:.9;
 }
