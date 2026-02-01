@@ -340,15 +340,9 @@ body.lock-scroll{ overflow:hidden; }
    🔥 FIX 3. 재정렬 3×3 스테이지
 ================================ */
 
-.reorder-stage{
-  position:fixed;
-  left:50%;
-  top:50%;
-  transform:translate(-50%, -50%);
-  width:100%;
-  max-width:300px;
-  aspect-ratio:3 / 4;
-  z-index:20;
+#reorderStage{
+  position: relative;
+  margin-top: 32px;   /* 👈 빅카드 아래로 밀어냄 */
 }
 
 .reorder-cards{
