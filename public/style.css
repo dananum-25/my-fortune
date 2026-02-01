@@ -108,7 +108,9 @@ body.lock-scroll{ overflow:hidden; }
   width:30%;
   aspect-ratio: 2 / 3;
   border-radius:14px;
-  background: url("/assets/tarot/back.png") center / contain no-repeat;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover; /* 🔥 핵심 */
   filter: drop-shadow(0 10px 22px rgba(0,0,0,.55));
   transition: opacity .35s ease;
 }
