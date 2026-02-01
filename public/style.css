@@ -323,7 +323,7 @@ body.lock-scroll{ overflow:hidden; }
   background-color:#000;
   background-repeat:no-repeat;
   background-position:center;
-  background-size:contain;
+  background-size:100% 100%; /* 🔥 여기 */
   will-change: background-image;
   backface-visibility:hidden;
 }
