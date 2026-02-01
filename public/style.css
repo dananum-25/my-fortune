@@ -118,16 +118,17 @@ body.lock-scroll{ overflow:hidden; }
   pointer-events:none;
 }
 
-/* 슬롯 좌표 (좌상단 기준 / 겹침 없음) */
+/* 🔥 카드 간격 압축 버전 */
+
 .slot-2{ left:0%;   top:0%; }
-.slot-1{ left:35%;  top:0%; }
-.slot-3{ left:70%;  top:0%; }
+.slot-1{ left:33%;  top:0%; }
+.slot-3{ left:66%;  top:0%; }
 
-.slot-6{ left:35%;  top:34%; }
+.slot-6{ left:33%;  top:32%; }
 
-.slot-4{ left:0%;   top:68%; }
-.slot-7{ left:35%;  top:68%; }
-.slot-5{ left:70%;  top:68%; }
+.slot-4{ left:0%;   top:64%; }
+.slot-7{ left:33%;  top:64%; }
+.slot-5{ left:66%;  top:64%; }
 
 /* ===============================
    PICKER (78 GRID)
