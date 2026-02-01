@@ -199,8 +199,7 @@ function pick(c){
 ===================================================== */
 document.getElementById("confirmPick").onclick = async ()=>{
   // 1️⃣ 빅카드 상단으로 이동
-  bigStage.scrollIntoView({ behavior:"smooth", block:"start" });
-  await wait(600);
+  
   document.body.style.overflow = "hidden";
 
   modal.classList.add("hidden");
@@ -212,8 +211,6 @@ document.getElementById("confirmPick").onclick = async ()=>{
       p.style.pointerEvents = "none";
     }
   });
-
-  spread.classList.add("hidden");
 
   // 3️⃣ 카드 결정
   const deck = build78Deck();
@@ -230,7 +227,10 @@ document.getElementById("confirmPick").onclick = async ()=>{
 
   // 5️⃣ 선택 카드 → 재정렬 위치 이동 (3초)
   await movePickedToReorder(selected);
-
+  spread.classList.add("hidden");
+  bigStage.scrollIntoView({ behavior:"smooth", block:"start" });
+  await wait(600);
+  
   // 6️⃣ 재정렬 카드 표시
   SLOT_SEQUENCE[readingVersion].forEach(slot=>{
     const card = reorderStage.querySelector(`.reorder-card.slot-${slot}`);
