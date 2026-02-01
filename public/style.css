@@ -105,14 +105,12 @@ body.lock-scroll{ overflow:hidden; }
 /* ✅ 초창기 기준 빅카드 */
 .big-card{
   position:absolute;
-  width:30%;
+  width:32vw;              /* ← 핵심 */
+  max-width:140px;         /* 모바일 폭 제한 */
   aspect-ratio: 2 / 3;
   border-radius:14px;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover; /* 🔥 핵심 */
+  background: url("/assets/tarot/back.png") center / 100% 100% no-repeat;
   filter: drop-shadow(0 10px 22px rgba(0,0,0,.55));
-  transition: opacity .35s ease;
 }
 
 .big-card.hidden{
