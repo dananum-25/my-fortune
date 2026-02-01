@@ -93,7 +93,11 @@ body.lock-scroll{ overflow:hidden; }
 .tarot-stage{
   padding:8px 10px 0;
 }
-
+#bigCardStage{
+  position: sticky;
+  top: 64px; /* 상단바 아래 */
+  z-index: 5;
+}
 .big-cards.v7-layout{
   position:relative;
   width:100%;
@@ -363,17 +367,17 @@ body.lock-scroll{ overflow:hidden; }
 
 .reorder-card{
   position:absolute;
-  width:22%;
+  width:18%;
   aspect-ratio:2 / 3;
 }
 
 /* 슬롯 좌표 (빅카드와 동일 구조) */
-.reorder-card.slot-2{ left:0%;   top:0%; }
-.reorder-card.slot-1{ left:39%;  top:0%; }
-.reorder-card.slot-3{ left:78%;  top:0%; }
+.reorder-card.slot-2{ left:10%; top:0%; }
+.reorder-card.slot-1{ left:41%; top:0%; }
+.reorder-card.slot-3{ left:72%; top:0%; }
 
-.reorder-card.slot-6{ left:39%;  top:36%; }
+.reorder-card.slot-6{ left:41%; top:34%; }
 
-.reorder-card.slot-4{ left:0%;   top:72%; }
-.reorder-card.slot-7{ left:39%;  top:72%; }
-.reorder-card.slot-5{ left:78%;  top:72%; }
+.reorder-card.slot-4{ left:10%; top:68%; }
+.reorder-card.slot-7{ left:41%; top:68%; }
+.reorder-card.slot-5{ left:72%; top:68%; }
