@@ -231,7 +231,7 @@ document.getElementById("confirmPick").onclick = async ()=>{
 async function fireToBigCards(pickedCards){
   const active = SLOT_SEQUENCE[readingVersion];
   active.forEach((slot,i)=>{
-    const b=document.querySelector(`.slot-${slot}`);
+    const b = bigStage.querySelector(`.big-card.slot-${slot}`);
     b.classList.add("burning");
     b.style.backgroundImage=`url('/assets/tarot/${pickedCards[i]}.png')`;
   });
