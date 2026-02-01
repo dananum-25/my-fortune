@@ -209,7 +209,7 @@ reorderCards.forEach(c=>{
 });
 
 reorderStage.classList.remove("hidden");
-await wait(50);
+await wait(2000);
 
 /* 재정렬 카드 표시 (앞면 절대 넣지 않음) */
 SLOT_SEQUENCE[readingVersion].forEach(slot=>{
@@ -237,25 +237,38 @@ async function fireToBigCards(pickedCards){
   const center = document.querySelector(".big-cards"); // 발사 지점
 
   for(let i=0; i<active.length; i++){
-    const slot = active[i];
+async function fireToBigCards(pickedCards){
+  const active = SLOT_SEQUENCE[readingVersion];
+  const center = document.querySelector(".big-cards");
+
+  // 1️⃣ 파이어볼 전부 동시에 날리기
+  await Promise.all(
+    active.map((slot, i) => {
+      const card = document.querySelector(`.big-card.slot-${slot}`);
+      play(sFire);
+      return flyFireball(center, card, 3000);
+    })
+  );
+
+  // 2️⃣ 도착 후 카드 공개 + 불꽃
+  active.forEach((slot, i) => {
     const card = document.querySelector(`.big-card.slot-${slot}`);
-
-    play(sFire);
-
-    // 🔥 파이어볼 포물선 이동 (3초)
-    await flyFireball(center, card, 3000);
-
-    // 카드 공개
     card.classList.add("burning");
     card.style.backgroundImage =
       `url('/assets/tarot/${pickedCards[i]}.png')`;
+  });
 
-    play(sReveal);
+  play(sReveal);
 
-    // 카드 간 템포 여유 (0.5초)
-    await wait(500);
-  }
+  // 3️⃣ 불꽃 유지 시간 (2초)
+  await wait(2000);
+
+  // 4️⃣ 불꽃 제거 (정상 카드로 복귀)
+  document.querySelectorAll(".big-card").forEach(c=>{
+    c.classList.remove("burning","smoking");
+  });
 }
+
 
 /* =====================================================
 UTIL
@@ -324,4 +337,36 @@ function flyFireball(startEl, targetEl, duration = 3000){
 
     requestAnimationFrame(animate);
   });
+}
+async function movePickedToReorder(pickedEls) {
+  const clones = [];
+
+  pickedEls.forEach((el, i) => {
+    const rect = el.getBoundingClientRect();
+    const target = reorderStage.querySelector(
+      `.reorder-card.slot-${SLOT_SEQUENCE[readingVersion][i]}`
+    ).getBoundingClientRect();
+
+    const clone = el.cloneNode(true);
+    clone.style.position = "fixed";
+    clone.style.left = rect.left + "px";
+    clone.style.top = rect.top + "px";
+    clone.style.width = rect.width + "px";
+    clone.style.height = rect.height + "px";
+    clone.style.transition = "transform 3s ease-in-out";
+    clone.style.zIndex = 9999;
+
+    document.body.appendChild(clone);
+    clones.push(clone);
+
+    const dx = target.left - rect.left;
+    const dy = target.top - rect.top;
+
+    requestAnimationFrame(() => {
+      clone.style.transform = `translate(${dx}px, ${dy}px)`;
+    });
+  });
+
+  await wait(3000);
+  clones.forEach(c => c.remove());
 }
