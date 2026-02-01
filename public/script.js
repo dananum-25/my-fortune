@@ -28,7 +28,7 @@ function play(sound){
 /* =====================================================
 1. 질문 단계
 ===================================================== */
-const catArea   = document.querySelector(".cat-area");
+const catArea   = document.getElementById("catArea");
 const catTextEl = document.getElementById("catText");
 const qArea = document.getElementById("questionArea");
 const tArea = document.getElementById("transitionArea");
@@ -113,10 +113,12 @@ const SLOT_SEQUENCE = {
 const grid = document.getElementById("grid78");
 const spread = document.getElementById("spreadSection");
 const bigStage = document.getElementById("bigCardStage");
+const reorderStage = document.getElementById("reorderStage");
 const modal = document.getElementById("confirmModal");
 const chat = document.getElementById("chatContainer");
 
 const bigCards = document.querySelectorAll(".big-card");
+const reorderCards = document.querySelectorAll(".reorder-card");
 
 let selected = [];
 
@@ -156,7 +158,7 @@ function applySlotVisibility(){
 }
 
 /* =====================================================
-6. 78장
+6. 78장 카드
 ===================================================== */
 function initSpread(){
   grid.innerHTML="";
@@ -185,11 +187,10 @@ function pick(c){
 }
 
 /* =====================================================
-7. 확정 → 빅카드 표시 → 리딩
+7. 확정 → 재정렬 → 파이어볼 → 빅카드 → 리딩
 ===================================================== */
 document.getElementById("confirmPick").onclick = async ()=>{
   modal.classList.add("hidden");
-
   spread.classList.add("hidden");
 
   const deck = build78Deck();
@@ -197,6 +198,24 @@ document.getElementById("confirmPick").onclick = async ()=>{
     return deck.splice(Math.random()*deck.length|0,1)[0].replace(".png","");
   });
 
+  /* 🔒 재정렬 초기화 (보이지 않게) */
+  reorderCards.forEach(c=>{
+    c.style.backgroundImage = "url('/assets/tarot/back.png')";
+  });
+
+  reorderStage.classList.remove("hidden");
+  await wait(500);
+
+  /* 재정렬 카드 표시 */
+  SLOT_SEQUENCE[readingVersion].forEach((slot,i)=>{
+    const card = document.querySelector(`.reorder-card.slot-${slot}`);
+    card.style.backgroundImage = `url('/assets/tarot/${pickedCards[i]}.png')`;
+  });
+
+  await wait(900);
+  reorderStage.classList.add("hidden");
+
+  /* 빅카드 연출 */
   await fireToBigCards(pickedCards);
 
   chat.classList.remove("hidden");
@@ -211,7 +230,6 @@ async function fireToBigCards(pickedCards){
   const active = SLOT_SEQUENCE[readingVersion];
   active.forEach((slot,i)=>{
     const b=document.querySelector(`.slot-${slot}`);
-    b.classList.remove("hidden");
     b.classList.add("burning");
     b.style.backgroundImage=`url('/assets/tarot/${pickedCards[i]}.png')`;
   });
