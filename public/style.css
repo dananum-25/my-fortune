@@ -341,11 +341,14 @@ body.lock-scroll{ overflow:hidden; }
 ================================ */
 
 .reorder-stage{
-  position:relative;
+  position:fixed;
+  left:50%;
+  top:50%;
+  transform:translate(-50%, -50%);
   width:100%;
   max-width:300px;
   aspect-ratio:3 / 4;
-  margin:20px auto 0;
+  z-index:20;
 }
 
 .reorder-cards{
