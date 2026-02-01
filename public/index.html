@@ -1,98 +1,345 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI 고양이 타로 상담</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI 고양이 타로 상담</title>
 
-  <!-- 고정 메타 -->
-  <meta name="naver-site-verification" content="20b0cc209520048d7c651297a28b316fe1de7cd8" />
-  <meta name="google-site-verification" content="5FKwm4_bVWL9skvm5olmNjvPSIzR_tW75VT_0NpJ9VA" />
-  <meta name="google-adsense-account" content="ca-pub-7356591276029815">
+<style>
+/* =========================
+GLOBAL
+========================= */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: radial-gradient(circle at top, #111 0%, #000 70%);
+  color: #fff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
+}
+.hidden { display: none !important; }
 
-  <link rel="stylesheet" href="style.css" />
+/* =========================
+TOP
+========================= */
+header {
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#soundToggle {
+  background:#222;
+  color:#fff;
+  border:none;
+  padding:8px 14px;
+  border-radius:20px;
+}
+
+/* =========================
+QUESTION
+========================= */
+#catArea { text-align:center; padding:30px 20px; }
+#catText { font-size:22px; font-weight:700; margin-bottom:16px; }
+#questionArea button {
+  margin:6px;
+  padding:12px 18px;
+  border-radius:14px;
+  border:none;
+  background:#222;
+  color:#fff;
+  font-size:16px;
+}
+
+/* =========================
+BIG STAGE (🔥 기준 무대)
+========================= */
+#bigCardStage {
+  position: relative;
+  min-height: 100vh;
+  padding-top: 40px;
+  overflow: visible;
+}
+
+.big-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+.big-card {
+  width: 100%;
+  aspect-ratio: 2/3;
+  background: url('/assets/tarot/back.png') center/contain no-repeat;
+  border-radius: 10px;
+  box-shadow: 0 10px 40px rgba(0,0,0,.6);
+}
+
+.big-card.burning {
+  box-shadow: 0 0 40px 20px rgba(255,150,0,.6);
+}
+
+/* =========================
+REORDER STAGE
+========================= */
+#reorderStage {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+}
+
+.reorder-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 70px);
+  gap: 10px;
+}
+
+.reorder-card {
+  width: 70px;
+  aspect-ratio: 2/3;
+  background: url('/assets/tarot/back.png') center/contain no-repeat;
+  opacity: 0;
+}
+
+/* =========================
+SPREAD 78
+========================= */
+#spreadSection {
+  padding: 30px 16px 120px;
+}
+
+.grid78 {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+
+.pick {
+  aspect-ratio: 2/3;
+  background: url('/assets/tarot/back.png') center/contain no-repeat;
+  border-radius: 6px;
+}
+.pick.sel {
+  outline: 3px solid gold;
+}
+
+/* =========================
+MODAL
+========================= */
+#confirmModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index: 100;
+}
+#confirmModal button {
+  padding:14px 22px;
+  font-size:18px;
+  border-radius:16px;
+  border:none;
+}
+
+/* =========================
+FLY
+========================= */
+.reorder-fly {
+  position: fixed;
+  background: url('/assets/tarot/back.png') center/contain no-repeat;
+  z-index: 9999;
+  transition: transform 3s ease-in-out;
+}
+
+.fireball {
+  position: fixed;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: orange;
+  box-shadow: 0 0 20px orange;
+  z-index: 9999;
+}
+</style>
 </head>
+
 <body>
 
-<header class="topbar">
-  <div class="brand">🐾 AI 고양이 타로 상담</div>
-  <button id="soundToggle" class="sound-btn">사운드 🔇</button>
+<header>
+  <div>🐾 AI 고양이 타로 상담</div>
+  <button id="soundToggle">사운드 🔇</button>
 </header>
 
-<main class="app">
+<section id="catArea">
+  <div id="catText"></div>
+  <div id="questionArea"></div>
+</section>
 
-  <!-- 1. 고양이 (카드 연출 중 hidden 처리 대상) -->
-  <section id="catArea" class="cat-area">
-    <img src="/assets/cat_ai.webp" alt="AI 고양이 상담사" />
-    <p id="catText">지금 가장 마음에 걸리는 고민이 어떤 분야인지 골라줘.</p>
-  </section>
+<section id="bigCardStage" class="hidden">
+  <div class="big-cards">
+    <div class="big-card slot-2"></div>
+    <div class="big-card slot-1"></div>
+    <div class="big-card slot-3"></div>
+  </div>
 
-  <!-- 2. 질문 -->
-  <section id="questionArea" class="question-area"></section>
-
-  <!-- 3. 전환 -->
-  <section id="transitionArea" class="transition hidden">
-    <p>지금 선택을 생각하며 카드를 3장 골라볼까요?</p>
-    <button id="goCard">YES, 카드 선택으로</button>
-    <button id="resetAll">처음으로</button>
-  </section>
-
-  <!-- 4. 빅카드 무대 (3×3, 213 / .6. / 475) -->
-  <section id="bigCardStage" class="tarot-stage hidden">
-    <div class="big-cards v7-layout">
-
-      <div class="big-card slot-2"></div>
-      <div class="big-card slot-1"></div>
-      <div class="big-card slot-3"></div>
-
-      <div class="big-card slot-6"></div>
-
-      <div class="big-card slot-4"></div>
-      <div class="big-card slot-7"></div>
-      <div class="big-card slot-5"></div>
-
-    </div>
-  </section>
-
-  <!-- 5. 재정렬 영역 (🔥 축소형 3×3 / 기본 hidden) -->
-  <!-- ⚠️ 파이어볼 이전 절대 표시 금지 -->
-  <section id="reorderStage" class="reorder-stage hidden">
-    <div class="reorder-cards v7-layout mini">
-
+  <section id="reorderStage" class="hidden">
+    <div class="reorder-cards">
       <div class="reorder-card slot-2"></div>
       <div class="reorder-card slot-1"></div>
       <div class="reorder-card slot-3"></div>
-
-      <div class="reorder-card slot-6"></div>
-
-      <div class="reorder-card slot-4"></div>
-      <div class="reorder-card slot-7"></div>
-      <div class="reorder-card slot-5"></div>
-
     </div>
   </section>
+</section>
 
-  <!-- 6. 78장 카드 선택 -->
-  <section id="spreadSection" class="picker hidden">
-    <div class="picker-title">마음이 가는 카드 3장을 골라줘</div>
-    <div id="grid78" class="grid78"></div>
-  </section>
+<section id="spreadSection" class="hidden">
+  <div class="grid78" id="grid78"></div>
+</section>
 
-  <!-- 7. 리딩 (재정렬 자리와 교체됨) -->
-  <section id="chatContainer" class="chat hidden">
-    <p>🔮 리딩이 시작됩니다…</p>
-  </section>
-
-</main>
-
-<!-- 8. 확인 모달 -->
-<div id="confirmModal" class="modal hidden">
-  <div class="modal-card">
-    <h3>다 정하셨나요?</h3>
-    <button id="confirmPick">이대로 진행</button>
-  </div>
+<div id="confirmModal" class="hidden">
+  <button id="confirmPick">이대로 진행</button>
 </div>
 
-<script src="script.js"></script>
+<script>
+/* =====================================================
+STATE
+===================================================== */
+let step = 0;
+let selected = [];
+let readingVersion = "V3";
+let maxPickCount = 3;
+
+/* =====================================================
+QUESTION
+===================================================== */
+const QUESTIONS = [
+  { text:"지금 가장 마음에 걸리는 고민이 어떤 분야인지 골라줘.", options:["연애","직업","금전","관계"] }
+];
+
+const catText = document.getElementById("catText");
+const qArea = document.getElementById("questionArea");
+
+function renderQ(){
+  const q = QUESTIONS[0];
+  catText.textContent = q.text;
+  qArea.innerHTML = "";
+  q.options.forEach(o=>{
+    const b=document.createElement("button");
+    b.textContent=o;
+    b.onclick=startPick;
+    qArea.appendChild(b);
+  });
+}
+renderQ();
+
+/* =====================================================
+START PICK
+===================================================== */
+const bigStage=document.getElementById("bigCardStage");
+const spread=document.getElementById("spreadSection");
+const grid=document.getElementById("grid78");
+const modal=document.getElementById("confirmModal");
+const reorderStage=document.getElementById("reorderStage");
+
+function startPick(){
+  document.getElementById("catArea").classList.add("hidden");
+  bigStage.classList.remove("hidden");
+  spread.classList.remove("hidden");
+  initSpread();
+}
+
+function initSpread(){
+  grid.innerHTML="";
+  selected=[];
+  for(let i=0;i<78;i++){
+    const d=document.createElement("div");
+    d.className="pick";
+    d.onclick=()=>pick(d);
+    grid.appendChild(d);
+  }
+}
+
+function pick(c){
+  if(c.classList.contains("sel")){
+    c.classList.remove("sel");
+    selected=selected.filter(x=>x!==c);
+    return;
+  }
+  if(selected.length>=maxPickCount) return;
+  c.classList.add("sel");
+  selected.push(c);
+  if(selected.length===maxPickCount){
+    modal.classList.remove("hidden");
+  }
+}
+
+/* =====================================================
+CONFIRM
+===================================================== */
+document.getElementById("confirmPick").onclick = async ()=>{
+  modal.classList.add("hidden");
+  document.body.style.overflow="hidden";
+  bigStage.scrollIntoView({behavior:"instant"});
+
+  document.querySelectorAll(".pick:not(.sel)").forEach(p=>p.style.opacity=0);
+
+  reorderStage.classList.remove("hidden");
+  await movePickedToReorder(selected);
+
+  reorderStage.classList.add("hidden");
+  await fireToBigCards();
+};
+
+async function movePickedToReorder(picks){
+  const targets=[2,1,3];
+  picks.forEach((el,i)=>{
+    const s=el.getBoundingClientRect();
+    const t=reorderStage.querySelector(`.slot-${targets[i]}`).getBoundingClientRect();
+    const fly=document.createElement("div");
+    fly.className="reorder-fly";
+    fly.style.left=s.left+"px";
+    fly.style.top=s.top+"px";
+    fly.style.width=s.width+"px";
+    fly.style.height=s.height+"px";
+    document.body.appendChild(fly);
+    requestAnimationFrame(()=>{
+      fly.style.transform=`translate(${t.left-s.left}px,${t.top-s.top}px)`;
+    });
+    setTimeout(()=>fly.remove(),3000);
+  });
+  await wait(3000);
+}
+
+async function fireToBigCards(){
+  const center=document.querySelector(".big-cards").getBoundingClientRect();
+  const cards=document.querySelectorAll(".big-card");
+  await Promise.all([...cards].map(card=>flyFireball(center,card)));
+}
+
+function flyFireball(startRect,targetEl){
+  return new Promise(resolve=>{
+    const fire=document.createElement("div");
+    fire.className="fireball";
+    document.body.appendChild(fire);
+    const e=targetEl.getBoundingClientRect();
+    const sx=startRect.left+startRect.width/2;
+    const sy=startRect.top+startRect.height/2;
+    const ex=e.left+e.width/2;
+    const ey=e.top+e.height/2;
+    const start=performance.now();
+    function anim(now){
+      const t=Math.min((now-start)/3000,1);
+      fire.style.transform=`translate(${sx+(ex-sx)*t}px,${sy+(ey-sy)*t-120*Math.sin(Math.PI*t)}px)`;
+      t<1?requestAnimationFrame(anim):(fire.remove(),resolve());
+    }
+    requestAnimationFrame(anim);
+  });
+}
+
+const wait = ms => new Promise(r=>setTimeout(r,ms));
+</script>
 </body>
 </html>
