@@ -198,93 +198,59 @@ function pick(c){
 7. 확정 → 재정렬 → 파이어볼 → 빅카드 → 리딩
 ===================================================== */
 document.getElementById("confirmPick").onclick = async ()=>{
-  // 1️⃣ 빅카드 상단으로 이동
-  
-  document.body.style.overflow = "hidden";
+// 🔒 스크롤 잠금 (가장 먼저)
+document.body.style.overflow = "hidden";
 
-  modal.classList.add("hidden");
+modal.classList.add("hidden");
 
-  // 2️⃣ 미선택 카드 제거
-  document.querySelectorAll(".pick").forEach(p=>{
-    if(!p.classList.contains("sel")){
-      p.style.opacity = "0";
-      p.style.pointerEvents = "none";
-    }
-  });
-
-  // 3️⃣ 카드 결정
-  const deck = build78Deck();
-  const pickedCards = selected.map(()=>{
-    return deck.splice(Math.random()*deck.length|0,1)[0].replace(".png","");
-  });
-
-  // 4️⃣ 재정렬 초기화
-  reorderCards.forEach(c=>{
-    c.style.opacity = "0";
-  });
-
-  reorderStage.classList.remove("hidden");
-
-  // 5️⃣ 선택 카드 → 재정렬 위치 이동 (3초)
-async function movePickedToReorder(pickedEls){
-  const clones = [];
-  const slots = SLOT_SEQUENCE[readingVersion];
-
-  pickedEls.forEach((el, i)=>{
-    const start = el.getBoundingClientRect();
-    const targetEl = reorderStage.querySelector(
-      `.reorder-card.slot-${slots[i]}`
-    );
-    const end = targetEl.getBoundingClientRect();
-
-    const fly = document.createElement("div");
-    fly.className = "reorder-fly";
-    fly.style.cssText = `
-      position: fixed;
-      left: ${start.left}px;
-      top: ${start.top}px;
-      width: ${start.width}px;
-      height: ${start.height}px;
-      background: url('/assets/tarot/back.png') center / contain no-repeat;
-      transition: transform 3s ease-in-out;
-      z-index: 9999;
-    `;
-
-    document.body.appendChild(fly);
-    clones.push(fly);
-
-    const dx = end.left - start.left;
-    const dy = end.top - start.top;
-
-    requestAnimationFrame(()=>{
-      requestAnimationFrame(()=>{
-        fly.style.transform = `translate(${dx}px, ${dy}px)`;
-      });
-    });
-  });
-
-  await wait(3000);
-  clones.forEach(c=>c.remove());
-}
-  // 6️⃣ 재정렬 카드 표시
-SLOT_SEQUENCE[readingVersion].forEach((slot)=>{
-  const card = reorderStage.querySelector(`.reorder-card.slot-${slot}`);
-  card.style.opacity = "1";
-  card.style.backgroundImage = "url('/assets/tarot/back.png')";
+/* 1️⃣ 미선택 카드 제거 (이동 전!) */
+document.querySelectorAll(".pick").forEach(p=>{
+  if(!p.classList.contains("sel")){
+    p.style.opacity = "0";
+    p.style.pointerEvents = "none";
+  }
 });
 
-  // 7️⃣ 재정렬 상태 유지
-  await wait(2000);
+/* 2️⃣ 카드 결정 */
+const deck = build78Deck();
+const pickedCards = selected.map(()=>{
+  return deck.splice(Math.random()*deck.length|0,1)[0].replace(".png","");
+});
 
-  // 8️⃣ 불꽃 → 빅카드
-  reorderStage.classList.add("hidden");
-  await fireToBigCards(pickedCards);
+/* 3️⃣ 재정렬 초기화 */
+reorderCards.forEach(c=>{
+  c.style.opacity = "0";
+  c.style.backgroundImage = "url('/assets/tarot/back.png')";
+});
+reorderStage.classList.remove("hidden");
 
-  // 9️⃣ 리딩
-  chat.classList.remove("hidden");
-  chat.innerHTML = "<p>🔮 리딩 중입니다…</p>";
-  await fetchReading(CATEGORY_MAP[selectedCategory], pickedCards, readingVersion);
-};
+/* 4️⃣ 선택 카드 → 재정렬 위치로 이동 (3초) */
+await movePickedToReorder(selected);
+
+/* 5️⃣ 이동 끝난 뒤 스프레드 숨김 */
+spread.classList.add("hidden");
+
+/* 6️⃣ 재정렬 카드 n장 표시 */
+SLOT_SEQUENCE[readingVersion].forEach(slot=>{
+  const card = reorderStage.querySelector(`.reorder-card.slot-${slot}`);
+  card.style.opacity = "1";
+});
+
+/* 7️⃣ 재정렬 상태 유지 */
+await wait(2000);
+
+/* 8️⃣ 불꽃 → 빅카드 */
+reorderStage.classList.add("hidden");
+await fireToBigCards(pickedCards);
+
+/* 9️⃣ 리딩 */
+chat.classList.remove("hidden");
+chat.innerHTML = "<p>🔮 리딩 중입니다…</p>";
+await fetchReading(
+  CATEGORY_MAP[selectedCategory],
+  pickedCards,
+  readingVersion
+);
 /* =====================================================
 8. 빅카드 표시
 ===================================================== */
