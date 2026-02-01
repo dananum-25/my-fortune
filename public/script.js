@@ -355,37 +355,43 @@ function flyFireball(startEl, targetEl, duration = 3000){
   });
 }
 async function movePickedToReorder(pickedEls) {
-  const clones = [];
+  const targets = SLOT_SEQUENCE[readingVersion];
 
   pickedEls.forEach((el, i) => {
-    const rect = el.getBoundingClientRect();
-    const target = reorderStage.querySelector(
-      `.reorder-card.slot-${SLOT_SEQUENCE[readingVersion][i]}`
-    ).getBoundingClientRect();
+    const startRect = el.getBoundingClientRect();
+    const targetEl = reorderStage.querySelector(
+      `.reorder-card.slot-${targets[i]}`
+    );
+    if (!targetEl) return;
 
-    const clone = document.createElement("div");
-    clone.className = "reorder-fly";
-    clone.style.background =
-  "url('/assets/tarot/back.png') center / contain no-repeat";
-    clone.style.position = "fixed";
-    clone.style.left = rect.left + "px";
-    clone.style.top = rect.top + "px";
-    clone.style.width = rect.width + "px";
-    clone.style.height = rect.height + "px";
-    clone.style.transition = "transform 3s ease-in-out";
-    clone.style.zIndex = 9999;
+    const targetRect = targetEl.getBoundingClientRect();
 
-    document.body.appendChild(clone);
-    clones.push(clone);
+    // 🔹 날아가는 카드 생성 (무조건 back.png)
+    const fly = document.createElement("div");
+    fly.className = "reorder-fly";
+    fly.style.position = "fixed";
+    fly.style.left = startRect.left + "px";
+    fly.style.top = startRect.top + "px";
+    fly.style.width = startRect.width + "px";
+    fly.style.height = startRect.height + "px";
+    fly.style.background =
+      "url('/assets/tarot/back.png') center / contain no-repeat";
+    fly.style.zIndex = 9999;
+    fly.style.transition = "transform 3s ease-in-out";
 
-    const dx = target.left - rect.left;
-    const dy = target.top - rect.top;
+    document.body.appendChild(fly);
+
+    // 🔹 이동 거리 계산 (같은 fixed 기준 → scroll 계산 필요 없음)
+    const dx = targetRect.left - startRect.left;
+    const dy = targetRect.top - startRect.top;
 
     requestAnimationFrame(() => {
-      clone.style.transform = `translate(${dx}px, ${dy}px)`;
+      fly.style.transform = `translate(${dx}px, ${dy}px)`;
     });
-  });
 
-  await wait(3000);
-  clones.forEach(c => c.remove());
+    // 🔹 이동 끝나면 제거
+    setTimeout(() => {
+      fly.remove();
+    }, 3000);
+  });
 }
