@@ -198,6 +198,12 @@ function pick(c){
 7. 확정 → 재정렬 → 파이어볼 → 빅카드 → 리딩
 ===================================================== */
 document.getElementById("confirmPick").onclick = async ()=>{
+  // 🔥 빅카드 상단으로 스크롤 이동
+bigStage.scrollIntoView({ behavior:"smooth", block:"start" });
+await wait(600);
+
+// 이후부터 스크롤 잠금
+document.body.style.overflow = "hidden";
   modal.classList.add("hidden");
   spread.classList.add("hidden");
 
