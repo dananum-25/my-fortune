@@ -206,18 +206,44 @@ document.getElementById("confirmPick").onclick = async ()=>{
     c.style.backgroundImage="url('/assets/tarot/back.png')";
   });
   reorderStage.classList.remove("hidden");
+async function movePickedToReorder(pickedEls) {
+  const slots = SLOT_SEQUENCE[readingVersion];
 
-  await movePickedToReorder(selected);
+  pickedEls.forEach((el, i) => {
+    const start = el.getBoundingClientRect();
+    const targetEl = reorderStage.querySelector(
+      `.reorder-card.slot-${slots[i]}`
+    );
+    if (!targetEl) return;
 
-  spread.classList.add("hidden");
+    const end = targetEl.getBoundingClientRect();
 
-  SLOT_SEQUENCE[readingVersion].forEach((slot,i)=>{
-    if(i>=pickedCards.length) return;
-    const card = reorderStage.querySelector(`.reorder-card.slot-${slot}`);
-    if(card) card.style.opacity="1";
+    const fly = document.createElement("div");
+    fly.className = "reorder-fly";
+    fly.style.position = "fixed";
+    fly.style.left = start.left + "px";
+    fly.style.top = start.top + "px";
+    fly.style.width = start.width + "px";
+    fly.style.height = start.height + "px";
+    fly.style.background =
+      "url('/assets/tarot/back.png') center / contain no-repeat";
+    fly.style.zIndex = 9999;
+    fly.style.transition = "transform 3s ease-in-out";
+
+    document.body.appendChild(fly);
+
+    const dx = end.left + end.width / 2 - (start.left + start.width / 2);
+    const dy = end.top + end.height / 2 - (start.top + start.height / 2);
+
+    requestAnimationFrame(() => {
+      fly.style.transform = `translate(${dx}px, ${dy}px)`;
+    });
+
+    setTimeout(() => fly.remove(), 3000);
   });
 
-  await wait(2000);
+  await wait(3000);
+}
 
   reorderStage.classList.add("hidden");
   await fireToBigCards(pickedCards);
