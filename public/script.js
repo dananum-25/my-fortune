@@ -147,6 +147,9 @@ document.getElementById("resetAll").onclick = ()=>{
 5. 슬롯 표시
 ===================================================== */
 function applySlotVisibility(){
+  const layout = document.querySelector(".big-cards");
+  layout.className = `big-cards ${readingVersion.toLowerCase()}-layout`;
+
   const active = SLOT_SEQUENCE[readingVersion];
   bigCards.forEach(c=>{
     const m = c.className.match(/slot-(\d)/);
