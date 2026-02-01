@@ -1,6 +1,15 @@
-step = 0;
 /* =====================================================
-0. 사운드
+0. GLOBAL INIT
+===================================================== */
+let step = 0;
+let selected = [];
+let selectedCategory = null;
+let selectedDepth = null;
+let readingVersion = "V3";
+let maxPickCount = 3;
+
+/* =====================================================
+1. SOUND
 ===================================================== */
 const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
 bgm.loop = true;
@@ -27,9 +36,9 @@ function play(sound){
 }
 
 /* =====================================================
-1. 질문 단계
+2. QUESTION
 ===================================================== */
-const catArea   = document.getElementById("catArea");
+const catArea = document.getElementById("catArea");
 const catTextEl = document.getElementById("catText");
 const qArea = document.getElementById("questionArea");
 const tArea = document.getElementById("transitionArea");
@@ -50,13 +59,6 @@ const QUESTIONS = [
   { text:"지금 가장 알고 싶은 것은?", options:["direction","advice","feeling","result"] }
 ];
 
-let step = 0;
-let selectedCategory = null;
-let selectedDepth = null;
-
-let readingVersion = "V3";
-let maxPickCount = 3;
-
 function applyReadingDepth(depth){
   const map = {
     direction:["V1",1],
@@ -68,11 +70,12 @@ function applyReadingDepth(depth){
     [readingVersion, maxPickCount] = map[depth];
   }
 }
-step = 0;
+
 function renderQ(){
-  catArea.classList.remove("hidden");   // ⭐ 반드시 보이게
-  qArea.classList.remove("hidden");   // ⭐ 이거
-  tArea.classList.add("hidden");      // 안전장치
+  catArea.classList.remove("hidden");
+  qArea.classList.remove("hidden");
+  tArea.classList.add("hidden");
+
   qArea.innerHTML = "";
   const q = QUESTIONS[step];
   catTextEl.textContent = q.text;
@@ -99,10 +102,9 @@ function renderQ(){
     qArea.appendChild(b);
   });
 }
-renderQ();
 
 /* =====================================================
-2. 슬롯 정의
+3. SLOT
 ===================================================== */
 const SLOT_SEQUENCE = {
   V1:[1],
@@ -112,7 +114,7 @@ const SLOT_SEQUENCE = {
 };
 
 /* =====================================================
-3. DOM
+4. DOM
 ===================================================== */
 const grid = document.getElementById("grid78");
 const spread = document.getElementById("spreadSection");
@@ -124,14 +126,12 @@ const chat = document.getElementById("chatContainer");
 const bigCards = document.querySelectorAll(".big-card");
 const reorderCards = document.querySelectorAll(".reorder-card");
 
-let selected = [];
-
 /* =====================================================
-4. 카드 선택 시작
+5. START PICK
 ===================================================== */
 document.getElementById("goCard").onclick = ()=>{
-  tArea.classList.add("hidden");
   catArea.classList.add("hidden");
+  tArea.classList.add("hidden");
 
   bigStage.classList.remove("hidden");
   spread.classList.remove("hidden");
@@ -143,39 +143,26 @@ document.getElementById("goCard").onclick = ()=>{
   initSpread();
 };
 
-document.getElementById("resetAll").onclick = ()=>{
-  location.reload();
-};
-
-/* =====================================================
-5. 슬롯 표시
-===================================================== */
 function applySlotVisibility(){
-  const layout = document.querySelector(".big-cards");
-  layout.className = `big-cards ${readingVersion.toLowerCase()}-layout`;
-
   const active = SLOT_SEQUENCE[readingVersion];
   bigCards.forEach(c=>{
-    const m = c.className.match(/slot-(\d)/);
-    const s = m ? Number(m[1]) : null;
+    const s = Number(c.className.match(/slot-(\d)/)?.[1]);
     c.classList.toggle("hidden", !active.includes(s));
     c.style.backgroundImage = "url('/assets/tarot/back.png')";
     c.classList.remove("burning","smoking");
   });
-  bigStage.querySelector(".big-cards").className =
-  `big-cards v7-layout ${readingVersion.toLowerCase()}-layout`;
 }
 
 /* =====================================================
-6. 78장 카드
+6. 78 SPREAD
 ===================================================== */
 function initSpread(){
-  grid.innerHTML="";
-  selected=[];
+  grid.innerHTML = "";
+  selected = [];
   for(let i=0;i<78;i++){
-    const d=document.createElement("div");
-    d.className="pick";
-    d.onclick=()=>pick(d);
+    const d = document.createElement("div");
+    d.className = "pick";
+    d.onclick = ()=>pick(d);
     grid.appendChild(d);
   }
 }
@@ -183,7 +170,7 @@ function initSpread(){
 function pick(c){
   if(c.classList.contains("sel")){
     c.classList.remove("sel");
-    selected=selected.filter(x=>x!==c);
+    selected = selected.filter(x=>x!==c);
     return;
   }
   if(selected.length>=maxPickCount) return;
@@ -196,104 +183,86 @@ function pick(c){
 }
 
 /* =====================================================
-7. 확정 → 재정렬 → 파이어볼 → 빅카드 → 리딩
+7. CONFIRM FLOW
 ===================================================== */
 document.getElementById("confirmPick").onclick = async ()=>{
-// 🔒 스크롤 잠금 (가장 먼저)
-document.body.style.overflow = "hidden";
+  modal.classList.add("hidden");
+  document.body.style.overflow = "hidden";
 
-modal.classList.add("hidden");
+  document.querySelectorAll(".pick").forEach(p=>{
+    if(!p.classList.contains("sel")){
+      p.style.opacity="0";
+      p.style.pointerEvents="none";
+    }
+  });
 
-/* 1️⃣ 미선택 카드 제거 (이동 전!) */
-document.querySelectorAll(".pick").forEach(p=>{
-  if(!p.classList.contains("sel")){
-    p.style.opacity = "0";
-    p.style.pointerEvents = "none";
-  }
-});
+  const deck = build78Deck();
+  const pickedCards = selected.map(()=>{
+    return deck.splice(Math.random()*deck.length|0,1)[0].replace(".png","");
+  });
 
-/* 2️⃣ 카드 결정 */
-const deck = build78Deck();
-const pickedCards = selected.map(()=>{
-  return deck.splice(Math.random()*deck.length|0,1)[0].replace(".png","");
-});
+  reorderCards.forEach(c=>{
+    c.style.opacity="0";
+    c.style.backgroundImage="url('/assets/tarot/back.png')";
+  });
+  reorderStage.classList.remove("hidden");
 
-/* 3️⃣ 재정렬 초기화 */
-reorderCards.forEach(c=>{
-  c.style.opacity = "0";
-  c.style.backgroundImage = "url('/assets/tarot/back.png')";
-});
-reorderStage.classList.remove("hidden");
+  await movePickedToReorder(selected);
 
-/* 4️⃣ 선택 카드 → 재정렬 위치로 이동 (3초) */
-await movePickedToReorder(selected);
+  spread.classList.add("hidden");
 
-/* 5️⃣ 이동 끝난 뒤 스프레드 숨김 */
-spread.classList.add("hidden");
+  SLOT_SEQUENCE[readingVersion].forEach((slot,i)=>{
+    if(i>=pickedCards.length) return;
+    const card = reorderStage.querySelector(`.reorder-card.slot-${slot}`);
+    if(card) card.style.opacity="1";
+  });
 
-/* 6️⃣ 재정렬 카드 n장 표시 */
-SLOT_SEQUENCE[readingVersion].forEach(slot=>{
-  const card = reorderStage.querySelector(`.reorder-card.slot-${slot}`);
-  card.style.opacity = "1";
-});
+  await wait(2000);
 
-/* 7️⃣ 재정렬 상태 유지 */
-await wait(2000);
+  reorderStage.classList.add("hidden");
+  await fireToBigCards(pickedCards);
 
-/* 8️⃣ 불꽃 → 빅카드 */
-reorderStage.classList.add("hidden");
-await fireToBigCards(pickedCards);
+  chat.classList.remove("hidden");
+  chat.innerHTML="<p>🔮 리딩 결과를 불러왔습니다.</p>";
+  await fetchReading(CATEGORY_MAP[selectedCategory], pickedCards, readingVersion);
+};
 
-/* 9️⃣ 리딩 */
-chat.classList.remove("hidden");
-chat.innerHTML = "<p>🔮 리딩 중입니다…</p>";
-await fetchReading(
-  CATEGORY_MAP[selectedCategory],
-  pickedCards,
-  readingVersion
-);
 /* =====================================================
-8. 빅카드 표시
+8. BIG CARD FIRE
 ===================================================== */
-
 async function fireToBigCards(pickedCards){
   const active = SLOT_SEQUENCE[readingVersion];
   const center = document.querySelector(".big-cards");
 
-  // 1️⃣ 파이어볼 전부 동시에 날리기
   await Promise.all(
-    active.map((slot, i) => {
-      const card = document.querySelector(`.big-card.slot-${slot}`);
+    active.map((slot,i)=>{
+      const card=document.querySelector(`.big-card.slot-${slot}`);
       play(sFire);
-      return flyFireball(center, card, 3000);
+      return flyFireball(center,card,3000);
     })
   );
 
-  // 2️⃣ 도착 후 카드 공개 + 불꽃
-  active.forEach((slot, i) => {
-    const card = document.querySelector(`.big-card.slot-${slot}`);
+  active.forEach((slot,i)=>{
+    const card=document.querySelector(`.big-card.slot-${slot}`);
     card.classList.add("burning");
-    card.style.backgroundImage =
-      `url('/assets/tarot/${pickedCards[i]}.png')`;
+    card.style.backgroundImage=`url('/assets/tarot/${pickedCards[i]}.png')`;
   });
 
   play(sReveal);
-
-  // 3️⃣ 불꽃 유지 시간 (2초)
   await wait(2000);
 
-  // 4️⃣ 불꽃 제거 (정상 카드로 복귀)
   document.querySelectorAll(".big-card").forEach(c=>{
     c.classList.remove("burning","smoking");
   });
 }
 
-
 /* =====================================================
 UTIL
 ===================================================== */
+const wait = ms=>new Promise(r=>setTimeout(r,ms));
+
 function build78Deck(){
-  const majors=[
+  const majors=[/* 생략 없음 */ 
     "00_the_fool","01_the_magician","02_the_high_priestess","03_the_empress",
     "04_the_emperor","05_the_hierophant","06_the_lovers","07_the_chariot",
     "08_strength","09_the_hermit","10_wheel_of_fortune","11_justice",
@@ -308,100 +277,65 @@ function build78Deck(){
   const d=[];
   majors.forEach(m=>d.push(`majors/${m}.png`));
   suits.forEach(s=>{
-    nums.forEach((n,i)=>{
-      d.push(`minors/${s}/${n}_${names[i]}.png`);
-    });
+    nums.forEach((n,i)=>d.push(`minors/${s}/${n}_${names[i]}.png`));
   });
   return d;
 }
 
-async function fetchReading(category, cards, version){
-  chat.innerHTML="<p>🔮 리딩 결과를 불러왔습니다.</p>";
-}
-
-const wait = ms => new Promise(r=>setTimeout(r,ms));
-
-function flyFireball(startEl, targetEl, duration = 3000){
+function flyFireball(startEl,targetEl,duration){
   return new Promise(resolve=>{
-    const fire = document.createElement("div");
-    fire.className = "fireball";
+    const fire=document.createElement("div");
+    fire.className="fireball";
     document.body.appendChild(fire);
 
-    const s = startEl.getBoundingClientRect();
-    const e = targetEl.getBoundingClientRect();
+    const s=startEl.getBoundingClientRect();
+    const e=targetEl.getBoundingClientRect();
+    const sx=s.left+s.width/2, sy=s.top+s.height/2;
+    const ex=e.left+e.width/2, ey=e.top+e.height/2;
 
-    const sx = s.left + s.width/2;
-    const sy = s.top + s.height/2;
-    const ex = e.left + e.width/2;
-    const ey = e.top + e.height/2;
-
-    const curve = 120; // 🔥 포물선 높이
-    const startTime = performance.now();
-
-    function animate(now){
-      const t = Math.min((now - startTime) / duration, 1);
-
-      const x = sx + (ex - sx) * t;
-      const y = sy + (ey - sy) * t - curve * Math.sin(Math.PI * t);
-
-      fire.style.transform = `translate(${x}px, ${y}px)`;
-
-      if(t < 1){
-        requestAnimationFrame(animate);
-      }else{
-        fire.remove();
-        resolve();
-      }
+    const start=performance.now();
+    function anim(now){
+      const t=Math.min((now-start)/duration,1);
+      fire.style.transform=`translate(${sx+(ex-sx)*t}px,${sy+(ey-sy)*t-120*Math.sin(Math.PI*t)}px)`;
+      t<1?requestAnimationFrame(anim):(fire.remove(),resolve());
     }
-
-    requestAnimationFrame(animate);
+    requestAnimationFrame(anim);
   });
 }
-async function movePickedToReorder(pickedEls) {
-  const targets = SLOT_SEQUENCE[readingVersion];
 
-  pickedEls.forEach((el, i) => {
-    const startRect = el.getBoundingClientRect();
-    const targetEl = reorderStage.querySelector(
-      `.reorder-card.slot-${targets[i]}`
-    );
-    if (!targetEl) return;
+async function movePickedToReorder(pickedEls){
+  const targets=SLOT_SEQUENCE[readingVersion];
+  pickedEls.forEach((el,i)=>{
+    const s=el.getBoundingClientRect();
+    const tEl=reorderStage.querySelector(`.reorder-card.slot-${targets[i]}`);
+    if(!tEl) return;
+    const t=tEl.getBoundingClientRect();
 
-    const targetRect = targetEl.getBoundingClientRect();
-
-    // 🔹 날아가는 카드 생성 (무조건 back.png)
-    const fly = document.createElement("div");
-    fly.className = "reorder-fly";
-    fly.style.position = "fixed";
-    fly.style.left = startRect.left + "px";
-    fly.style.top = startRect.top + "px";
-    fly.style.width = startRect.width + "px";
-    fly.style.height = startRect.height + "px";
-    fly.style.background =
-      "url('/assets/tarot/back.png') center / contain no-repeat";
-    fly.style.zIndex = 9999;
-    fly.style.transition = "transform 3s ease-in-out";
+    const fly=document.createElement("div");
+    fly.className="reorder-fly";
+    fly.style.position="fixed";
+    fly.style.left=s.left+"px";
+    fly.style.top=s.top+"px";
+    fly.style.width=s.width+"px";
+    fly.style.height=s.height+"px";
+    fly.style.background="url('/assets/tarot/back.png') center/contain no-repeat";
+    fly.style.transition="transform 3s ease";
+    fly.style.zIndex=9999;
 
     document.body.appendChild(fly);
-
-    // 🔹 이동 거리 계산 (같은 fixed 기준 → scroll 계산 필요 없음)
-    const dx = targetRect.left - startRect.left;
-    const dy = targetRect.top - startRect.top;
-
-    requestAnimationFrame(() => {
-      fly.style.transform = `translate(${dx}px, ${dy}px)`;
+    requestAnimationFrame(()=>{
+      fly.style.transform=`translate(${t.left-s.left}px,${t.top-s.top}px)`;
     });
-
-    // 🔹 이동 끝나면 제거
-    setTimeout(() => {
-      fly.remove();
-    }, 3000);
+    setTimeout(()=>fly.remove(),3000);
   });
+  await wait(3000);
 }
 
-  window.addEventListener("load", ()=>{
-  step = 0;
-  qArea.classList.remove("hidden");
-  tArea.classList.add("hidden");
+/* =====================================================
+INIT
+===================================================== */
+window.addEventListener("load",()=>{
+  document.body.style.overflow="";
+  step=0;
   renderQ();
 });
