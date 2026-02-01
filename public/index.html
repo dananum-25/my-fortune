@@ -2,63 +2,109 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>AI 고양이 타로 상담</title>
-  <link rel="stylesheet" href="style.css" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/style.css" />
+
 </head>
 <body>
 
+<!-- ===============================
+HEADER
+=============================== -->
 <header class="top-bar">
-  <span>🐾 AI 고양이 타로 상담</span>
+  <div class="title">🐾 AI 고양이 타로 상담</div>
   <button id="soundToggle">사운드 🔇</button>
 </header>
 
-<!-- 고양이 영역 -->
+<!-- ===============================
+CAT AREA (초기 표시)
+=============================== -->
 <section class="cat-area">
-  <img src="/assets/cat.jpg" alt="cat" />
-  <p id="catText"></p>
+  <img src="/assets/cat_ai.webp" alt="AI Tarot Cat" class="cat-img" />
+  <p id="catText" class="cat-text"></p>
 </section>
 
-<!-- 질문 영역 -->
-<section id="questionArea" class="question-area"></section>
+<!-- ===============================
+QUESTION AREA (카드형 큰 버튼)
+=============================== -->
+<section id="questionArea" class="question-area">
+  <!-- JS로 카드형 질문 버튼 삽입 -->
+</section>
 
-<!-- 전환 안내 -->
-<section id="transitionArea" class="hidden">
+<!-- ===============================
+TRANSITION TEXT
+=============================== -->
+<section id="transitionArea" class="transition-area hidden">
   <p></p>
-  <button id="goCard" class="primary">YES, 카드 선택으로</button>
-  <button id="resetAll" class="secondary">처음으로</button>
+  <button id="goCard" class="go-btn">카드 선택 시작</button>
 </section>
 
-<!-- 빅카드 스테이지 -->
-<section id="bigCardStage" class="hidden">
+<!-- ===============================
+BIG CARD STAGE
+(❗ 질문 끝나기 전까지 hidden)
+=============================== -->
+<section id="bigCardStage" class="big-stage hidden">
   <div class="big-cards">
+
+    <!-- SLOT 1 -->
     <div class="big-card slot-1"></div>
+
+    <!-- SLOT 2 -->
     <div class="big-card slot-2"></div>
+
+    <!-- SLOT 3 -->
     <div class="big-card slot-3"></div>
+
+    <!-- SLOT 4 -->
     <div class="big-card slot-4"></div>
+
+    <!-- SLOT 5 -->
     <div class="big-card slot-5"></div>
+
+    <!-- SLOT 6 -->
     <div class="big-card slot-6"></div>
+
+    <!-- SLOT 7 -->
     <div class="big-card slot-7"></div>
+
   </div>
 </section>
 
-<!-- 78장 스프레드 -->
-<section id="spreadSection" class="hidden">
-  <h2 class="picker-title"></h2>
-  <div id="grid78" class="grid78"></div>
+<!-- ===============================
+78 CARD SPREAD
+=============================== -->
+<section id="spreadSection" class="spread-section hidden">
+  <h2 class="picker-title">마음이 가는 카드를 골라줘</h2>
+  <div id="grid78" class="grid-78"></div>
 </section>
 
-<!-- 선택 확인 모달 -->
+<!-- ===============================
+CONFIRM MODAL
+=============================== -->
 <div id="confirmModal" class="modal hidden">
   <div class="modal-box">
-    <p>선택을 확정할까요?</p>
-    <button id="confirmPick" class="primary">확정</button>
+    <p>선택한 카드로 진행할까요?</p>
+    <div class="modal-actions">
+      <button id="confirmPick">YES, 카드 선택으로</button>
+      <button id="resetAll">처음으로</button>
+    </div>
   </div>
 </div>
 
-<!-- 리딩 영역 -->
-<section id="chatContainer" class="hidden"></section>
+<!-- ===============================
+READING / CHAT
+=============================== -->
+<section id="chatContainer" class="chat-container hidden">
+  <!-- 리딩 결과 HTML 삽입 -->
+</section>
 
-<script src="script.js"></script>
+<!-- ===============================
+SCRIPT
+=============================== -->
+<script src="/script.js"></script>
+
 </body>
 </html>
