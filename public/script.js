@@ -1,5 +1,5 @@
 /* =====================================================
-0. 사운드
+0. GLOBAL / SOUND
 ===================================================== */
 const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
 bgm.loop = true;
@@ -12,27 +12,47 @@ const sReveal = new Audio("/sounds/tarot/reveal.mp3");
 
 let muted = true;
 const soundBtn = document.getElementById("soundToggle");
-
 soundBtn.onclick = () => {
   muted = !muted;
   soundBtn.textContent = muted ? "사운드 🔇" : "사운드 🔊";
   muted ? bgm.pause() : bgm.play().catch(()=>{});
 };
-
-function play(sound){
-  if(!muted){
-    sound.currentTime = 0;
-    sound.play().catch(()=>{});
-  }
-}
+const play = (s)=>{ if(!muted){ s.currentTime=0; s.play().catch(()=>{});} };
 
 /* =====================================================
-1. 질문 단계 (UI 유지)
+1. DOM REFS
 ===================================================== */
-const catTextEl = document.getElementById("catText");
-const qArea = document.getElementById("questionArea");
-const tArea = document.getElementById("transitionArea");
+const catArea   = document.querySelector(".cat-area");     // 고양이 영역
+const catText   = document.getElementById("catText");
+const qArea     = document.getElementById("questionArea");
+const tArea     = document.getElementById("transitionArea");
 
+const bigStage  = document.getElementById("bigCardStage");
+const bigWrap   = bigStage.querySelector(".big-cards");
+const bigCards  = bigStage.querySelectorAll(".big-card");
+
+const spread    = document.getElementById("spreadSection");
+const grid78    = document.getElementById("grid78");
+
+const modal     = document.getElementById("confirmModal");
+const chat      = document.getElementById("chatContainer");
+
+/* =====================================================
+2. STATE
+===================================================== */
+let step = 0;
+let selectedCategory = null;
+let selectedTime = null;
+let selectedDepth = null;
+
+let readingVersion = "V3";
+let maxPickCount = 3;
+
+let selected = [];
+
+/* =====================================================
+3. LABEL / QUESTION (카드형 큰 버튼 유지)
+===================================================== */
 const LABELS = {
   love:"연애", career:"직업 / 진로", money:"금전", relationship:"관계",
   past:"과거", present:"현재", future:"미래",
@@ -49,30 +69,25 @@ const QUESTIONS = [
   { text:"지금 가장 알고 싶은 것은?", options:["direction","advice","feeling","result"] }
 ];
 
-let step = 0;
-let selectedCategory = null;
-let selectedDepth = null;
-
-let readingVersion = "V3";
-let maxPickCount = 3;
-
-function applyReadingDepth(depth){
-  if(depth==="direction"){ readingVersion="V1"; maxPickCount=1; }
-  if(depth==="advice"){ readingVersion="V3"; maxPickCount=3; }
-  if(depth==="feeling"){ readingVersion="V5"; maxPickCount=5; }
-  if(depth==="result"){ readingVersion="V7"; maxPickCount=7; }
+function applyReadingDepth(d){
+  if(d==="direction"){ readingVersion="V1"; maxPickCount=1; }
+  if(d==="advice"){    readingVersion="V3"; maxPickCount=3; }
+  if(d==="feeling"){   readingVersion="V5"; maxPickCount=5; }
+  if(d==="result"){    readingVersion="V7"; maxPickCount=7; }
 }
 
 function renderQ(){
   qArea.innerHTML = "";
   const q = QUESTIONS[step];
-  catTextEl.textContent = q.text;
+  catText.textContent = q.text;
 
   q.options.forEach(o=>{
     const btn = document.createElement("button");
+    btn.className = "q-card";           // ❗ 카드형 큰 버튼 (CSS에서 이미 정의됨)
     btn.textContent = LABELS[o];
     btn.onclick = ()=>{
       if(step===0) selectedCategory=o;
+      if(step===1) selectedTime=o;
       if(step===2){ selectedDepth=o; applyReadingDepth(o); }
       nextQ();
     };
@@ -91,11 +106,13 @@ function nextQ(){
       `지금 선택을 생각하며 카드를 ${maxPickCount}장 골라줘.`;
   }
 }
-
 renderQ();
 
 /* =====================================================
-2. 슬롯 고정 배열
+4. SLOT SEQUENCE (LOCK)
+213
+..6
+475
 ===================================================== */
 const SLOT_SEQUENCE = {
   V1:[1],
@@ -105,7 +122,7 @@ const SLOT_SEQUENCE = {
 };
 
 /* =====================================================
-3. 카드 덱
+5. DECK
 ===================================================== */
 const MAJORS = [
   "00_the_fool.png","01_the_magician.png","02_the_high_priestess.png",
@@ -116,7 +133,6 @@ const MAJORS = [
   "15_the_devil.png","16_the_tower.png","17_the_star.png",
   "18_the_moon.png","19_the_sun.png","20_judgement.png","21_the_world.png"
 ];
-
 const SUITS=["cups","wands","swords","pentacles"];
 const MINOR_NAMES={
   "01":"ace","02":"two","03":"three","04":"four","05":"five","06":"six",
@@ -136,144 +152,116 @@ function build78Deck(){
 }
 
 /* =====================================================
-4. DOM
+6. GO / RESET
 ===================================================== */
-const grid=document.getElementById("grid78");
-const spread=document.getElementById("spreadSection");
-const bigStage=document.getElementById("bigCardStage");
-const bigCards=document.querySelectorAll(".big-card");
-const modal=document.getElementById("confirmModal");
-const chat=document.getElementById("chatContainer");
-
-let selected=[];
-
-/* =====================================================
-5. 재정렬 영역 (빅카드 배열 동일)
-===================================================== */
-let reorderStage=null;
-
-function ensureReorderStage(){
-  if(reorderStage) return reorderStage;
-
-  reorderStage=document.createElement("section");
-  reorderStage.className="tarot-stage reorder-stage";
-
-  const wrap=document.createElement("div");
-  wrap.className="big-cards v7-layout";
-
-  for(let i=1;i<=7;i++){
-    const c=document.createElement("div");
-    c.className=`big-card slot-${i}`;
-    c.style.transform="translate(-50%, -50%) scale(0.45)";
-    wrap.appendChild(c);
-  }
-
-  reorderStage.appendChild(wrap);
-  bigStage.insertAdjacentElement("afterend",reorderStage);
-  return reorderStage;
-}
-
-/* =====================================================
-6. 시작
-===================================================== */
-document.getElementById("goCard").onclick=()=>{
+document.getElementById("goCard").onclick = ()=>{
   tArea.classList.add("hidden");
+
+  // ❗ 카드 연출 단계부터 고양이 숨김
+  catArea.classList.add("hidden");
+
   bigStage.classList.remove("hidden");
   spread.classList.remove("hidden");
+
   document.querySelector(".picker-title").textContent =
     `마음이 가는 카드 ${maxPickCount}장을 골라줘`;
-  applySlotVisibility(bigCards);
+
+  applySlotVisibility();
   initSpread();
 };
 
-document.getElementById("resetAll").onclick=()=>location.reload();
+document.getElementById("resetAll").onclick = ()=>location.reload();
 
 /* =====================================================
-7. 슬롯 표시
+7. BIG SLOT VISIBILITY
 ===================================================== */
-function applySlotVisibility(cards){
-  const active=SLOT_SEQUENCE[readingVersion];
-  cards.forEach(c=>{
-    const slot=Number(c.className.match(/slot-(\d)/)[1]);
+function applySlotVisibility(){
+  const active = SLOT_SEQUENCE[readingVersion];
+  bigCards.forEach(c=>{
+    const slot = Number(c.className.match(/slot-(\d)/)[1]);
     if(!active.includes(slot)){
       c.classList.add("hidden");
     }else{
       c.classList.remove("hidden","burning","smoking");
-      c.style.backgroundImage="url('/assets/tarot/back.png')";
+      c.style.backgroundImage = "url('/assets/tarot/back.png')";
     }
   });
 }
 
 /* =====================================================
-8. 78장 선택
+8. 78 GRID
 ===================================================== */
 function initSpread(){
-  grid.innerHTML=""; selected=[];
+  grid78.innerHTML="";
+  selected=[];
   for(let i=0;i<78;i++){
     const d=document.createElement("div");
     d.className="pick";
     d.onclick=()=>pick(d);
-    grid.appendChild(d);
+    grid78.appendChild(d);
   }
 }
 
 function pick(card){
   if(card.classList.contains("sel")){
     card.classList.remove("sel");
-    selected=selected.filter(c=>c!==card);
+    selected = selected.filter(x=>x!==card);
     return;
   }
   if(selected.length>=maxPickCount) return;
+
   card.classList.add("sel");
   selected.push(card);
   play(sPick);
-  if(selected.length===maxPickCount) modal.classList.remove("hidden");
+
+  if(selected.length===maxPickCount){
+    modal.classList.remove("hidden");
+  }
 }
 
 /* =====================================================
-9. 확정 → 재정렬 → 파이어볼 → 빅카드
+9. CONFIRM → FIREBALL → BIGCARD ONLY FRONT REVEAL
 ===================================================== */
-document.getElementById("confirmPick").onclick=async()=>{
+document.getElementById("confirmPick").onclick = async ()=>{
   modal.classList.add("hidden");
   document.body.classList.add("lock-scroll");
 
   document.querySelectorAll(".pick:not(.sel)").forEach(c=>c.classList.add("fade"));
-  await wait(600);
+  await wait(500);
 
-  const deck=build78Deck();
+  const deck = build78Deck();
   const picked=[];
   selected.forEach(()=>{
-    const id=deck.splice(Math.random()*deck.length|0,1)[0];
+    const id = deck.splice(Math.random()*deck.length|0,1)[0];
     picked.push(id.replace(".png",""));
   });
 
-  /* 재정렬 (back만) */
-  const rs=ensureReorderStage();
-  const rsCards=rs.querySelectorAll(".big-card");
-  applySlotVisibility(rsCards);
-
-  await wait(1200);
-
-  rs.remove();
-
+  // ❗ 앞면 공개는 여기서만 (빅카드)
   await fireToBigCards(picked);
 
+  // 리딩 영역 (재정렬 영역은 없음)
   chat.classList.remove("hidden");
   chat.innerHTML="<p>🔮 리딩 중입니다…</p>";
-  await fetchReading(CATEGORY_MAP[selectedCategory],picked,readingVersion);
+
+  await fetchReading(CATEGORY_MAP[selectedCategory], picked, readingVersion);
+
+  // 리딩 시작 시 고양이 복귀
+  catArea.classList.remove("hidden");
+
   document.body.classList.remove("lock-scroll");
 };
 
 /* =====================================================
-10. 파이어볼 + 공개
+10. FIREBALL → BIG CARD
 ===================================================== */
 async function fireToBigCards(picked){
-  applySlotVisibility(bigCards);
-  const active=SLOT_SEQUENCE[readingVersion];
+  const active = SLOT_SEQUENCE[readingVersion];
+  applySlotVisibility();
 
   selected.forEach((c,i)=>{
-    const slot=active[i];
-    const target=document.querySelector(`.slot-${slot}`);
+    const slot = active[i];
+    const target = document.querySelector(`.slot-${slot}`);
+
     const fire=document.createElement("div");
     fire.className="fireball";
     document.body.appendChild(fire);
@@ -282,22 +270,23 @@ async function fireToBigCards(picked){
     const t=target.getBoundingClientRect();
 
     fire.style.left=`${f.left+f.width/2}px`;
-    fire.style.top=`${f.top+f.height/2}px`;
+    fire.style.top =`${f.top+f.height/2}px`;
+
     play(sFire);
 
     fire.animate([
       {transform:"translate(0,0)"},
-      {transform:`translate(${t.left-f.left}px,${t.top-f.top}px)`}
-    ],{duration:1600,fill:"forwards",easing:"ease-in-out"});
+      {transform:`translate(${(t.left+t.width/2)-(f.left+f.width/2)}px,${(t.top+t.height/2)-(f.top+f.height/2)}px)`}
+    ],{duration:1400,easing:"ease-in-out",fill:"forwards"});
 
-    setTimeout(()=>fire.remove(),1600);
+    setTimeout(()=>fire.remove(),1400);
   });
 
-  await wait(1600);
+  await wait(1400);
   play(sIgnite);
 
   active.forEach(s=>document.querySelector(`.slot-${s}`).classList.add("burning"));
-  await wait(1200);
+  await wait(1100);
 
   active.forEach((s,i)=>{
     const b=document.querySelector(`.slot-${s}`);
@@ -307,10 +296,11 @@ async function fireToBigCards(picked){
   });
 
   play(sReveal);
+  await wait(900);
 }
 
 /* =====================================================
-11. 리딩 API
+11. READING API
 ===================================================== */
 const READING_API="https://script.google.com/macros/s/AKfycbx_WT8AGg2sVcI1EPpqDHWNXsBUtlaTOPovbCTN1Is63n3cIC8zLo2w-efI5-gMLt-h/exec";
 
@@ -318,7 +308,9 @@ async function fetchReading(category,cards,version){
   try{
     const r=await fetch(READING_API,{
       method:"POST",
-      body:new URLSearchParams({category,version,cards:JSON.stringify(cards)})
+      body:new URLSearchParams({
+        category, version, cards:JSON.stringify(cards)
+      })
     });
     const d=await r.json();
     chat.innerHTML=`<h3>🔮 리딩 결과</h3>${d.html}`;
@@ -327,4 +319,4 @@ async function fetchReading(category,cards,version){
   }
 }
 
-const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const wait = ms => new Promise(r=>setTimeout(r,ms));
