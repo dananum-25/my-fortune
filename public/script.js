@@ -226,15 +226,46 @@ document.getElementById("confirmPick").onclick = async ()=>{
   reorderStage.classList.remove("hidden");
 
   // 5️⃣ 선택 카드 → 재정렬 위치 이동 (3초)
-  await movePickedToReorder(selected);
-  spread.classList.add("hidden");
-  bigStage.scrollIntoView({ behavior:"smooth", block:"start" });
-  await wait(600);
-  requestAnimationFrame(() => {
-  requestAnimationFrame(() => {
-    fly.style.transform = `translate(${dx}px, ${dy}px)`;
+async function movePickedToReorder(pickedEls){
+  const clones = [];
+  const slots = SLOT_SEQUENCE[readingVersion];
+
+  pickedEls.forEach((el, i)=>{
+    const start = el.getBoundingClientRect();
+    const targetEl = reorderStage.querySelector(
+      `.reorder-card.slot-${slots[i]}`
+    );
+    const end = targetEl.getBoundingClientRect();
+
+    const fly = document.createElement("div");
+    fly.className = "reorder-fly";
+    fly.style.cssText = `
+      position: fixed;
+      left: ${start.left}px;
+      top: ${start.top}px;
+      width: ${start.width}px;
+      height: ${start.height}px;
+      background: url('/assets/tarot/back.png') center / contain no-repeat;
+      transition: transform 3s ease-in-out;
+      z-index: 9999;
+    `;
+
+    document.body.appendChild(fly);
+    clones.push(fly);
+
+    const dx = end.left - start.left;
+    const dy = end.top - start.top;
+
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        fly.style.transform = `translate(${dx}px, ${dy}px)`;
+      });
+    });
   });
-});
+
+  await wait(3000);
+  clones.forEach(c=>c.remove());
+}
   // 6️⃣ 재정렬 카드 표시
   SLOT_SEQUENCE[readingVersion].forEach(slot=>{
     const card = reorderStage.querySelector(`.reorder-card.slot-${slot}`);
