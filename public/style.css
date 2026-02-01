@@ -94,9 +94,12 @@ body.lock-scroll{ overflow:hidden; }
   padding:8px 10px 0;
 }
 #bigCardStage{
+  position: sticky;
   top: 0;
-  padding-top: 4px;   /* 12 → 4 */
-  padding-bottom: 6px; /* 12 → 6 */
+  z-index: 40;
+  padding-top: 8px;
+  padding-bottom: 12px;
+  background: radial-gradient(circle at top, rgba(0,0,0,.6), rgba(0,0,0,0));
 }
 .big-cards.v7-layout{
   position:relative;
