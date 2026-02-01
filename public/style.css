@@ -356,22 +356,25 @@ body.lock-scroll{ overflow:hidden; }
   min-height: 60vh;
 }
 /* 재정렬 스테이지 자체의 크기(높이) 확보 */
+/* 재정렬 스테이지 전체 */
+#reorderStage{
+  position: relative;
+  margin-top: 12px;
+}
+
+/* ⭐ 재정렬 카드 배치 기준 캔버스 */
 #reorderStage .reorder-cards{
   position: relative;
   width: min(92vw, 380px);
   aspect-ratio: 3 / 4;
   margin: 0 auto;
 }
-.reorder-cards{
-  position:relative;
-  width:100%;
-  height:100%;
-}
 
+/* 재정렬 카드 */
 .reorder-card{
-  position:absolute;
-  width:18%;
-  aspect-ratio:2 / 3;
+  position: absolute;
+  width: 22%;
+  aspect-ratio: 2 / 3;
 }
 
 /* 슬롯 좌표 (빅카드와 동일 구조) */
