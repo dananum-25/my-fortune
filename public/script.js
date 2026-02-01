@@ -233,12 +233,28 @@ SLOT_SEQUENCE[readingVersion].forEach(slot=>{
 ===================================================== */
 async function fireToBigCards(pickedCards){
   const active = SLOT_SEQUENCE[readingVersion];
-  active.forEach((slot,i)=>{
-    const b = bigStage.querySelector(`.big-card.slot-${slot}`);
-    b.classList.add("burning");
-    b.style.backgroundImage=`url('/assets/tarot/${pickedCards[i]}.png')`;
-  });
-  play(sReveal);
+
+  const center = document.querySelector(".big-cards"); // 발사 지점
+
+  for(let i=0; i<active.length; i++){
+    const slot = active[i];
+    const card = document.querySelector(`.big-card.slot-${slot}`);
+
+    play(sFire);
+
+    // 🔥 파이어볼 포물선 이동 (3초)
+    await flyFireball(center, card, 3000);
+
+    // 카드 공개
+    card.classList.add("burning");
+    card.style.backgroundImage =
+      `url('/assets/tarot/${pickedCards[i]}.png')`;
+
+    play(sReveal);
+
+    // 카드 간 템포 여유 (0.5초)
+    await wait(500);
+  }
 }
 
 /* =====================================================
@@ -272,3 +288,40 @@ async function fetchReading(category, cards, version){
 }
 
 const wait = ms => new Promise(r=>setTimeout(r,ms));
+
+function flyFireball(startEl, targetEl, duration = 3000){
+  return new Promise(resolve=>{
+    const fire = document.createElement("div");
+    fire.className = "fireball";
+    document.body.appendChild(fire);
+
+    const s = startEl.getBoundingClientRect();
+    const e = targetEl.getBoundingClientRect();
+
+    const sx = s.left + s.width/2;
+    const sy = s.top + s.height/2;
+    const ex = e.left + e.width/2;
+    const ey = e.top + e.height/2;
+
+    const curve = 120; // 🔥 포물선 높이
+    const startTime = performance.now();
+
+    function animate(now){
+      const t = Math.min((now - startTime) / duration, 1);
+
+      const x = sx + (ex - sx) * t;
+      const y = sy + (ey - sy) * t - curve * Math.sin(Math.PI * t);
+
+      fire.style.transform = `translate(${x}px, ${y}px)`;
+
+      if(t < 1){
+        requestAnimationFrame(animate);
+      }else{
+        fire.remove();
+        resolve();
+      }
+    }
+
+    requestAnimationFrame(animate);
+  });
+}
