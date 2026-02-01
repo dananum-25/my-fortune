@@ -94,9 +94,9 @@ body.lock-scroll{ overflow:hidden; }
   padding:8px 10px 0;
 }
 #bigCardStage{
-  position: sticky;
-  top: 64px; /* 상단바 아래 */
-  z-index: 5;
+  top: 0;
+  padding-top: 4px;   /* 12 → 4 */
+  padding-bottom: 6px; /* 12 → 6 */
 }
 .big-cards.v7-layout{
   position:relative;
@@ -346,18 +346,18 @@ body.lock-scroll{ overflow:hidden; }
 
 #reorderStage{
   position: relative;
-  margin-top: 32px;
-  padding-bottom: 32px;
+  margin-top: 10px;
+  padding-bottom: 10px;
 
   /* 🔥 핵심 */
   min-height: 60vh;
 }
-.reorder-stage{
-  width:100%;
-  max-width:360px;
+/* 재정렬 스테이지 자체의 크기(높이) 확보 */
+#reorderStage .reorder-cards{
+  position: relative;
+  width: min(92vw, 380px);
   aspect-ratio: 3 / 4;
   margin: 0 auto;
-  position: relative;
 }
 .reorder-cards{
   position:relative;
