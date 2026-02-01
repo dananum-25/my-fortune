@@ -155,6 +155,8 @@ function applySlotVisibility(){
     c.style.backgroundImage = "url('/assets/tarot/back.png')";
     c.classList.remove("burning","smoking");
   });
+  bigStage.querySelector(".big-cards").className =
+  `big-cards v7-layout ${readingVersion.toLowerCase()}-layout`;
 }
 
 /* =====================================================
