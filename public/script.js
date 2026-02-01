@@ -69,6 +69,7 @@ function applyReadingDepth(depth){
 }
 
 function renderQ(){
+  catArea.classList.remove("hidden");   // ⭐ 반드시 보이게
   qArea.classList.remove("hidden");   // ⭐ 이거
   tArea.classList.add("hidden");      // 안전장치
   qArea.innerHTML = "";
@@ -233,12 +234,7 @@ SLOT_SEQUENCE[readingVersion].forEach(slot=>{
 /* =====================================================
 8. 빅카드 표시
 ===================================================== */
-async function fireToBigCards(pickedCards){
-  const active = SLOT_SEQUENCE[readingVersion];
 
-  const center = document.querySelector(".big-cards"); // 발사 지점
-
-  for(let i=0; i<active.length; i++){
 async function fireToBigCards(pickedCards){
   const active = SLOT_SEQUENCE[readingVersion];
   const center = document.querySelector(".big-cards");
