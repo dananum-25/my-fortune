@@ -230,7 +230,11 @@ document.getElementById("confirmPick").onclick = async ()=>{
   spread.classList.add("hidden");
   bigStage.scrollIntoView({ behavior:"smooth", block:"start" });
   await wait(600);
-  
+  requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
+    fly.style.transform = `translate(${dx}px, ${dy}px)`;
+  });
+});
   // 6️⃣ 재정렬 카드 표시
   SLOT_SEQUENCE[readingVersion].forEach(slot=>{
     const card = reorderStage.querySelector(`.reorder-card.slot-${slot}`);
