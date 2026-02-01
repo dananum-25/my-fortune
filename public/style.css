@@ -181,11 +181,16 @@ body.lock-scroll{ overflow:hidden; }
 /* ===============================
    REORDER
 ================================ */
-.reorder-area{
-  display:flex;
-  justify-content:center;
-  gap:12px;
-  margin:12px 0 0;
+/* 재정렬 영역을 화면 기준 고정 */
+#reorderStage {
+  position: fixed;
+  top: 12vh;              /* 빅카드 바로 아래 */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 420px;
+  z-index: 900;
+  pointer-events: none;
 }
 
 .reorder-card{
@@ -194,8 +199,9 @@ body.lock-scroll{ overflow:hidden; }
   border-radius:10px;
   background: url("/assets/tarot/back.png") center / contain no-repeat;
   filter: drop-shadow(0 8px 16px rgba(0,0,0,.5));
+  position: relative;
+  height: 110px;
 }
-
 .reorder-area.hidden{ display:none; }
 
 /* ===============================
