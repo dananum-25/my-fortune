@@ -69,6 +69,8 @@ function applyReadingDepth(depth){
 }
 
 function renderQ(){
+  qArea.classList.remove("hidden");   // ⭐ 이거
+  tArea.classList.add("hidden");      // 안전장치
   qArea.innerHTML = "";
   const q = QUESTIONS[step];
   catTextEl.textContent = q.text;
