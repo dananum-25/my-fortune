@@ -210,7 +210,7 @@ document.getElementById("confirmPick").onclick = async ()=>{
 
   /* 재정렬 카드 표시 */
   SLOT_SEQUENCE[readingVersion].forEach((slot,i)=>{
-    const card = document.querySelector(`.reorder-card.slot-${slot}`);
+    const card = reorderStage.querySelector(`.reorder-card.slot-${slot}`);
     card.style.backgroundImage = `url('/assets/tarot/${pickedCards[i]}.png')`;
   });
 
