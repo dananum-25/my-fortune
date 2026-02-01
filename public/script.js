@@ -1,3 +1,4 @@
+step = 0;
 /* =====================================================
 0. 사운드
 ===================================================== */
@@ -67,7 +68,7 @@ function applyReadingDepth(depth){
     [readingVersion, maxPickCount] = map[depth];
   }
 }
-
+step = 0;
 function renderQ(){
   catArea.classList.remove("hidden");   // ⭐ 반드시 보이게
   qArea.classList.remove("hidden");   // ⭐ 이거
@@ -397,3 +398,10 @@ async function movePickedToReorder(pickedEls) {
     }, 3000);
   });
 }
+
+  window.addEventListener("load", ()=>{
+  step = 0;
+  qArea.classList.remove("hidden");
+  tArea.classList.add("hidden");
+  renderQ();
+});
