@@ -267,10 +267,11 @@ async function movePickedToReorder(pickedEls){
   clones.forEach(c=>c.remove());
 }
   // 6️⃣ 재정렬 카드 표시
-  SLOT_SEQUENCE[readingVersion].forEach(slot=>{
-    const card = reorderStage.querySelector(`.reorder-card.slot-${slot}`);
-    card.style.opacity = "1";
-  });
+SLOT_SEQUENCE[readingVersion].forEach((slot)=>{
+  const card = reorderStage.querySelector(`.reorder-card.slot-${slot}`);
+  card.style.opacity = "1";
+  card.style.backgroundImage = "url('/assets/tarot/back.png')";
+});
 
   // 7️⃣ 재정렬 상태 유지
   await wait(2000);
