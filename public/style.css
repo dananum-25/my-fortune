@@ -37,7 +37,7 @@ QUESTION CARD UI (LOCK)
 }
 
 /* 질문 단계에서는 절대 빅카드/스프레드 노출 금지 */
-#bigCardStage,
-#spreadSection{
-  display:none !important;
+body.phase-question #bigCardStage,
+body.phase-question #spreadSection{
+  display:none;
 }
