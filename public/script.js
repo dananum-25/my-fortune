@@ -198,45 +198,57 @@ function pick(c){
 7. 확정 → 재정렬 → 파이어볼 → 빅카드 → 리딩
 ===================================================== */
 document.getElementById("confirmPick").onclick = async ()=>{
-  // 🔥 빅카드 상단으로 스크롤 이동
-bigStage.scrollIntoView({ behavior:"smooth", block:"start" });
-await wait(600);
+  // 1️⃣ 빅카드 상단으로 이동
+  bigStage.scrollIntoView({ behavior:"smooth", block:"start" });
+  await wait(600);
+  document.body.style.overflow = "hidden";
 
-// 이후부터 스크롤 잠금
-document.body.style.overflow = "hidden";
   modal.classList.add("hidden");
+
+  // 2️⃣ 미선택 카드 제거
+  document.querySelectorAll(".pick").forEach(p=>{
+    if(!p.classList.contains("sel")){
+      p.style.opacity = "0";
+      p.style.pointerEvents = "none";
+    }
+  });
+
   spread.classList.add("hidden");
 
+  // 3️⃣ 카드 결정
   const deck = build78Deck();
   const pickedCards = selected.map(()=>{
     return deck.splice(Math.random()*deck.length|0,1)[0].replace(".png","");
   });
 
-/* 🔒 재정렬 초기화 (이미지 절대 건드리지 않음) */
-reorderCards.forEach(c=>{
-  c.style.opacity = "0";
-});
+  // 4️⃣ 재정렬 초기화
+  reorderCards.forEach(c=>{
+    c.style.opacity = "0";
+  });
 
-reorderStage.classList.remove("hidden");
-await wait(2000);
+  reorderStage.classList.remove("hidden");
 
-/* 재정렬 카드 표시 (앞면 절대 넣지 않음) */
-SLOT_SEQUENCE[readingVersion].forEach(slot=>{
-  const card = reorderStage.querySelector(`.reorder-card.slot-${slot}`);
-  card.style.opacity = "1";
-});
+  // 5️⃣ 선택 카드 → 재정렬 위치 이동 (3초)
+  await movePickedToReorder(selected);
 
-  await wait(900);
+  // 6️⃣ 재정렬 카드 표시
+  SLOT_SEQUENCE[readingVersion].forEach(slot=>{
+    const card = reorderStage.querySelector(`.reorder-card.slot-${slot}`);
+    card.style.opacity = "1";
+  });
+
+  // 7️⃣ 재정렬 상태 유지
+  await wait(2000);
+
+  // 8️⃣ 불꽃 → 빅카드
   reorderStage.classList.add("hidden");
-
-  /* 빅카드 연출 */
   await fireToBigCards(pickedCards);
 
+  // 9️⃣ 리딩
   chat.classList.remove("hidden");
-  chat.innerHTML="<p>🔮 리딩 중입니다…</p>";
+  chat.innerHTML = "<p>🔮 리딩 중입니다…</p>";
   await fetchReading(CATEGORY_MAP[selectedCategory], pickedCards, readingVersion);
 };
-
 /* =====================================================
 8. 빅카드 표시
 ===================================================== */
