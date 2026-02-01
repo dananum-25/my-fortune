@@ -1,73 +1,349 @@
-*{box-sizing:border-box;}
-body{
+/* ===============================
+   RESET / BASE
+================================ */
+* { box-sizing: border-box; }
+
+html, body{
   margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+}
+
+body{
   background:#0b0b0f;
   color:#fff;
-  font-family:system-ui,-apple-system;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  overflow-x:hidden;
+}
+
+body.lock-scroll{
   overflow:hidden;
 }
 
-/* CAT */
-.cat-area img{
-  width:100%;
-  max-width:360px;
-  margin:0 auto;
-  display:block;
+/* ===============================
+   TOP BAR
+================================ */
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 14px;
 }
 
-/* BIG CARD STAGE */
-.big-cards{
+.brand{
+  font-weight:700;
+  letter-spacing:.2px;
+}
+
+.sound-btn{
+  font-size:14px;
+  padding:8px 10px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);
+  color:#fff;
+}
+
+/* ===============================
+   APP
+================================ */
+.app{
+  padding-bottom:16px;
+}
+
+/* ===============================
+   CAT AREA
+   ⚠️ 카드 연출 시 JS에서 hidden 처리
+================================ */
+.cat-area{
+  text-align:center;
+  padding:10px 14px 6px;
+}
+
+.cat-area img{
+  width:92%;
+  max-width:420px;
+  border-radius:14px;
+  display:block;
+  margin:0 auto;
+}
+
+#catText{
+  margin:12px 0 8px;
+  font-size:22px;
+  line-height:1.25;
+  font-weight:800;
+  letter-spacing:-0.3px;
+}
+
+/* ===============================
+   QUESTION / TRANSITION
+   (기존 큰 카드형 버튼 유지)
+================================ */
+.question-area,
+.transition{
+  padding:10px 14px 0;
+  text-align:center;
+}
+
+.question-area button,
+.transition button{
+  display:block;
+  width:100%;
+  margin:12px 0;
+  padding:20px 14px;
+  border-radius:18px;
+  border:none;
+  background:#1e1e2a;
+  color:#fff;
+  font-size:18px;
+}
+
+/* ===============================
+   BIG CARD STAGE
+   🔥 핵심 영역
+================================ */
+.tarot-stage{
+  width:100%;
+  padding:0;
+  margin:0;
+}
+
+/* 🔒 한 화면 고정 컨테이너 */
+.big-cards.v7-layout{
   position:relative;
   width:100vw;
-  height:62vh;
-  max-width:420px;
+  height:100vh;              /* 한 화면 고정 */
+  max-height:100svh;
   margin:0 auto;
 }
 
+/* ===============================
+   BIG CARD (중요)
+   ✔ 모든 카드 크기 통일
+   ✔ 완드/코트카드 예외 없음
+================================ */
 .big-card{
   position:absolute;
-  width:30vw;
-  max-width:140px;
-  aspect-ratio:2/3;
-  background:center/cover no-repeat;
+
+  /* 📐 카드 크기 기준값 */
+  width:28vw;                /* 가로 3장 꽉 차는 기준 */
+  max-width:180px;
+  aspect-ratio:2 / 3;
+
   border-radius:14px;
-  transition:all .8s ease;
-  z-index:1;
+  background:
+    url("/assets/tarot/back.png")
+    center / contain
+    no-repeat;
+
+  filter: drop-shadow(0 10px 22px rgba(0,0,0,.55));
+
+  transform: translate(-50%, -50%);
+  transform-origin:center;
+
+  transition:
+    opacity .4s ease,
+    transform .8s ease,
+    filter .6s ease;
+
+  will-change: transform, opacity;
 }
 
-/* SLOT POSITIONS */
-.slot-1{left:50%;top:14%;transform:translate(-50%,-50%);}
-.slot-2{left:15%;top:14%;transform:translate(-50%,-50%);}
-.slot-3{left:85%;top:14%;transform:translate(-50%,-50%);}
-.slot-6{left:50%;top:42%;transform:translate(-50%,-50%);}
-.slot-4{left:15%;top:70%;transform:translate(-50%,-50%);}
-.slot-7{left:50%;top:70%;transform:translate(-50%,-50%);}
-.slot-5{left:85%;top:70%;transform:translate(-50%,-50%);}
+.big-card.hidden{
+  opacity:0;
+  pointer-events:none;
+}
 
-/* STATES */
-.big-card.back{filter:brightness(.7);z-index:1;}
-.big-card.front{z-index:3;}
-.big-card.burning{box-shadow:0 0 40px orange;}
-.big-card.smoking{opacity:1;}
+/* ===============================
+   SLOT POSITIONS (겹침 방지)
+   배열:
+   2   1   3
+       6
+   4   7   5
+================================ */
 
-/* PICK GRID */
+/* 상단 */
+.slot-2{ left:16.5%; top:22%; }
+.slot-1{ left:50%;   top:22%; }
+.slot-3{ left:83.5%; top:22%; }
+
+/* 중앙 */
+.slot-6{ left:50%;   top:50%; }
+
+/* 하단 */
+.slot-4{ left:16.5%; top:78%; }
+.slot-7{ left:50%;   top:78%; }
+.slot-5{ left:83.5%; top:78%; }
+
+/* ===============================
+   PICKER (78 CARD GRID)
+================================ */
+.picker{
+  padding:10px 12px 0;
+}
+
+.picker-title{
+  margin:10px 0 8px;
+  font-size:26px;
+  font-weight:900;
+  letter-spacing:-.4px;
+}
+
 .grid78{
   display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:6px;
-  height:30vh;
+  grid-template-columns: repeat(6, 1fr);
+  gap:8px;
+  max-height:34vh;
+  overflow-y:auto;
 }
-.pick{
-  aspect-ratio:2/3;
-  background:url("/assets/tarot/back.png") center/contain no-repeat;
-  border-radius:8px;
-}
-.pick.sel{outline:2px solid gold}
 
-/* MODAL */
-.modal{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,.7);
-  display:flex;align-items:center;justify-content:center;
+.pick{
+  width:100%;
+  aspect-ratio:2 / 3;
+  background:
+    url("/assets/tarot/back.png")
+    center / contain
+    no-repeat;
+  border-radius:10px;
+  transition: transform .25s ease, opacity .35s ease;
 }
-.hidden{display:none!important;}
+
+.pick.sel{
+  outline:2px solid gold;
+  outline-offset:2px;
+  transform: translateY(-2px);
+}
+
+.pick.fade{
+  opacity:0;
+  transform: scale(.85);
+}
+
+/* ===============================
+   REORDER AREA
+   ❗ JS에서 잠깐만 사용 후 제거
+================================ */
+.reorder-area{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin:12px 0 0;
+}
+
+.reorder-card{
+  width:52px;
+  aspect-ratio:2 / 3;
+  border-radius:8px;
+  background:
+    url("/assets/tarot/back.png")
+    center / contain
+    no-repeat;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,.6));
+}
+
+.reorder-area.hidden{
+  display:none;
+}
+
+/* ===============================
+   MODAL
+================================ */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.7);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+.modal-card{
+  width:min(86vw, 360px);
+  background:#1a1a1f;
+  padding:18px;
+  border-radius:16px;
+  text-align:center;
+}
+
+.modal-card button{
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:none;
+  background:#f5f5f7;
+  color:#111;
+  font-weight:800;
+}
+
+/* ===============================
+   FIREBALL / EFFECTS
+================================ */
+.fireball{
+  position:fixed;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background: radial-gradient(circle,
+    #fff1c1,
+    #ffb703,
+    #ff5400,
+    #b5179e
+  );
+  box-shadow:
+    0 0 25px rgba(255,180,0,.9),
+    0 0 45px rgba(255,80,0,.8);
+  z-index:9998;
+  pointer-events:none;
+}
+
+.big-card.burning::before{
+  content:"";
+  position:absolute;
+  inset:-25%;
+  background: radial-gradient(circle,
+    rgba(255,200,80,.9),
+    rgba(255,120,0,.7),
+    rgba(120,0,200,.5),
+    transparent 70%
+  );
+  animation: burnPulse 2.4s ease-in-out forwards;
+  border-radius:18px;
+}
+
+@keyframes burnPulse{
+  0%{ opacity:.35; }
+  60%{ opacity:1; }
+  100%{ opacity:.55; }
+}
+
+.big-card.smoking::after{
+  content:"";
+  position:absolute;
+  inset:-35%;
+  background: radial-gradient(circle at bottom,
+    rgba(240,240,255,.75),
+    rgba(180,180,200,.45),
+    transparent 75%
+  );
+  animation: smokeRise 2.6s ease-out forwards;
+  border-radius:18px;
+}
+
+@keyframes smokeRise{
+  from{ transform: translateY(0); opacity:.85; }
+  to{ transform: translateY(-60px); opacity:0; }
+}
+
+/* ===============================
+   CHAT / READING
+================================ */
+.chat{
+  padding:14px;
+}
+
+.hidden{
+  display:none !important;
+}
