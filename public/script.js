@@ -363,7 +363,10 @@ async function movePickedToReorder(pickedEls) {
       `.reorder-card.slot-${SLOT_SEQUENCE[readingVersion][i]}`
     ).getBoundingClientRect();
 
-    const clone = el.cloneNode(true);
+    const clone = document.createElement("div");
+    clone.className = "reorder-fly";
+    clone.style.background =
+  "url('/assets/tarot/back.png') center / contain no-repeat";
     clone.style.position = "fixed";
     clone.style.left = rect.left + "px";
     clone.style.top = rect.top + "px";
