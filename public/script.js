@@ -317,7 +317,9 @@ function flyFireball(startEl,targetEl,duration){
     const s=startEl.getBoundingClientRect();
     const e=targetEl.getBoundingClientRect();
     const sx=s.left+s.width/2, sy=s.top+s.height/2;
-    const ex=e.left+e.width/2, ey=e.top+e.height/2;
+    const ex = e.left + e.width / 2;
+    const ey = e.top + e.height * 0.45; 
+    // 🔥 살짝 위 (카드 중앙 보정)
 
     const start=performance.now();
     function anim(now){
