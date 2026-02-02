@@ -224,48 +224,64 @@ body.lock-scroll{ overflow:hidden; }
 }
 
 /* ===============================
-   REORDER STAGE
+   REORDER (✅ FINAL FIX)
+   구조: 213 / ..6.. / 475
+   - bigCardStage 바로 아래에 붙음
 ================================ */
+
+/* ✅ bigCardStage 기준으로 아래에 붙게 */
+#bigCardStage{
+  position: relative; /* 혹시 없으면 안전하게 한번 더 선언 */
+}
+
+/* ✅ 빅카드 바로 아래 */
 #reorderStage{
-  position:fixed;
-  top:12vh;
-  left:50%;
-  transform:translateX(-50%);
-  width:100%;
-  max-width:420px;
-  z-index:900;
-  pointer-events:none;
+  position: absolute;
+  top: 100%;                 /* 🔥 bigCardStage 아래 */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 420px;
+  margin-top: 12px;
+  z-index: 30;
+  pointer-events: none;
 }
 
-.reorder-cards{
-  position:relative;
-  width:92%;
-  aspect-ratio:3 / 4;
-  margin:0 auto;
+/* ✅ 재정렬 캔버스 (빅카드와 동일 비율) */
+#reorderStage .reorder-cards{
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 3 / 4;
+  margin: 0 auto;
 }
 
+/* ✅ 재정렬 카드 (축소판) */
 .reorder-card{
-  position:absolute;
-  width:22%;
-  aspect-ratio:2 / 3;
-  border-radius:10px;
-  background:url("/assets/tarot/back.png")
-    center / contain no-repeat;
-  filter:drop-shadow(0 8px 16px rgba(0,0,0,.5));
-  opacity:0;
+  position: absolute;
+  width: 22%;
+  aspect-ratio: 2 / 3;
+  border-radius: 10px;
+  background: url("/assets/tarot/back.png") center / contain no-repeat;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,.5));
+  opacity: 0;               /* JS에서 보여줌 */
 }
 
-/* 슬롯 동일 */
-.reorder-card.slot-2{ left:10%; top:0%; }
-.reorder-card.slot-1{ left:41%; top:0%; }
-.reorder-card.slot-3{ left:72%; top:0%; }
+/* ✅ 슬롯 좌표: 2 1 3 / . 6 . / 4 7 5 */
+.reorder-card.slot-2{ left: 0%;   top: 0%; }
+.reorder-card.slot-1{ left: 33%;  top: 0%; }
+.reorder-card.slot-3{ left: 66%;  top: 0%; }
 
-.reorder-card.slot-6{ left:41%; top:34%; }
+.reorder-card.slot-6{ left: 33%;  top: 32%; }
 
-.reorder-card.slot-4{ left:10%; top:68%; }
-.reorder-card.slot-7{ left:41%; top:68%; }
-.reorder-card.slot-5{ left:72%; top:68%; }
+.reorder-card.slot-4{ left: 0%;   top: 64%; }
+.reorder-card.slot-7{ left: 33%;  top: 64%; }
+.reorder-card.slot-5{ left: 66%;  top: 64%; }
 
+/* ✅ 78장 카드(그리드)와 겹침 방지 */
+#spreadSection{
+  margin-top: 160px; /* 필요하면 140~190 조절 */
+}
 /* ===============================
    MODAL
 ================================ */
