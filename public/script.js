@@ -362,8 +362,31 @@ async function movePickedToReorder(pickedEls){
 /* =====================================================
 INIT
 ===================================================== */
-window.addEventListener("load",()=>{
-  document.body.style.overflow="";
-  step=0;
+
+window.addEventListener("load", () => {
+  // 🔓 스크롤 초기화
+  document.body.style.overflow = "";
+
+  // 🔁 상태 초기화
+  step = 0;
+  selected = [];
+  selectedCategory = null;
+  selectedDepth = null;
+
+  // 🧹 모든 스테이지 숨김
+  bigStage.classList.add("hidden");
+  spread.classList.add("hidden");
+  reorderStage.classList.add("hidden");
+  chat.classList.add("hidden");
+  modal.classList.add("hidden");
+
+  // 🧹 78장 카드 초기화
+  document.querySelectorAll(".pick").forEach(p=>{
+    p.style.opacity = "";
+    p.style.pointerEvents = "";
+    p.classList.remove("sel");
+  });
+
+  // ❓ 질문 렌더
   renderQ();
 });
