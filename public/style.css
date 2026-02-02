@@ -54,7 +54,7 @@ body.lock-scroll{ overflow:hidden; }
   height:260px;
   margin:0 auto 14px;
   background:
-    url("/public/assets/cat_ai.webp")
+    url("https://my_fortune/assets/cat_ai.webp")
     center / contain no-repeat;
   border-radius:18px;
 }
