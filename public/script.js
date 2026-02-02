@@ -183,7 +183,7 @@ function pick(c){
 }
 
 /* =====================================================
-7. CONFIRM FLOW
+7. CONFIRM FLOW (FIXED)
 ===================================================== */
 document.getElementById("confirmPick").onclick = async ()=>{
   modal.classList.add("hidden");
@@ -201,57 +201,30 @@ document.getElementById("confirmPick").onclick = async ()=>{
     return deck.splice(Math.random()*deck.length|0,1)[0].replace(".png","");
   });
 
+  await handleAfterConfirm(pickedCards);
+};
+
+/* =====================================================
+7-1. REORDER → FIRE (STABLE)
+===================================================== */
+async function handleAfterConfirm(pickedCards){
   reorderCards.forEach(c=>{
-    c.style.opacity="0";
-    c.style.backgroundImage="url('/assets/tarot/back.png')";
+    c.style.opacity = "1";
+    c.style.backgroundImage = "url('/assets/tarot/back.png')";
   });
   reorderStage.classList.remove("hidden");
-async function movePickedToReorder(pickedEls) {
-  const slots = SLOT_SEQUENCE[readingVersion];
 
-  pickedEls.forEach((el, i) => {
-    const start = el.getBoundingClientRect();
-    const targetEl = reorderStage.querySelector(
-      `.reorder-card.slot-${slots[i]}`
-    );
-    if (!targetEl) return;
-
-    const end = targetEl.getBoundingClientRect();
-
-    const fly = document.createElement("div");
-    fly.className = "reorder-fly";
-    fly.style.position = "fixed";
-    fly.style.left = start.left + "px";
-    fly.style.top = start.top + "px";
-    fly.style.width = start.width + "px";
-    fly.style.height = start.height + "px";
-    fly.style.background =
-      "url('/assets/tarot/back.png') center / contain no-repeat";
-    fly.style.zIndex = 9999;
-    fly.style.transition = "transform 3s ease-in-out";
-
-    document.body.appendChild(fly);
-
-    const dx = end.left + end.width / 2 - (start.left + start.width / 2);
-    const dy = end.top + end.height / 2 - (start.top + start.height / 2);
-
-    requestAnimationFrame(() => {
-      fly.style.transform = `translate(${dx}px, ${dy}px)`;
-    });
-
-    setTimeout(() => fly.remove(), 3000);
-  });
-
-  await wait(3000);
-}
+  await movePickedToReorderFixed(selected);
 
   reorderStage.classList.add("hidden");
   await fireToBigCards(pickedCards);
 
+  // 🔥 다음 단계에서 여기부터:
+  // - 리딩 문구
+  // - 고양이 재등장
   chat.classList.remove("hidden");
-  chat.innerHTML="<p>🔮 리딩 결과를 불러왔습니다.</p>";
-  await fetchReading(CATEGORY_MAP[selectedCategory], pickedCards, readingVersion);
-};
+  chat.innerHTML = "<p>🔮 리딩을 시작합니다…</p>";
+}
 
 /* =====================================================
 8. BIG CARD FIRE
@@ -271,7 +244,8 @@ async function fireToBigCards(pickedCards){
   active.forEach((slot,i)=>{
     const card=document.querySelector(`.big-card.slot-${slot}`);
     card.classList.add("burning");
-    card.style.backgroundImage=`url('/assets/tarot/${pickedCards[i]}.png')`;
+    card.style.backgroundImage =
+      `url('/assets/tarot/${pickedCards[i]}.png')`;
   });
 
   play(sReveal);
@@ -288,7 +262,7 @@ UTIL
 const wait = ms=>new Promise(r=>setTimeout(r,ms));
 
 function build78Deck(){
-  const majors=[/* 생략 없음 */ 
+  const majors=[
     "00_the_fool","01_the_magician","02_the_high_priestess","03_the_empress",
     "04_the_emperor","05_the_hierophant","06_the_lovers","07_the_chariot",
     "08_strength","09_the_hermit","10_wheel_of_fortune","11_justice",
@@ -317,76 +291,58 @@ function flyFireball(startEl,targetEl,duration){
     const s=startEl.getBoundingClientRect();
     const e=targetEl.getBoundingClientRect();
     const sx=s.left+s.width/2, sy=s.top+s.height/2;
-    const ex = e.left + e.width / 2;
-    const ey = e.top + e.height * 0.45; 
-    // 🔥 살짝 위 (카드 중앙 보정)
+    const ex=e.left+e.width/2;
+    const ey=e.top+e.height*0.45;
 
     const start=performance.now();
     function anim(now){
       const t=Math.min((now-start)/duration,1);
-      fire.style.transform=`translate(${sx+(ex-sx)*t}px,${sy+(ey-sy)*t-120*Math.sin(Math.PI*t)}px)`;
+      fire.style.transform=
+        `translate(${sx+(ex-sx)*t}px,${sy+(ey-sy)*t-120*Math.sin(Math.PI*t)}px)`;
       t<1?requestAnimationFrame(anim):(fire.remove(),resolve());
     }
     requestAnimationFrame(anim);
   });
 }
 
-async function movePickedToReorder(pickedEls){
-  const targets=SLOT_SEQUENCE[readingVersion];
+async function movePickedToReorderFixed(pickedEls){
+  const slots = SLOT_SEQUENCE[readingVersion];
+
   pickedEls.forEach((el,i)=>{
-    const s=el.getBoundingClientRect();
-    const tEl=reorderStage.querySelector(`.reorder-card.slot-${targets[i]}`);
+    const s = el.getBoundingClientRect();
+    const tEl = reorderStage.querySelector(
+      `.reorder-card.slot-${slots[i]}`
+    );
     if(!tEl) return;
-    const t=tEl.getBoundingClientRect();
+    const t = tEl.getBoundingClientRect();
 
     const fly=document.createElement("div");
     fly.className="reorder-fly";
-    fly.style.position="fixed";
     fly.style.left=s.left+"px";
     fly.style.top=s.top+"px";
     fly.style.width=s.width+"px";
     fly.style.height=s.height+"px";
-    fly.style.background="url('/assets/tarot/back.png') center/contain no-repeat";
-    fly.style.transition="transform 3s ease";
+    fly.style.background=
+      "url('/assets/tarot/back.png') center/contain no-repeat";
     fly.style.zIndex=9999;
 
     document.body.appendChild(fly);
     requestAnimationFrame(()=>{
-      fly.style.transform=`translate(${t.left-s.left}px,${t.top-s.top}px)`;
+      fly.style.transform=
+        `translate(${t.left-s.left}px,${t.top-s.top}px)`;
     });
-    setTimeout(()=>fly.remove(),3000);
+    setTimeout(()=>fly.remove(),2800);
   });
+
   await wait(3000);
 }
 
 /* =====================================================
 INIT
 ===================================================== */
-
-window.addEventListener("load", () => {
-  // 🔓 스크롤 초기화
-  document.body.style.overflow = "";
-
-  // 🔁 상태 초기화
+window.addEventListener("load",()=>{
+  document.body.style.overflow="";
   step = 0;
   selected = [];
-  selectedCategory = null;
-  selectedDepth = null;
-
-  // 🧹 모든 스테이지 숨김
-  bigStage.classList.add("hidden");
-  spread.classList.add("hidden");
-  reorderStage.classList.add("hidden");
-  chat.classList.add("hidden");
-  modal.classList.add("hidden");
-
-  // 🧹 78장 카드 초기화
-  document.querySelectorAll(".pick").forEach(p=>{
-    p.style.opacity = "";
-    p.style.pointerEvents = "";
-    p.classList.remove("sel");
-  });
-
-  // ❓ 질문 렌더
   renderQ();
 });
