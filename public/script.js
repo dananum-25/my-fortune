@@ -324,6 +324,7 @@ async function movePickedToReorderFixed(pickedEls){
 
     const fly=document.createElement("div");
     fly.className="reorder-fly";
+    fly.style.position = "fixed";
     fly.style.left=s.left+"px";
     fly.style.top=s.top+"px";
     fly.style.width=s.width+"px";
