@@ -362,3 +362,20 @@ body.lock-scroll{ overflow:hidden; }
   border:1px solid rgba(255,255,255,.1);
   border-radius:16px;
 }
+
+/* ===============================
+   REORDER FLY (중간 이동 연출 핵심)
+================================ */
+.reorder-fly{
+  position: fixed;               /* 🔥 화면 기준 */
+  background: url("/assets/tarot/back.png") center/contain no-repeat;
+  border-radius: 10px;
+
+  /* 🔥 이게 없어서 안 보였음 */
+  transition: transform 2.8s cubic-bezier(.22,.61,.36,1);
+
+  /* 🔥 항상 위에 */
+  z-index: 9999;
+
+  pointer-events: none;
+}
