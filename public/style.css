@@ -133,9 +133,6 @@ body.lock-scroll{ overflow:hidden; }
   z-index:40;
   padding-top:8px;
 
-  padding-bottom: 16px;   /* 🔥 재정렬 공간 확보용 아님 */
-}
-
   background: radial-gradient(circle at top,
     rgba(0,0,0,.6),
     rgba(0,0,0,0));
@@ -240,7 +237,7 @@ body.lock-scroll{ overflow:hidden; }
   position: relative;     /* 🔥 absolute 절대 금지 */
   width: 100%;
   max-width: 420px;
-  margin: 12px auto 0;
+  margin: 8px auto 0;
   pointer-events: none;
   z-index: 5;
 }
