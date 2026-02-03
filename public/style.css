@@ -132,7 +132,10 @@ body.lock-scroll{ overflow:hidden; }
   top:0;
   z-index:40;
   padding-top:8px;
-  padding-bottom:12px;
+
+  /* 🔥 핵심: 재정렬 영역 공간 확보 */
+  padding-bottom: 180px;
+
   background: radial-gradient(circle at top,
     rgba(0,0,0,.6),
     rgba(0,0,0,0));
@@ -276,7 +279,7 @@ body.lock-scroll{ overflow:hidden; }
 
 /* ✅ 78장 카드(그리드)와 겹침 방지 */
 #spreadSection{
-  margin-top: 110px; /* 🔥 재정렬 축소 반영 */
+  margin-top: 40px; /* 🔥 재정렬 축소 반영 */
 }
 /* ===============================
    MODAL
