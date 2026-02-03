@@ -49,10 +49,6 @@ const LABELS = {
   direction:"방향성", advice:"조언", feeling:"상대의 마음", result:"결과"
 };
 
-const CATEGORY_MAP = {
-  love:"연애", career:"직업", money:"금전", relationship:"관계"
-};
-
 const QUESTIONS = [
   { text:"지금 가장 마음에 걸리는 고민이 어떤 분야인지 골라줘.", options:["love","career","money","relationship"] },
   { text:"이 고민은 언제쯤의 이야기인가요?", options:["past","present","future"] },
@@ -84,7 +80,6 @@ function renderQ(){
     const b = document.createElement("button");
     b.textContent = LABELS[o];
     b.onclick = ()=>{
-      if(step===0) selectedCategory=o;
       if(step===2){
         selectedDepth=o;
         applyReadingDepth(o);
@@ -95,8 +90,7 @@ function renderQ(){
       }else{
         qArea.classList.add("hidden");
         tArea.classList.remove("hidden");
-        tArea.querySelector("p").textContent =
-          `카드 ${maxPickCount}장을 골라줘`;
+        tArea.querySelector("p").textContent = `카드 ${maxPickCount}장을 골라줘`;
       }
     };
     qArea.appendChild(b);
@@ -141,6 +135,9 @@ document.getElementById("goCard").onclick = ()=>{
 
   applySlotVisibility();
   initSpread();
+
+  // ✅ 시작 시 상단 정렬 (좌표 안정)
+  window.scrollTo({ top: 0, behavior: "instant" });
 };
 
 function applySlotVisibility(){
@@ -174,20 +171,22 @@ function pick(c){
     return;
   }
   if(selected.length>=maxPickCount) return;
+
   c.classList.add("sel");
   selected.push(c);
   play(sPick);
+
   if(selected.length===maxPickCount){
     modal.classList.remove("hidden");
   }
 }
 
 /* =====================================================
-7. CONFIRM FLOW (FIXED)
+7. CONFIRM FLOW
 ===================================================== */
 document.getElementById("confirmPick").onclick = async ()=>{
   modal.classList.add("hidden");
-  document.body.style.overflow = "hidden";
+  document.body.classList.add("lock-scroll");
 
   document.querySelectorAll(".pick").forEach(p=>{
     if(!p.classList.contains("sel")){
@@ -205,31 +204,37 @@ document.getElementById("confirmPick").onclick = async ()=>{
 };
 
 /* =====================================================
-7-1. REORDER → FIRE (STABLE)
+7-1. REORDER → FIRE
 ===================================================== */
 async function handleAfterConfirm(pickedCards){
+  // ✅ reorderStage는 bigStage 내부 absolute라 좌표가 항상 안정적
   reorderCards.forEach(c=>{
     c.style.opacity = "1";
     c.style.backgroundImage = "url('/assets/tarot/back.png')";
   });
   reorderStage.classList.remove("hidden");
 
-await movePickedToReorderFixed(selected);
+  // ✅ 레이아웃 확정(좌표 튐 방지)
+  reorderStage.getBoundingClientRect();
+  await wait(50);
 
-/* 🔥 재정렬 위치에서 잠깐 멈춤 */
-await wait(800);
+  // ✅ 선택 카드 -> 재정렬 위치로 2.8초 이동 + 0.2초 여유
+  await movePickedToReorderFixed(selected);
 
-/* 🔥 재정렬 카드 → 동시에 불꽃 발사 */
-await fireToBigCards(pickedCards);
+  // ✅ 재정렬 위치에서 0.8초 멈춤(요구사항)
+  await wait(800);
 
-/* 🔥 불꽃 발사 직후 재정렬 카드 제거 */
-reorderStage.classList.add("hidden");
+  // ✅ 재정렬 카드들 -> 동시에 파이어볼 발사(요구사항)
+  await fireToBigCards(pickedCards);
 
-  // 🔥 다음 단계에서 여기부터:
-  // - 리딩 문구
-  // - 고양이 재등장
+  // ✅ 발사 직후 재정렬 숨김(요구사항)
+  reorderStage.classList.add("hidden");
+
+  // ✅ 다음
   chat.classList.remove("hidden");
   chat.innerHTML = "<p>🔮 리딩을 시작합니다…</p>";
+
+  document.body.classList.remove("lock-scroll");
 }
 
 /* =====================================================
@@ -243,19 +248,18 @@ async function fireToBigCards(pickedCards){
     active.map((slot,i)=>{
       const card=document.querySelector(`.big-card.slot-${slot}`);
       play(sFire);
-      return flyFireball(center,card,3000);
+      return flyFireball(center,card,1600); // ✅ 너무 길면 답답해서 1.6s
     })
   );
 
   active.forEach((slot,i)=>{
     const card=document.querySelector(`.big-card.slot-${slot}`);
     card.classList.add("burning");
-    card.style.backgroundImage =
-      `url('/assets/tarot/${pickedCards[i]}.png')`;
+    card.style.backgroundImage = `url('/assets/tarot/${pickedCards[i]}.png')`;
   });
 
   play(sReveal);
-  await wait(2000);
+  await wait(1400);
 
   document.querySelectorAll(".big-card").forEach(c=>{
     c.classList.remove("burning","smoking");
@@ -316,28 +320,25 @@ async function movePickedToReorderFixed(pickedEls){
 
   pickedEls.forEach((el,i)=>{
     const s = el.getBoundingClientRect();
-    const tEl = reorderStage.querySelector(
-      `.reorder-card.slot-${slots[i]}`
-    );
+
+    const tEl = reorderStage.querySelector(`.reorder-card.slot-${slots[i]}`);
     if(!tEl) return;
+
     const t = tEl.getBoundingClientRect();
 
     const fly=document.createElement("div");
     fly.className="reorder-fly";
-    fly.style.position = "fixed";
     fly.style.left=s.left+"px";
     fly.style.top=s.top+"px";
     fly.style.width=s.width+"px";
     fly.style.height=s.height+"px";
-    fly.style.background=
-      "url('/assets/tarot/back.png') center/contain no-repeat";
-    fly.style.zIndex=9999;
 
     document.body.appendChild(fly);
+
     requestAnimationFrame(()=>{
-      fly.style.transform=
-        `translate(${t.left-s.left}px,${t.top-s.top}px)`;
+      fly.style.transform = `translate(${t.left-s.left}px,${t.top-s.top}px)`;
     });
+
     setTimeout(()=>fly.remove(),2800);
   });
 
@@ -348,7 +349,7 @@ async function movePickedToReorderFixed(pickedEls){
 INIT
 ===================================================== */
 window.addEventListener("load",()=>{
-  document.body.style.overflow="";
+  document.body.classList.remove("lock-scroll");
   step = 0;
   selected = [];
   renderQ();
