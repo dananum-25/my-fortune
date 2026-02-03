@@ -133,8 +133,8 @@ body.lock-scroll{ overflow:hidden; }
   z-index:40;
   padding-top:8px;
 
-  /* 🔥 핵심: 재정렬 영역 공간 확보 */
-  padding-bottom: 140px;
+  padding-bottom: 16px;   /* 🔥 재정렬 공간 확보용 아님 */
+}
 
   background: radial-gradient(circle at top,
     rgba(0,0,0,.6),
@@ -237,14 +237,12 @@ body.lock-scroll{ overflow:hidden; }
 ================================ */
 
 #reorderStage{
-  position: absolute;
-  left: 50%;
-  top: 100%;                 /* bigCardStage 바로 아래 */
-  transform: translateX(-50%);
+  position: relative;     /* 🔥 absolute 절대 금지 */
   width: 100%;
   max-width: 420px;
+  margin: 12px auto 0;
   pointer-events: none;
-  z-index: 20;
+  z-index: 5;
 }
 
 /* 재정렬 카드 캔버스 */
@@ -281,8 +279,8 @@ body.lock-scroll{ overflow:hidden; }
 /* ✅ 78장 카드(그리드)와 겹침 방지 */
 #spreadSection{
   position: relative;
-  z-index: 10;
-  margin-top: 24px;
+  z-index: 1;
+  margin-top: 16px;
 }
 /* ===============================
    MODAL
