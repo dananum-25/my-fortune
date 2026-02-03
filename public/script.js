@@ -214,10 +214,16 @@ async function handleAfterConfirm(pickedCards){
   });
   reorderStage.classList.remove("hidden");
 
-  await movePickedToReorderFixed(selected);
+await movePickedToReorderFixed(selected);
 
-  reorderStage.classList.add("hidden");
-  await fireToBigCards(pickedCards);
+/* 🔥 재정렬 위치에서 잠깐 멈춤 */
+await wait(800);
+
+/* 🔥 재정렬 카드 → 동시에 불꽃 발사 */
+await fireToBigCards(pickedCards);
+
+/* 🔥 불꽃 발사 직후 재정렬 카드 제거 */
+reorderStage.classList.add("hidden");
 
   // 🔥 다음 단계에서 여기부터:
   // - 리딩 문구
