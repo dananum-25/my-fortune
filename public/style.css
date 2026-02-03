@@ -46,14 +46,11 @@ body.lock-scroll{ overflow:hidden; }
   padding:14px 16px 6px;
 }
 
-.cat-area::before{
-  content:"";
+.cat-image{
   display:block;
   width:100%;
   max-width:420px;
-  height:260px;
   margin:0 auto 14px;
-  background:url("/assets/cat_ai.webp") center / contain no-repeat;
   border-radius:18px;
 }
 
