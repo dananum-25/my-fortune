@@ -247,24 +247,35 @@ body.lock-scroll{ overflow:hidden; }
   pointer-events: none;
 }
 
-/* ✅ 재정렬 캔버스 (빅카드와 동일 비율) */
+/* ===============================
+   REORDER STAGE (축소 / 이펙트용)
+================================ */
+
+#reorderStage{
+  position: relative;
+  margin: 6px auto 0;
+  width: 100%;
+  max-width: 420px;
+  pointer-events: none;
+}
+
+/* 재정렬 카드 캔버스 */
 #reorderStage .reorder-cards{
   position: relative;
   width: 100%;
-  max-width: 420px;
+  max-width: 360px;
   aspect-ratio: 3 / 4;
   margin: 0 auto;
 }
 
-/* ✅ 재정렬 카드 (축소판) */
+/* 🔥 재정렬 카드 (작게) */
 .reorder-card{
   position: absolute;
-  width: 22%;
+  width: 18%;          /* 🔥 작게 */
   aspect-ratio: 2 / 3;
-  border-radius: 10px;
   background: url("/assets/tarot/back.png") center / contain no-repeat;
-  filter: drop-shadow(0 6px 14px rgba(0,0,0,.5));
-  opacity: 0;               /* JS에서 보여줌 */
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,.45));
+  opacity: 0;
 }
 
 /* ✅ 슬롯 좌표: 2 1 3 / . 6 . / 4 7 5 */
