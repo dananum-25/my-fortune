@@ -125,6 +125,8 @@ body.lock-scroll{ overflow:hidden; }
   top: 0;
   z-index: 40;
   padding-top: 8px;
+  pointer-events: none;
+
 
   /* ✅ reorderStage가 들어갈 공간 확보(겹침 방지) */
   padding-bottom: 170px;
@@ -328,7 +330,7 @@ body.lock-scroll{ overflow:hidden; }
   box-shadow:
     0 0 25px rgba(255,180,0,.9),
     0 0 45px rgba(255,80,0,.8);
-  z-index:9998;
+  z-index:100000;
   pointer-events:none;
 }
 
