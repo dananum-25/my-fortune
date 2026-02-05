@@ -304,24 +304,33 @@ function build78Deck(){
 
 function flyFireballBetween(startEl, targetEl, duration){
   return new Promise(resolve=>{
-    const fire=document.createElement("div");
-    fire.className="fireball";
-    document.body.appendChild(fire);
+    const fire = document.createElement("div");
+    fire.className = "fireball";
 
-    const s=startEl.getBoundingClientRect();
-    const e=targetEl.getBoundingClientRect();
+    const wrapper = document.getElementById("stageWrapper");
+    wrapper.appendChild(fire);
 
-    const sx=s.left+s.width/2, sy=s.top+s.height/2;
-    const ex=e.left+e.width/2, ey=e.top+e.height*0.45;
+    const w = wrapper.getBoundingClientRect();
+    const s = startEl.getBoundingClientRect();
+    const e = targetEl.getBoundingClientRect();
 
-    const start=performance.now();
+    const sx = s.left - w.left + s.width/2;
+    const sy = s.top  - w.top  + s.height/2;
+    const ex = e.left - w.left + e.width/2;
+    const ey = e.top  - w.top  + e.height*0.45;
+
+    const start = performance.now();
+
     function anim(now){
-      const t=Math.min((now-start)/duration,1);
+      const t = Math.min((now - start) / duration, 1);
       const arc = 120 * Math.sin(Math.PI * t);
+
       fire.style.transform =
-        `translate(${sx+(ex-sx)*t}px,${sy+(ey-sy)*t - arc}px)`;
-      t<1 ? requestAnimationFrame(anim) : (fire.remove(), resolve());
+        `translate(${sx + (ex - sx) * t}px, ${sy + (ey - sy) * t - arc}px)`;
+
+      t < 1 ? requestAnimationFrame(anim) : (fire.remove(), resolve());
     }
+
     requestAnimationFrame(anim);
   });
 }
