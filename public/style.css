@@ -237,24 +237,29 @@ body.lock-scroll{ overflow:hidden; }
   font-weight:900;
 }
 
-/* REORDER FLY */
+/* REORDER FLY + FIREBALL : 좌표계 통일 */
 .reorder-fly,
 .fireball{
-  position: absolute;
+  position: absolute;      /* ✅ fixed 절대 금지 */
   pointer-events: none;
   z-index: 9999;
 }
 
-/* FIREBALL */
+/* FIREBALL 스타일만 분리 */
 .fireball{
-  position:fixed;
   width:42px;
   height:42px;
   border-radius:50%;
-  background:radial-gradient(circle,#fff1c1,#ffb703,#ff5400,#b5179e);
-  box-shadow:0 0 25px rgba(255,180,0,.9), 0 0 45px rgba(255,80,0,.8);
-  z-index: 100000;
-  pointer-events:none;
+  background:radial-gradient(
+    circle,
+    #fff1c1,
+    #ffb703,
+    #ff5400,
+    #b5179e
+  );
+  box-shadow:
+    0 0 25px rgba(255,180,0,.9),
+    0 0 45px rgba(255,80,0,.8);
 }
 
 .big-card.burning::before{
