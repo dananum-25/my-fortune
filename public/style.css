@@ -84,8 +84,6 @@ body.lock-scroll{ overflow:hidden; }
 
 #bigCardStage{
   position: -webkit-sticky;
-  position: sticky;
-  top: 0;
   z-index: 40;
   padding-top: 8px;
 
@@ -133,10 +131,6 @@ body.lock-scroll{ overflow:hidden; }
 
 /* REORDER STAGE (✅ bigCardStage 내부 absolute, 무조건 아래 고정) */
 #reorderStage{
-  position: absolute;
-  left: 50%;
-  bottom: 14px;
-  transform: translateX(-50%);
   width: 100%;
   max-width: 420px;
   z-index: 45;
