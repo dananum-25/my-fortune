@@ -331,32 +331,32 @@ function flyFireballBetween(startEl, targetEl, duration){
       t < 1 ? requestAnimationFrame(anim) : (fire.remove(), resolve());
     }
 
-    requestAnimationFrame(anim);
-  });
-}
-
 async function movePickedToReorderFixed(pickedEls){
   const slots = SLOT_SEQUENCE[readingVersion];
 
   pickedEls.forEach((el,i)=>{
-    const s = el.getBoundingClientRect();
-    const tEl = reorderStage.querySelector(`.reorder-card.slot-${slots[i]}`);
-    if(!tEl) return;
-    const t = tEl.getBoundingClientRect();
+const wrapper = document.getElementById("stageWrapper");
+const w = wrapper.getBoundingClientRect();
 
-    const fly=document.createElement("div");
-    fly.className="reorder-fly";
-    fly.style.left=s.left+"px";
-    fly.style.top=s.top+"px";
-    fly.style.width=s.width+"px";
-    fly.style.height=s.height+"px";
+const s = el.getBoundingClientRect();
+const t = tEl.getBoundingClientRect();
 
-    document.body.appendChild(fly);
+const fly = document.createElement("div");
+fly.className = "reorder-fly";
 
-    requestAnimationFrame(()=>{
-      fly.style.transform =
-        `translate(${t.left-s.left}px,${t.top-s.top + 12}px) scale(0.6)`;
-    });
+/* ✅ stageWrapper 기준 좌표로 변환 */
+fly.style.left = (s.left - w.left) + "px";
+fly.style.top  = (s.top  - w.top)  + "px";
+fly.style.width  = s.width  + "px";
+fly.style.height = s.height + "px";
+
+/* ✅ body ❌ → wrapper ✅ */
+wrapper.appendChild(fly);
+
+requestAnimationFrame(()=>{
+  fly.style.transform =
+    `translate(${t.left - s.left}px, ${t.top - s.top}px) scale(0.6)`;
+});
 
     setTimeout(()=>fly.remove(),2800);
   });
