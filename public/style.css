@@ -255,6 +255,10 @@ body.lock-scroll{ overflow:hidden; }
   transition: transform 2.8s cubic-bezier(.22,.61,.36,1);
   z-index: 9999;
   pointer-events: none;
+  .reorder-fly,
+.fireball{
+  position: absolute; /* ❗ fixed 절대 금지 */
+}
 }
 
 /* FIREBALL */
