@@ -88,8 +88,9 @@ body.lock-scroll{ overflow:hidden; }
 
 /* big cards */
 #bigCardStage{
-  position: relative;
+  position: relative;   /* ❗ sticky 완전 제거 */
   z-index: 20;
+  padding-top: 8px;
 }
 
 /* reorder는 그냥 아래에 “고정된 박스” */
@@ -105,19 +106,8 @@ body.lock-scroll{ overflow:hidden; }
 }
 .tarot-stage{ padding:8px 10px 0; }
 
-#bigCardStage{
-  position: -webkit-sticky;
-  z-index: 40;
-  padding-top: 8px;
-
-  /* ✅ reorderStage 공간 확보 */
-  padding-bottom: 190px;
-
   /* ✅ absolute 자식 기준 */
   overflow: visible;
-
-  /* ✅ 겹침 클릭 방지(스프레드 클릭은 아래에서) */
-  pointer-events: none;
 
   background: radial-gradient(circle at top,
     rgba(0,0,0,.6),
@@ -248,17 +238,11 @@ body.lock-scroll{ overflow:hidden; }
 }
 
 /* REORDER FLY */
-.reorder-fly{
-  position: fixed;
-  background: url("/assets/tarot/back.png") center/contain no-repeat;
-  border-radius: 10px;
-  transition: transform 2.8s cubic-bezier(.22,.61,.36,1);
-  z-index: 9999;
-  pointer-events: none;
-  .reorder-fly,
+.reorder-fly,
 .fireball{
-  position: absolute; /* ❗ fixed 절대 금지 */
-}
+  position: absolute;
+  pointer-events: none;
+  z-index: 9999;
 }
 
 /* FIREBALL */
