@@ -329,6 +329,7 @@ function flyFireballBetween(startEl, targetEl, duration){
         `translate(${sx + (ex - sx) * t}px, ${sy + (ey - sy) * t - arc}px)`;
 
       t < 1 ? requestAnimationFrame(anim) : (fire.remove(), resolve());
+      console.log(getComputedStyle(fire).position);
     }
 
 async function movePickedToReorderFixed(pickedEls){
