@@ -124,6 +124,8 @@ const reorderCards = document.querySelectorAll(".reorder-card");
 5. START PICK
 ===================================================== */
 document.getElementById("goCard").onclick = ()=>{
+ // ✅ 질문 끝나면 상단 UI 잠시 숨김
+  document.querySelector(".topbar").classList.add("hidden");
   catArea.classList.add("hidden");
   tArea.classList.add("hidden");
 
