@@ -231,7 +231,11 @@ async function handleAfterConfirm(pickedCards){
 
   // ✅ 발사 직후 재정렬 숨김(요구사항)
   reorderStage.classList.add("hidden");
-
+  // ✅ 선택된 스프레드 카드 완전 제거
+  selected.forEach(el=>{
+  el.remove();
+});
+selected = [];
   // ✅ 다음
   chat.classList.remove("hidden");
   chat.innerHTML = "<p>🔮 리딩을 시작합니다…</p>";
