@@ -3,7 +3,6 @@
 ===================================================== */
 let step = 0;
 let selected = [];
-let selectedCategory = null;
 let selectedDepth = null;
 let readingVersion = "V3";
 let maxPickCount = 3;
@@ -21,13 +20,11 @@ const sReveal = new Audio("/sounds/tarot/reveal.mp3");
 
 let muted = true;
 const soundBtn = document.getElementById("soundToggle");
-
 soundBtn.onclick = () => {
   muted = !muted;
   soundBtn.textContent = muted ? "사운드 🔇" : "사운드 🔊";
   muted ? bgm.pause() : bgm.play().catch(()=>{});
 };
-
 function play(sound){
   if(!muted){
     sound.currentTime = 0;
@@ -80,8 +77,8 @@ function renderQ(){
     const b = document.createElement("button");
     b.textContent = LABELS[o];
     b.onclick = ()=>{
-      if(step===2){
-        selectedDepth=o;
+      if(step === 2){
+        selectedDepth = o;
         applyReadingDepth(o);
       }
       step++;
@@ -124,8 +121,9 @@ const reorderCards = document.querySelectorAll(".reorder-card");
 5. START PICK
 ===================================================== */
 document.getElementById("goCard").onclick = ()=>{
- // ✅ 질문 끝나면 상단 UI 잠시 숨김
+  // ✅ 상단 UI 숨김(좌표 안정)
   document.querySelector(".topbar").classList.add("hidden");
+
   catArea.classList.add("hidden");
   tArea.classList.add("hidden");
 
@@ -138,8 +136,11 @@ document.getElementById("goCard").onclick = ()=>{
   applySlotVisibility();
   initSpread();
 
-  // ✅ 시작 시 상단 정렬 (좌표 안정)
-  window.scrollTo({ top: 0, behavior: "instant" });
+  // ✅ “처음 온 사람도 알게” 스프레드로 자동 이동
+  // (빅카드는 sticky라 화면 위에 계속 남아있음)
+  setTimeout(()=>{
+    spread.scrollIntoView({ behavior:"smooth", block:"start" });
+  }, 120);
 };
 
 function applySlotVisibility(){
@@ -190,6 +191,7 @@ document.getElementById("confirmPick").onclick = async ()=>{
   modal.classList.add("hidden");
   document.body.classList.add("lock-scroll");
 
+  // ✅ 선택 안 된 카드들은 사라지게
   document.querySelectorAll(".pick").forEach(p=>{
     if(!p.classList.contains("sel")){
       p.style.opacity="0";
@@ -209,34 +211,33 @@ document.getElementById("confirmPick").onclick = async ()=>{
 7-1. REORDER → FIRE
 ===================================================== */
 async function handleAfterConfirm(pickedCards){
-  // ✅ reorderStage는 bigStage 내부 absolute라 좌표가 항상 안정적
+  // ✅ 재정렬 카드 보이기
   reorderCards.forEach(c=>{
     c.style.opacity = "1";
     c.style.backgroundImage = "url('/assets/tarot/back.png')";
   });
   reorderStage.classList.remove("hidden");
 
-  // ✅ 레이아웃 확정(좌표 튐 방지)
+  // ✅ layout 확정
   reorderStage.getBoundingClientRect();
   await wait(50);
 
-  // ✅ 선택 카드 -> 재정렬 위치로 2.8초 이동 + 0.2초 여유
+  // ✅ 선택 카드 -> 재정렬로 이동
   await movePickedToReorderFixed(selected);
 
-  // ✅ 재정렬 위치에서 0.8초 멈춤(요구사항)
+  // ✅ 재정렬에서 0.8초 멈춤
   await wait(800);
 
-  // ✅ 재정렬 카드들 -> 동시에 파이어볼 발사(요구사항)
-  await fireToBigCards(pickedCards);
+  // ✅ 파이어볼: “재정렬 카드 → 빅카드” 로 동시에 발사 (핵심)
+  await fireToBigCardsFromReorder(pickedCards);
 
-  // ✅ 발사 직후 재정렬 숨김(요구사항)
+  // ✅ 발사 직후 재정렬 숨김
   reorderStage.classList.add("hidden");
-  // ✅ 선택된 스프레드 카드 완전 제거
-  selected.forEach(el=>{
-  el.remove();
-});
-selected = [];
-  // ✅ 다음
+
+  // ✅ 선택된 스프레드 카드 “완전 제거”
+  selected.forEach(el=>el.remove());
+  selected = [];
+
   chat.classList.remove("hidden");
   chat.innerHTML = "<p>🔮 리딩을 시작합니다…</p>";
 
@@ -244,28 +245,29 @@ selected = [];
 }
 
 /* =====================================================
-8. BIG CARD FIRE
+8. FIRE: REORDER → BIG
 ===================================================== */
-async function fireToBigCards(pickedCards){
+async function fireToBigCardsFromReorder(pickedCards){
   const active = SLOT_SEQUENCE[readingVersion];
-  const center = document.querySelector(".big-cards");
 
   await Promise.all(
     active.map((slot,i)=>{
-      const card=document.querySelector(`.big-card.slot-${slot}`);
+      const startCard = reorderStage.querySelector(`.reorder-card.slot-${slot}`);
+      const targetCard = document.querySelector(`.big-card.slot-${slot}`);
       play(sFire);
-      return flyFireball(center,card,1600); // ✅ 너무 길면 답답해서 1.6s
+      return flyFireballBetween(startCard, targetCard, 1200);
     })
   );
 
+  // ✅ 발사 후 빅카드 앞면 오픈 + 불타는 효과
   active.forEach((slot,i)=>{
-    const card=document.querySelector(`.big-card.slot-${slot}`);
+    const card = document.querySelector(`.big-card.slot-${slot}`);
     card.classList.add("burning");
     card.style.backgroundImage = `url('/assets/tarot/${pickedCards[i]}.png')`;
   });
 
   play(sReveal);
-  await wait(1400);
+  await wait(1200);
 
   document.querySelectorAll(".big-card").forEach(c=>{
     c.classList.remove("burning","smoking");
@@ -298,7 +300,7 @@ function build78Deck(){
   return d;
 }
 
-function flyFireball(startEl,targetEl,duration){
+function flyFireballBetween(startEl, targetEl, duration){
   return new Promise(resolve=>{
     const fire=document.createElement("div");
     fire.className="fireball";
@@ -306,16 +308,17 @@ function flyFireball(startEl,targetEl,duration){
 
     const s=startEl.getBoundingClientRect();
     const e=targetEl.getBoundingClientRect();
+
     const sx=s.left+s.width/2, sy=s.top+s.height/2;
-    const ex=e.left+e.width/2;
-    const ey=e.top+e.height*0.45;
+    const ex=e.left+e.width/2, ey=e.top+e.height*0.45;
 
     const start=performance.now();
     function anim(now){
       const t=Math.min((now-start)/duration,1);
-      fire.style.transform=
-        `translate(${sx+(ex-sx)*t}px,${sy+(ey-sy)*t-120*Math.sin(Math.PI*t)}px)`;
-      t<1?requestAnimationFrame(anim):(fire.remove(),resolve());
+      const arc = 120 * Math.sin(Math.PI * t);
+      fire.style.transform =
+        `translate(${sx+(ex-sx)*t}px,${sy+(ey-sy)*t - arc}px)`;
+      t<1 ? requestAnimationFrame(anim) : (fire.remove(), resolve());
     }
     requestAnimationFrame(anim);
   });
@@ -326,10 +329,8 @@ async function movePickedToReorderFixed(pickedEls){
 
   pickedEls.forEach((el,i)=>{
     const s = el.getBoundingClientRect();
-
     const tEl = reorderStage.querySelector(`.reorder-card.slot-${slots[i]}`);
     if(!tEl) return;
-
     const t = tEl.getBoundingClientRect();
 
     const fly=document.createElement("div");
@@ -342,9 +343,9 @@ async function movePickedToReorderFixed(pickedEls){
     document.body.appendChild(fly);
 
     requestAnimationFrame(()=>{
-    fly.style.transform =
-    `translate(${t.left-s.left}px,${t.top-s.top + 12}px) scale(0.6)`;
-  });
+      fly.style.transform =
+        `translate(${t.left-s.left}px,${t.top-s.top + 12}px) scale(0.6)`;
+    });
 
     setTimeout(()=>fly.remove(),2800);
   });
