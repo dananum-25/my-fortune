@@ -210,12 +210,7 @@ document.getElementById("confirmPick").onclick = async ()=>{
 /* =====================================================
 7-1. REORDER → FIRE
 ===================================================== */
-const wrapperRect = document
-  .getElementById("stageWrapper")
-  .getBoundingClientRect();
 
-sx = start.left - wrapperRect.left;
-sy = start.top  - wrapperRect.top;
 
 async function handleAfterConfirm(pickedCards){
   // ✅ 재정렬 카드 보이기
