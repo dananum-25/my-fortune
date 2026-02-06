@@ -132,17 +132,17 @@ body.lock-scroll{ overflow:hidden; }
 
 /* 슬롯 위치 */
 .slot-2{ left:0%;   top:0%; }
-.slot-1{ left:36%;  top:0%; }
+.slot-1{ left:40%;  top:0%; }
 .slot-3{ left:72%;  top:0%; }
-.slot-6{ left:36%;  top:38%; }
+.slot-6{ left:40%;  top:38%; }
 .slot-4{ left:0%;   top:76%; }
-.slot-7{ left:36%;  top:76%; }
+.slot-7{ left:40%;  top:76%; }
 .slot-5{ left:72%;  top:76%; }
 
 /* REORDER STAGE (✅ bigCardStage 내부 absolute, 무조건 아래 고정) */
 #reorderStage{
   width: 100%;
-  max-width: 420px;
+  max-width: 540px;
   z-index: 45;
   pointer-events: none;
 }
