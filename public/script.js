@@ -65,6 +65,7 @@ function applyReadingDepth(depth){
 }
 
 function renderQ(){
+  console.log("[renderQ] step=", step, "QUESTIONS=", QUESTIONS?.length);
   catArea.classList.remove("hidden");
   qArea.classList.remove("hidden");
   tArea.classList.add("hidden");
