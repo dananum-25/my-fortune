@@ -315,6 +315,9 @@ function flyFireballBetween(startEl, targetEl, duration){
     const wrapper = document.getElementById("stageWrapper");
     wrapper.appendChild(fire);
 
+    fire.style.left = "0px";
+    fire.style.top  = "0px";
+
     const w = wrapper.getBoundingClientRect();
     const s = startEl.getBoundingClientRect();
     const e = targetEl.getBoundingClientRect();
