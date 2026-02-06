@@ -376,9 +376,36 @@ requestAnimationFrame(()=>{
 /* =====================================================
 INIT
 ===================================================== */
-window.addEventListener("load",()=>{
-  document.body.classList.remove("lock-scroll");
-  step = 0;
-  selected = [];
-  renderQ();
+window.addEventListener("load", () => {
+  try {
+    document.body.classList.remove("lock-scroll");
+
+    // 화면 초기화(혹시 이전 상태 남아있을 수 있으니)
+    step = 0;
+    selected = [];
+    selectedDepth = null;
+    readingVersion = "V3";
+    maxPickCount = 3;
+
+    // 필수 UI 복구
+    document.querySelector(".topbar")?.classList.remove("hidden");
+    catArea?.classList.remove("hidden");
+    qArea?.classList.remove("hidden");
+    tArea?.classList.add("hidden");
+    bigStage?.classList.add("hidden");
+    spread?.classList.add("hidden");
+    chat?.classList.add("hidden");
+
+    renderQ();
+  } catch (e) {
+    console.error("[INIT FAIL]", e);
+
+    // 최후의 안전장치: 화면에 에러 표시
+    const err = document.createElement("div");
+    err.style.padding = "14px";
+    err.style.fontSize = "14px";
+    err.style.color = "tomato";
+    err.textContent = "초기 로딩 에러가 발생했어요. 콘솔(F12) 에러를 확인해주세요.";
+    document.body.prepend(err);
+  }
 });
