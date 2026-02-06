@@ -109,6 +109,7 @@ const SLOT_SEQUENCE = {
 4. DOM
 ===================================================== */
 const grid = document.getElementById("grid78");
+const pickerTitle = document.getElementById("pickerTitle");
 const spread = document.getElementById("spreadSection");
 const bigStage = document.getElementById("bigCardStage");
 const reorderStage = document.getElementById("reorderStage");
@@ -131,8 +132,9 @@ document.getElementById("goCard").onclick = ()=>{
   bigStage.classList.remove("hidden");
   spread.classList.remove("hidden");
 
-  document.querySelector(".picker-title").textContent =
-    `마음이 가는 카드 ${maxPickCount}장을 골라줘`;
+  pickerTitle.classList.remove("hidden");
+  pickerTitle.textContent =
+  `마음이 가는 카드 ${maxPickCount}장을 골라줘`;
 
   applySlotVisibility();
   initSpread();
@@ -190,6 +192,7 @@ function pick(c){
 ===================================================== */
 document.getElementById("confirmPick").onclick = async ()=>{
   modal.classList.add("hidden");
+  pickerTitle.classList.add("hidden");   // ← 추가
   document.body.classList.add("lock-scroll");
 
   // ✅ 선택 안 된 카드들은 사라지게
