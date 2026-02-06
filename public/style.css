@@ -96,7 +96,7 @@ body.lock-scroll{ overflow:hidden; }
 /* reorder는 그냥 아래에 “고정된 박스” */
 #reorderStage{
   position: relative;
-  margin-top: 32px;   /* ← 이게 “빅카드 아래” 기준 */
+  margin-top: 52px;   /* ← 이게 “빅카드 아래” 기준 */
   z-index: 10;
 }
 
@@ -132,11 +132,11 @@ body.lock-scroll{ overflow:hidden; }
 
 /* 슬롯 위치 */
 .slot-2{ left:0%;   top:0%; }
-.slot-1{ left:37%;  top:0%; }
+.slot-1{ left:36.5%;  top:0%; }
 .slot-3{ left:72%;  top:0%; }
-.slot-6{ left:37%;  top:38%; }
+.slot-6{ left:36.5%;  top:38%; }
 .slot-4{ left:0%;   top:76%; }
-.slot-7{ left:37%;  top:76%; }
+.slot-7{ left:36.5%;  top:76%; }
 .slot-5{ left:72%;  top:76%; }
 
 /* REORDER STAGE (✅ bigCardStage 내부 absolute, 무조건 아래 고정) */
