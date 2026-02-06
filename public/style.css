@@ -291,7 +291,7 @@ body.lock-scroll{ overflow:hidden; }
 /* CHAT */
 .chat{
   padding:14px;
-  margin-top: 6px;     /* ✅ 475 바로 아래 붙게 */
+  margin-top: 24px;     /* ✅ 475 바로 아래 붙게 */
   max-width: 420px;
   margin-left: auto;
   margin-right: auto;
