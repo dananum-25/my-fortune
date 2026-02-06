@@ -136,9 +136,9 @@ body.lock-scroll{ overflow:hidden; }
 .slot-1{ left:33%;  top:0%; }
 .slot-3{ left:66%;  top:0%; }
 .slot-6{ left:33%;  top:38%; }
-.slot-4{ left:0%;   top:70%; }
-.slot-7{ left:33%;  top:70%; }
-.slot-5{ left:66%;  top:70%; }
+.slot-4{ left:0%;   top:67%; }
+.slot-7{ left:33%;  top:67%; }
+.slot-5{ left:66%;  top:67%; }
 
 /* REORDER STAGE (✅ bigCardStage 내부 absolute, 무조건 아래 고정) */
 #reorderStage{
