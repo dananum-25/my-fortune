@@ -158,8 +158,8 @@ body.lock-scroll{ overflow:hidden; }
 
 .reorder-card{
   position: absolute;
-  width: 36px;
-  height: 54px;
+  width: 42px;
+  height: 64px;
   background: url("/assets/tarot/back.png") center / contain no-repeat;
   filter: drop-shadow(0 4px 8px rgba(0,0,0,.45));
   opacity: 0;
