@@ -118,7 +118,7 @@ body.lock-scroll{ overflow:hidden; }
   position:relative;
   width:100%;
   max-width:420px;
-  aspect-ratio:3 / 4;
+  height:520px;   /* ← 고정 높이로 변경 */
   margin:8px auto 0;
 }
 
