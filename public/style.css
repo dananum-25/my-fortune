@@ -104,11 +104,9 @@ body.lock-scroll{ overflow:hidden; }
 .reorder-cards{
   margin: 0 auto;
 }
-.tarot-stage{ padding:8px 10px 0; }
-
-  /* ✅ absolute 자식 기준 */
+.tarot-stage{
+  padding:8px 10px 0;
   overflow: visible;
-
   background: radial-gradient(circle at top,
     rgba(0,0,0,.6),
     rgba(0,0,0,0));
