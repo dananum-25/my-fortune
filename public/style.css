@@ -151,15 +151,15 @@ body.lock-scroll{ overflow:hidden; }
 #reorderStage .reorder-cards{
   position: relative;
   width: 100%;
-  max-width: 260px;
-  height: 120px;        /* ✅ 화면 안에 들어오게 높이 고정 */
-  margin: 6px auto 0;
+  max-width: 220px;
+  height: 96px;      /* 더 압축 */
+  margin: 2px auto 0;
 }
 
 .reorder-card{
   position: absolute;
-  width: 42px;
-  height: 64px;
+  width: 36px;
+  height: 54px;
   background: url("/assets/tarot/back.png") center / contain no-repeat;
   filter: drop-shadow(0 4px 8px rgba(0,0,0,.45));
   opacity: 0;
