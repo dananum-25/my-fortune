@@ -80,10 +80,12 @@ body.lock-scroll{ overflow:hidden; }
 }
 
 /* BIG CARD STAGE */
+
 #stageWrapper{
   position: relative;
   max-width: 420px;
   margin: 0 auto;
+  min-height: 520px;   /* ← 이거 추가 (핵심) */
 }
 
 /* big cards */
