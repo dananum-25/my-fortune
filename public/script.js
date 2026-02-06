@@ -329,9 +329,17 @@ function flyFireballBetween(startEl, targetEl, duration){
       fire.style.transform =
         `translate(${sx + (ex - sx) * t}px, ${sy + (ey - sy) * t - arc}px)`;
 
-      t < 1 ? requestAnimationFrame(anim) : (fire.remove(), resolve());
-      console.log(getComputedStyle(fire).position);
+      if(t < 1){
+        requestAnimationFrame(anim);
+      }else{
+        fire.remove();
+        resolve();
+      }
     }
+
+    requestAnimationFrame(anim);
+  });
+}
 
 async function movePickedToReorderFixed(pickedEls){
   const slots = SLOT_SEQUENCE[readingVersion];
