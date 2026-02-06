@@ -339,6 +339,9 @@ async function movePickedToReorderFixed(pickedEls){
 const wrapper = document.getElementById("stageWrapper");
 const w = wrapper.getBoundingClientRect();
 
+const tEl = reorderStage.querySelector(`.reorder-card.slot-${slots[i]}`);
+if(!tEl) return;
+
 const s = el.getBoundingClientRect();
 const t = tEl.getBoundingClientRect();
 
@@ -346,18 +349,23 @@ const fly = document.createElement("div");
 fly.className = "reorder-fly";
 
 /* ✅ stageWrapper 기준 좌표로 변환 */
+const wrapper = document.getElementById("stageWrapper");
+const w = wrapper.getBoundingClientRect();
+
+const s = el.getBoundingClientRect();
+const t = tEl.getBoundingClientRect();
+
 fly.style.left = (s.left - w.left) + "px";
 fly.style.top  = (s.top  - w.top)  + "px";
-fly.style.width  = s.width  + "px";
-fly.style.height = s.height + "px";
 
-/* ✅ body ❌ → wrapper ✅ */
 wrapper.appendChild(fly);
 
 requestAnimationFrame(()=>{
   fly.style.transform =
-    `translate(${t.left - s.left}px, ${t.top - s.top}px) scale(0.6)`;
-});
+    `translate(
+      ${t.left - w.left - (s.left - w.left)}px,
+      ${t.top  - w.top  - (s.top  - w.top)}px
+    ) scale(0.6)`;
 
     setTimeout(()=>fly.remove(),2800);
   });
