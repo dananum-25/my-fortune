@@ -291,14 +291,14 @@ body.lock-scroll{ overflow:hidden; }
 /* CHAT */
 .chat{
   padding:14px;
-  margin-top: 32px;     /* ✅ 475 바로 아래 붙게 */
+  margin-top: 120px;   /* ← 이게 핵심 */
   max-width: 420px;
   margin-left: auto;
   margin-right: auto;
 }
 
 .reading-result{
-  margin-top:32px;
+  margin-top:120px;
   padding:14px;
   background:rgba(255,255,255,.04);
   border:1px solid rgba(255,255,255,.1);
