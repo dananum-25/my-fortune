@@ -132,11 +132,11 @@ body.lock-scroll{ overflow:hidden; }
 
 /* 슬롯 위치 */
 .slot-2{ left:0%;   top:0%; }
-.slot-1{ left:33%;  top:0%; }
+.slot-1{ left:36%;  top:0%; }
 .slot-3{ left:72%;  top:0%; }
-.slot-6{ left:33%;  top:38%; }
+.slot-6{ left:36%;  top:38%; }
 .slot-4{ left:0%;   top:76%; }
-.slot-7{ left:33%;  top:76%; }
+.slot-7{ left:36%;  top:76%; }
 .slot-5{ left:72%;  top:76%; }
 
 /* REORDER STAGE (✅ bigCardStage 내부 absolute, 무조건 아래 고정) */
@@ -166,14 +166,14 @@ body.lock-scroll{ overflow:hidden; }
 
 /* 슬롯 */
 .reorder-card.slot-2{ left: 0%;   top: 0px; }
-.reorder-card.slot-1{ left: 36%;  top: 0px; }
-.reorder-card.slot-3{ left: 72%;  top: 0px; }
+.reorder-card.slot-1{ left: 45%;  top: 0px; }
+.reorder-card.slot-3{ left: 90%;  top: 0px; }
 
-.reorder-card.slot-6{ left: 36%;  top: 32px; }
+.reorder-card.slot-6{ left: 36%;  top: 45px; }
 
-.reorder-card.slot-4{ left: 0%;   top: 64px; }
-.reorder-card.slot-7{ left: 36%;  top: 64px; }
-.reorder-card.slot-5{ left: 72%;  top: 64px; }
+.reorder-card.slot-4{ left: 0%;   top: 90px; }
+.reorder-card.slot-7{ left: 45%;  top: 90px; }
+.reorder-card.slot-5{ left: 90%;  top: 90px; }
 
 /* PICKER */
 .picker{ padding:8px 12px 0; }
