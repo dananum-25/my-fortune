@@ -96,7 +96,7 @@ body.lock-scroll{ overflow:hidden; }
 /* reorder는 그냥 아래에 “고정된 박스” */
 #reorderStage{
   position: relative;
-  margin-top: 52px;   /* ← 이게 “빅카드 아래” 기준 */
+  margin-top: 72px;   /* ← 이게 “빅카드 아래” 기준 */
   z-index: 10;
 }
 
