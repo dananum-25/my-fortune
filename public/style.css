@@ -122,23 +122,24 @@ body.lock-scroll{ overflow:hidden; }
 
 .big-card{
   position:absolute;
-  width:32vw;
-  max-width:140px;
-  aspect-ratio:2 / 3;
+  width:120px;      /* ← 카드 크기 고정 */
+  height:180px;
   border-radius:14px;
-  background:url("/assets/tarot/back.png") center / 100% 100% no-repeat;
+  background:url("/assets/tarot/back.png") center / cover no-repeat;
   filter:drop-shadow(0 10px 22px rgba(0,0,0,.55));
   backface-visibility:hidden;
 }
 
 /* 슬롯 위치 */
 .slot-2{ left:0%;   top:0%; }
-.slot-1{ left:33%;  top:0%; }
-.slot-3{ left:66%;  top:0%; }
-.slot-6{ left:33%;  top:38%; }
-.slot-4{ left:0%;   top:67%; }
-.slot-7{ left:33%;  top:67%; }
-.slot-5{ left:66%;  top:67%; }
+.slot-1{ left:36%;  top:0%; }
+.slot-3{ left:72%;  top:0%; }
+
+.slot-6{ left:36%;  top:45%; }
+
+.slot-4{ left:0%;   top:90%; }
+.slot-7{ left:36%;  top:90%; }
+.slot-5{ left:72%;  top:90%; }
 
 /* REORDER STAGE (✅ bigCardStage 내부 absolute, 무조건 아래 고정) */
 #reorderStage{
