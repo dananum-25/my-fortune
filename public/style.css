@@ -151,28 +151,30 @@ body.lock-scroll{ overflow:hidden; }
 #reorderStage .reorder-cards{
   position: relative;
   width: 100%;
-  max-width: 320px;
-  aspect-ratio: 3 / 4;
-  margin: 0 auto;
+  max-width: 260px;
+  height: 120px;        /* ✅ 화면 안에 들어오게 높이 고정 */
+  margin: 6px auto 0;
 }
 
 .reorder-card{
   position: absolute;
-  width: 14%;
-  aspect-ratio: 2 / 3;
+  width: 42px;
+  height: 64px;
   background: url("/assets/tarot/back.png") center / contain no-repeat;
   filter: drop-shadow(0 4px 8px rgba(0,0,0,.45));
   opacity: 0;
 }
 
 /* 슬롯 */
-.reorder-card.slot-2{ left: 0%;   top: 0%; }
-.reorder-card.slot-1{ left: 33%;  top: 0%; }
-.reorder-card.slot-3{ left: 66%;  top: 0%; }
-.reorder-card.slot-6{ left: 33%;  top: 32%; }
-.reorder-card.slot-4{ left: 0%;   top: 64%; }
-.reorder-card.slot-7{ left: 33%;  top: 64%; }
-.reorder-card.slot-5{ left: 66%;  top: 64%; }
+.reorder-card.slot-2{ left: 0%;   top: 0px; }
+.reorder-card.slot-1{ left: 38%;  top: 0px; }
+.reorder-card.slot-3{ left: 76%;  top: 0px; }
+
+.reorder-card.slot-6{ left: 38%;  top: 44px; }
+
+.reorder-card.slot-4{ left: 0%;   top: 88px; }
+.reorder-card.slot-7{ left: 38%;  top: 88px; }
+.reorder-card.slot-5{ left: 76%;  top: 88px; }
 
 /* PICKER */
 .picker{ padding:8px 12px 0; }
