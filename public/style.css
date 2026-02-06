@@ -141,6 +141,15 @@ body.lock-scroll{ overflow:hidden; }
 .slot-7{ left:36.5%;  top:76%; }
 .slot-5{ left:72%;  top:76%; }
 
+#chatContainer{
+  margin-top: 12px;
+}
+
+#pickerTitle{
+  margin: 16px 0 8px;
+  text-align: center;
+}
+
 /* REORDER STAGE (✅ bigCardStage 내부 absolute, 무조건 아래 고정) */
 #reorderStage{
   width: 100%;
