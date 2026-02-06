@@ -238,6 +238,9 @@ await wait(500);
   // ✅ 파이어볼: “재정렬 카드 → 빅카드” 로 동시에 발사 (핵심)
   await fireToBigCardsFromReorder(pickedCards);
 
+  // ✅ 모든 카드 앞면 + 연출 끝난 후 topbar 다시 표시
+  document.querySelector(".topbar")?.classList.remove("hidden");
+
   // ✅ 발사 직후 재정렬 숨김
   reorderStage.classList.add("hidden");
 
