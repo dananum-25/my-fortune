@@ -368,8 +368,11 @@ async function movePickedToReorderFixed(pickedEls){
     wrapper.appendChild(fly);
 
     requestAnimationFrame(()=>{
+      const dx = (t.left - w.left) - (s.left - w.left);
+      const dy = (t.top  - w.top)  - (s.top  - w.top);
+
       fly.style.transform =
-        `translate(${t.left - s.left}px, ${t.top - s.top}px) scale(0.6)`;
+        `translate(${dx}px, ${dy}px) scale(0.6)`;
     });
 
     setTimeout(()=>fly.remove(),2800);
