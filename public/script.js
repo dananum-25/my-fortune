@@ -308,6 +308,7 @@ function build78Deck(){
 }
 
 function flyFireballBetween(startEl, targetEl, duration){
+function flyFireballBetween(startEl, targetEl, duration){
   return new Promise(resolve=>{
     const fire = document.createElement("div");
     fire.className = "fireball";
