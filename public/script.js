@@ -12,7 +12,7 @@ let maxPickCount = 3;
 ===================================================== */
 const bgm = new Audio("/sounds/tarot/ambient_entry.mp3");
 bgm.loop = true;
-bgm.volume = 0.15;
+bgm.volume = 0.15; 
 
 const sPick   = new Audio("/sounds/tarot/card_pick.mp3");
 const sFire   = new Audio("/sounds/tarot/fire.mp3");
