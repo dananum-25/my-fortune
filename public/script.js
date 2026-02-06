@@ -224,7 +224,11 @@ async function handleAfterConfirm(pickedCards){
   // ✅ layout 확정
   reorderStage.getBoundingClientRect();
   await wait(50);
+ /* 🔥 화면 맨 위로 이동 */
+  document.getElementById("stageWrapper")
+  .scrollIntoView({ behavior:"smooth", block:"start" });
 
+await wait(500);
   // ✅ 선택 카드 -> 재정렬로 이동
   await movePickedToReorderFixed(selected);
 
