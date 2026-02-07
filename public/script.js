@@ -218,10 +218,18 @@ document.getElementById("confirmPick").onclick = async ()=>{
 
 async function handleAfterConfirm(pickedCards){
   // ✅ 재정렬 카드 보이기
-  reorderCards.forEach(c=>{
+const active = SLOT_SEQUENCE[readingVersion];
+
+reorderCards.forEach(c=>{
+  const s = Number(c.className.match(/slot-(\d)/)?.[1]);
+
+  if(active.includes(s)){
     c.style.opacity = "1";
     c.style.backgroundImage = "url('/assets/tarot/back.png')";
-  });
+  }else{
+    c.style.opacity = "0";
+  }
+});
   reorderStage.classList.remove("hidden");
 
   // ✅ layout 확정
