@@ -477,29 +477,6 @@ async function buildReadingHTML(pickedCards){
     };
   });
 
-  let html = `<div class="reading">`;
-  html += `<h3>🔮 AI 고양이 타로 리딩</h3>`;
-
-  /* 전체 흐름 */
-  html += `<p class="reading-core">`;
-  cards.forEach(c=>{
-    html += (c.db?.core || "") + " ";
-  });
-  html += `</p>`;
-
-  /* 카드 설명 */
-  html += `<div class="reading-cards">`;
-  cards.forEach((c,i)=>{
-    html += `
-      <div class="reading-card">
-        <strong>${i+1}번 카드 — ${c.key}</strong>
-        <p>${c.db?.core || ""}</p>
-      </div>
-    `;
-  });
-  html += `</div>`;
-
-  /* 슬롯 리딩 */
   const slotMap = {
     2:"past",
     1:"present",
@@ -510,21 +487,51 @@ async function buildReadingHTML(pickedCards){
     5:"advice"
   };
 
-  html += `<div class="reading-flow">`;
+  let html = `<div class="reading">`;
+  html += `<h3>🔮 AI 고양이 타로 리딩</h3>`;
+
+  /* =====================
+     전체 흐름 요약
+  ===================== */
+  const summary = cards
+    .map(c=>c.db?.core)
+    .filter(Boolean)
+    .slice(0,3)
+    .join(" ");
+
+  html += `<p class="reading-core">${summary}</p>`;
+
+  /* =====================
+     상담형 흐름
+  ===================== */
+  const flow = {
+    past: [],
+    present: [],
+    future: [],
+    advice: []
+  };
 
   cards.forEach(c=>{
     const type = slotMap[c.slot];
     if(type && c.db?.[type]){
-      html += `<p><strong>${type}</strong> — ${c.db[type]}</p>`;
+      flow[type].push(c.db[type]);
     }
   });
 
-  html += `</div>`;
+  if(flow.past.length){
+    html += `<p><strong>과거</strong><br>${flow.past.join(" ")}</p>`;
+  }
 
-  /* 조언 */
-  const adviceCard = cards.find(c=>c.slot === 5);
-  if(adviceCard?.db?.advice){
-    html += `<p class="reading-advice">💡 ${adviceCard.db.advice}</p>`;
+  if(flow.present.length){
+    html += `<p><strong>현재</strong><br>${flow.present.join(" ")}</p>`;
+  }
+
+  if(flow.future.length){
+    html += `<p><strong>미래</strong><br>${flow.future.join(" ")}</p>`;
+  }
+
+  if(flow.advice.length){
+    html += `<p class="reading-advice">💡 ${flow.advice.join(" ")}</p>`;
   }
 
   html += `</div>`;
