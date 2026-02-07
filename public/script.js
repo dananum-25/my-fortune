@@ -281,11 +281,15 @@ async function fireToBigCardsFromReorder(pickedCards){
   );
 
   // ✅ 발사 후 빅카드 앞면 오픈 + 불타는 효과
-  active.forEach((slot,i)=>{
-    const card = document.querySelector(`.big-card.slot-${slot}`);
-    card.classList.add("burning");
-    card.style.backgroundImage = `url('/assets/tarot/${pickedCards[i]}.png')`;
-  });
+active.forEach((slot,i)=>{
+  const card = document.querySelector(`.big-card.slot-${slot}`);
+
+  const img = pickedCards[i % pickedCards.length];
+
+  card.classList.add("burning");
+  card.style.backgroundImage =
+    `url('/assets/tarot/${img}.png')`;
+});
 
   play(sReveal);
   await wait(1200);
