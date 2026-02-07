@@ -478,10 +478,17 @@ async function loadTarotDB(){
 }
 
 function normalizeCardKey(cardId){
-  if(cardId.includes("/")){
-    const name = cardId.split("/").pop().replace(".png","");
-    return name;
+  if(cardId.includes("majors")){
+    return cardId.split("/").pop().replace(".png","");
   }
+
+  if(cardId.includes("minors")){
+    const parts = cardId.split("/");
+    const suit = parts[1];
+    const name = parts[2].split("_")[1].replace(".png","");
+    return `${suit}_${name}`;
+  }
+
   return cardId;
 }
 
