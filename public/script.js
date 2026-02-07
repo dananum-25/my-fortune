@@ -7,6 +7,8 @@ let selectedDepth = null;
 let readingVersion = "V3";
 let maxPickCount = 3;
 
+let selectedTime = null;
+let selectedCategory = null;
 /* =====================================================
 1. SOUND
 ===================================================== */
@@ -78,10 +80,19 @@ function renderQ(){
     const b = document.createElement("button");
     b.textContent = LABELS[o];
     b.onclick = ()=>{
-      if(step === 2){
-        selectedDepth = o;
-        applyReadingDepth(o);
-      }
+
+  if(step === 0){
+    selectedCategory = o;
+  }
+
+  if(step === 1){
+    selectedTime = o;
+  }
+
+  if(step === 2){
+    selectedDepth = o;
+    applyReadingDepth(o);
+  }
       step++;
       if(step < QUESTIONS.length){
         renderQ();
@@ -104,6 +115,18 @@ const SLOT_SEQUENCE = {
   V5:[2,1,3,4,5],
   V7:[2,1,3,6,4,7,5]
 };
+
+function getActiveSlots(){
+  if(readingVersion !== "V1") {
+    return SLOT_SEQUENCE[readingVersion];
+  }
+
+  if(selectedTime === "past") return [2];
+  if(selectedTime === "present") return [1];
+  if(selectedTime === "future") return [3];
+
+  return [1];
+}
 
 /* =====================================================
 4. DOM
@@ -147,7 +170,7 @@ document.getElementById("goCard").onclick = ()=>{
 };
 
 function applySlotVisibility(){
-  const active = SLOT_SEQUENCE[readingVersion];
+  const active = getActiveSlots();
   bigCards.forEach(c=>{
     const s = Number(c.className.match(/slot-(\d)/)?.[1]);
     c.classList.toggle("hidden", !active.includes(s));
@@ -218,7 +241,7 @@ document.getElementById("confirmPick").onclick = async ()=>{
 
 async function handleAfterConfirm(pickedCards){
   // ✅ 재정렬 카드 보이기
-const active = SLOT_SEQUENCE[readingVersion];
+const active = getActiveSlots();
 
 reorderCards.forEach(c=>{
   const s = Number(c.className.match(/slot-(\d)/)?.[1]);
@@ -271,8 +294,7 @@ chat.innerHTML = readingHTML;
 8. FIRE: REORDER → BIG
 ===================================================== */
 async function fireToBigCardsFromReorder(pickedCards){
-  const active = SLOT_SEQUENCE[readingVersion];
-
+  const active = getActiveSlots();
   await Promise.all(
     active.map((slot,i)=>{
       const startCard = reorderStage.querySelector(`.reorder-card.slot-${slot}`);
@@ -369,7 +391,7 @@ function flyFireballBetween(startEl, targetEl, duration){
 }
 
 async function movePickedToReorderFixed(pickedEls){
-  const slots = SLOT_SEQUENCE[readingVersion];
+  const active = getActiveSlots();
   const wrapper = document.getElementById("stageWrapper");
   const w = wrapper.getBoundingClientRect();
 
