@@ -85,7 +85,7 @@ body.lock-scroll{ overflow:hidden; }
   position: relative;
   max-width: 420px;
   margin: 0 auto;
-  min-height: 520px;   /* ← 이거 추가 (핵심) */
+  min-height: 480px;   /* ← 이거 추가 (핵심) */
 }
 
 /* big cards */
@@ -98,7 +98,7 @@ body.lock-scroll{ overflow:hidden; }
 /* reorder는 그냥 아래에 “고정된 박스” */
 #reorderStage{
   position: relative;
-  margin-top: 72px;   /* ← 이게 “빅카드 아래” 기준 */
+  margin-top: 18px;   /* ← 이게 “빅카드 아래” 기준 */
   z-index: 10;
 }
 
@@ -118,7 +118,7 @@ body.lock-scroll{ overflow:hidden; }
   position:relative;
   width:100%;
   max-width:420px;
-  height:520px;   /* ← 고정 높이로 변경 */
+  height:480px;   /* ← 고정 높이로 변경 */
   margin:8px auto 0;
 }
 
