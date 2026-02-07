@@ -391,7 +391,8 @@ function flyFireballBetween(startEl, targetEl, duration){
 }
 
 async function movePickedToReorderFixed(pickedEls){
-  const active = getActiveSlots();
+  const slots = getActiveSlots();   // ← 이름을 slots로 통일
+
   const wrapper = document.getElementById("stageWrapper");
   const w = wrapper.getBoundingClientRect();
 
@@ -487,7 +488,7 @@ function normalizeCardKey(cardId){
 async function buildReadingHTML(pickedCards){
   await loadTarotDB();
 
-  const slots = SLOT_SEQUENCE[readingVersion];
+  const slots = getActiveSlots();
 
   const cards = pickedCards.map((id,i)=>{
     const key = normalizeCardKey(id);
@@ -499,8 +500,8 @@ async function buildReadingHTML(pickedCards){
     };
   });
 
-  const category = selected[0];   // love/career/money/relationship
-  const timeKey  = selected[1];   // past/present/future
+  const category = selectedCategory;
+  const timeKey  = selectedTime;
 
   let html = `<div class="reading">`;
   html += `<h3>🔮 AI 고양이 타로 리딩</h3>`;
