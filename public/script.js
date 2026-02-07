@@ -260,7 +260,9 @@ await wait(500);
   selected = [];
 
   chat.classList.remove("hidden");
-  chat.innerHTML = "<p>🔮 리딩을 시작합니다…</p>";
+
+const readingHTML = await buildReadingHTML(pickedCards);
+chat.innerHTML = readingHTML;
 
   document.body.classList.remove("lock-scroll");
 }
@@ -438,3 +440,93 @@ window.addEventListener("load", () => {
     document.body.prepend(err);
   }
 });
+
+/* =====================================================
+READING ENGINE
+===================================================== */
+
+let tarotDB = {};
+
+async function loadTarotDB(){
+  if(Object.keys(tarotDB).length) return;
+
+  const res = await fetch("/data/tarot_reading_db_ko.json");
+  tarotDB = await res.json();
+}
+
+function normalizeCardKey(cardId){
+  if(cardId.includes("/")){
+    const name = cardId.split("/").pop().replace(".png","");
+    return name;
+  }
+  return cardId;
+}
+
+async function buildReadingHTML(pickedCards){
+  await loadTarotDB();
+
+  const slots = SLOT_SEQUENCE[readingVersion];
+
+  const cards = pickedCards.map((id,i)=>{
+    const key = normalizeCardKey(id);
+    const db = tarotDB[key];
+    return {
+      slot: slots[i],
+      key,
+      db
+    };
+  });
+
+  let html = `<div class="reading">`;
+  html += `<h3>🔮 AI 고양이 타로 리딩</h3>`;
+
+  /* 전체 흐름 */
+  html += `<p class="reading-core">`;
+  cards.forEach(c=>{
+    html += (c.db?.core || "") + " ";
+  });
+  html += `</p>`;
+
+  /* 카드 설명 */
+  html += `<div class="reading-cards">`;
+  cards.forEach((c,i)=>{
+    html += `
+      <div class="reading-card">
+        <strong>${i+1}번 카드</strong>
+        <p>${c.db?.core || ""}</p>
+      </div>
+    `;
+  });
+  html += `</div>`;
+
+  /* 슬롯 리딩 */
+  const slotMap = {
+    2:"past",
+    1:"present",
+    3:"future",
+    6:"present",
+    4:"past",
+    7:"future",
+    5:"advice"
+  };
+
+  html += `<div class="reading-flow">`;
+
+  cards.forEach(c=>{
+    const type = slotMap[c.slot];
+    if(type && c.db?.[type]){
+      html += `<p><strong>${type}</strong> — ${c.db[type]}</p>`;
+    }
+  });
+
+  html += `</div>`;
+
+  /* 조언 */
+  const adviceCard = cards.find(c=>c.slot === 5);
+  if(adviceCard?.db?.advice){
+    html += `<p class="reading-advice">💡 ${adviceCard.db.advice}</p>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
