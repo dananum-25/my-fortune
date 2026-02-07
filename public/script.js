@@ -465,7 +465,7 @@ window.addEventListener("load", () => {
 });
 
 /* =====================================================
-READING ENGINE
+READING ENGINE (FINAL STABLE)
 ===================================================== */
 
 let tarotDB = {};
@@ -477,6 +477,7 @@ async function loadTarotDB(){
   tarotDB = await res.json();
 }
 
+/* 카드 키 정규화 (메이저 + 마이너 대응) */
 function normalizeCardKey(cardId){
   if(cardId.includes("majors")){
     return cardId.split("/").pop().replace(".png","");
@@ -492,6 +493,15 @@ function normalizeCardKey(cardId){
   return cardId;
 }
 
+/* 슬롯 의미 매핑 */
+function getSlotMeaning(slot){
+  if([2,4].includes(slot)) return "past";
+  if([1,6].includes(slot)) return "present";
+  if([3,7].includes(slot)) return "future";
+  if(slot === 5) return "advice";
+  return "present";
+}
+
 async function buildReadingHTML(pickedCards){
   await loadTarotDB();
 
@@ -499,16 +509,15 @@ async function buildReadingHTML(pickedCards){
 
   const cards = pickedCards.map((id,i)=>{
     const key = normalizeCardKey(id);
-    const db = tarotDB[key];
     return {
       slot: slots[i],
       key,
-      db
+      db: tarotDB[key]
     };
   });
 
   const category = selectedCategory;
-  const timeKey  = selectedTime;
+  const timeKey = selectedTime;
 
   let html = `<div class="reading">`;
   html += `<h3>🔮 AI 고양이 타로 리딩</h3>`;
@@ -525,35 +534,82 @@ async function buildReadingHTML(pickedCards){
   html += `<p class="reading-core">${summary}</p>`;
 
   /* =====================
-     카드별 상담형 설명
+     과거
   ===================== */
-  html += `<div class="reading-cards">`;
+  const pastCards = cards.filter(c=>getSlotMeaning(c.slot)==="past");
+  if(pastCards.length){
+    html += `<h4>과거의 흐름</h4>`;
+    pastCards.forEach(c=>{
+      html += `<p>${c.db?.past || c.db?.core}</p>`;
+    });
+  }
 
-  cards.forEach((c,i)=>{
-    if(!c.db) return;
+  /* =====================
+     현재
+  ===================== */
+  const presentCards = cards.filter(c=>getSlotMeaning(c.slot)==="present");
+  if(presentCards.length){
+    html += `<h4>현재의 흐름</h4>`;
+    presentCards.forEach(c=>{
+      html += `<p>${c.db?.present || c.db?.core}</p>`;
+    });
+  }
 
-    const catText  = c.db[category] || "";
-    const timeText = c.db[timeKey] || "";
+  /* =====================
+     미래
+  ===================== */
+  const futureCards = cards.filter(c=>getSlotMeaning(c.slot)==="future");
+  if(futureCards.length){
+    html += `<h4>앞으로의 흐름</h4>`;
+    futureCards.forEach(c=>{
+      html += `<p>${c.db?.future || c.db?.core}</p>`;
+    });
+  }
 
-    html += `
-      <div class="reading-card">
-        <strong>🃏 ${i+1}번 카드</strong>
-        <p>${c.db.core}</p>
-        <p>${catText}</p>
-        <p>${timeText}</p>
-      </div>
-    `;
-  });
+  /* =====================
+     질문2 포커스 강조
+  ===================== */
+  if(timeKey){
+    const focusText = cards
+      .map(c=>c.db?.[timeKey])
+      .filter(Boolean)
+      .join(" ");
 
-  html += `</div>`;
+    if(focusText){
+      html += `<div class="reading-focus">`;
+      html += `<h4>🔎 집중 메시지</h4>`;
+      html += `<p>${focusText}</p>`;
+      html += `</div>`;
+    }
+  }
+
+  /* =====================
+     질문1 상담 메시지
+  ===================== */
+  if(category){
+    const catText = cards
+      .map(c=>c.db?.[category])
+      .filter(Boolean)
+      .slice(0,2)
+      .join(" ");
+
+    if(catText){
+      html += `<div class="reading-category">`;
+      html += `<h4>💬 상담 메시지</h4>`;
+      html += `<p>${catText}</p>`;
+      html += `</div>`;
+    }
+  }
 
   /* =====================
      조언 카드
   ===================== */
   const adviceCard = cards.find(c=>c.db?.advice);
-
   if(adviceCard){
-    html += `<p class="reading-advice">💡 ${adviceCard.db.advice}</p>`;
+    html += `<div class="reading-advice">`;
+    html += `<h4>💡 조언</h4>`;
+    html += `<p>${adviceCard.db.advice}</p>`;
+    html += `</div>`;
   }
 
   html += `</div>`;
