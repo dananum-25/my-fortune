@@ -492,7 +492,7 @@ async function buildReadingHTML(pickedCards){
   cards.forEach((c,i)=>{
     html += `
       <div class="reading-card">
-        <strong>${i+1}번 카드</strong>
+        <strong>${i+1}번 카드 — ${c.key}</strong>
         <p>${c.db?.core || ""}</p>
       </div>
     `;
