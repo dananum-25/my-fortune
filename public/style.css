@@ -134,12 +134,12 @@ body.lock-scroll{ overflow:hidden; }
 
 /* 슬롯 위치 */
 .slot-2{ left:0%;   top:0%; }
-.slot-1{ left:36.5%;  top:0%; }
+.slot-1{ left:36%;  top:0%; }
 .slot-3{ left:72%;  top:0%; }
-.slot-6{ left:36.5%;  top:34%; }
-.slot-4{ left:0%;   top:68%; }
-.slot-7{ left:36.5%;  top:68%; }
-.slot-5{ left:72%;  top:68%; }
+.slot-6{ left:36%;  top:35%; }
+.slot-4{ left:0%;   top:70%; }
+.slot-7{ left:36%;  top:70%; }
+.slot-5{ left:72%;  top:70%; }
 
 #chatContainer{
   margin-top: 12px;
