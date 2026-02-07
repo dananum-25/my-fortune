@@ -477,15 +477,8 @@ async function buildReadingHTML(pickedCards){
     };
   });
 
-  const slotMap = {
-    2:"past",
-    1:"present",
-    3:"future",
-    6:"present",
-    4:"past",
-    7:"future",
-    5:"advice"
-  };
+  const category = selected[0];   // love/career/money/relationship
+  const timeKey  = selected[1];   // past/present/future
 
   let html = `<div class="reading">`;
   html += `<h3>🔮 AI 고양이 타로 리딩</h3>`;
@@ -502,36 +495,35 @@ async function buildReadingHTML(pickedCards){
   html += `<p class="reading-core">${summary}</p>`;
 
   /* =====================
-     상담형 흐름
+     카드별 상담형 설명
   ===================== */
-  const flow = {
-    past: [],
-    present: [],
-    future: [],
-    advice: []
-  };
+  html += `<div class="reading-cards">`;
 
-  cards.forEach(c=>{
-    const type = slotMap[c.slot];
-    if(type && c.db?.[type]){
-      flow[type].push(c.db[type]);
-    }
+  cards.forEach((c,i)=>{
+    if(!c.db) return;
+
+    const catText  = c.db[category] || "";
+    const timeText = c.db[timeKey] || "";
+
+    html += `
+      <div class="reading-card">
+        <strong>🃏 ${i+1}번 카드</strong>
+        <p>${c.db.core}</p>
+        <p>${catText}</p>
+        <p>${timeText}</p>
+      </div>
+    `;
   });
 
-  if(flow.past.length){
-    html += `<p><strong>과거</strong><br>${flow.past.join(" ")}</p>`;
-  }
+  html += `</div>`;
 
-  if(flow.present.length){
-    html += `<p><strong>현재</strong><br>${flow.present.join(" ")}</p>`;
-  }
+  /* =====================
+     조언 카드
+  ===================== */
+  const adviceCard = cards.find(c=>c.db?.advice);
 
-  if(flow.future.length){
-    html += `<p><strong>미래</strong><br>${flow.future.join(" ")}</p>`;
-  }
-
-  if(flow.advice.length){
-    html += `<p class="reading-advice">💡 ${flow.advice.join(" ")}</p>`;
+  if(adviceCard){
+    html += `<p class="reading-advice">💡 ${adviceCard.db.advice}</p>`;
   }
 
   html += `</div>`;
