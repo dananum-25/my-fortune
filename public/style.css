@@ -138,8 +138,8 @@ body.lock-scroll{ overflow:hidden; }
 .slot-3{ left:72%;  top:0%; }
 .slot-6{ left:36.5%;  top:34%; }
 .slot-4{ left:0%;   top:58%; }
-.slot-7{ left:36.5%;  top:58%; }
-.slot-5{ left:72%;  top:58%; }
+.slot-7{ left:36.5%;  top:68%; }
+.slot-5{ left:72%;  top:68%; }
 
 #chatContainer{
   margin-top: 12px;
@@ -162,7 +162,7 @@ body.lock-scroll{ overflow:hidden; }
   position: relative;
   width: 100%;
   max-width: 220px;
-  height: 96px;      /* 더 압축 */
+  height: 26px;      /* 더 압축 */
   margin: 2px auto 0;
 }
 
