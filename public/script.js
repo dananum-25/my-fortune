@@ -477,6 +477,34 @@ async function loadTarotDB(){
   tarotDB = await res.json();
 }
 
+function getCardDisplayName(key){
+  if(!key) return "";
+
+  // Major
+  if(key.startsWith("0") || key.startsWith("1") || key.startsWith("2")){
+    return key
+      .replace(/\d+_/, "")
+      .replace(/_/g," ")
+      .replace(/\b\w/g, m=>m.toUpperCase());
+  }
+
+  // Minor
+  if(key.includes("_")){
+    const [suit, name] = key.split("_");
+
+    const suitMap = {
+      cups:"Cups",
+      wands:"Wands",
+      swords:"Swords",
+      pentacles:"Pentacles"
+    };
+
+    return `${suitMap[suit]} ${name.charAt(0).toUpperCase()+name.slice(1)}`;
+  }
+
+  return key;
+}
+
 /* 카드 키 정규화 (메이저 + 마이너 대응) */
 function normalizeCardKey(cardId){
   if(cardId.includes("majors")){
@@ -500,6 +528,14 @@ function getSlotMeaning(slot){
   if([3,7].includes(slot)) return "future";
   if(slot === 5) return "advice";
   return "present";
+}
+
+function formatCardName(key){
+  if(!key) return "";
+
+  return key
+    .replace(/_/g," ")
+    .replace(/\b\w/g, l=>l.toUpperCase());
 }
 
 async function buildReadingHTML(pickedCards){
@@ -540,9 +576,9 @@ async function buildReadingHTML(pickedCards){
   if(pastCards.length){
     html += `<h4>과거의 흐름</h4>`;
     pastCards.forEach(c=>{
-      html += `<p>${c.db?.past || c.db?.core}</p>`;
-    });
-  }
+      html += `<p>🃏 ${formatCardName(c.key)}</p>`;
+  html += `<p>${c.db?.past || c.db?.core}</p>`;
+});
 
   /* =====================
      현재
@@ -551,8 +587,9 @@ async function buildReadingHTML(pickedCards){
   if(presentCards.length){
     html += `<h4>현재의 흐름</h4>`;
     presentCards.forEach(c=>{
-      html += `<p>${c.db?.present || c.db?.core}</p>`;
-    });
+  html += `<p>🃏 ${formatCardName(c.key)}</p>`;
+  html += `<p>${c.db?.present || c.db?.core}</p>`;
+});
   }
 
   /* =====================
@@ -562,8 +599,9 @@ async function buildReadingHTML(pickedCards){
   if(futureCards.length){
     html += `<h4>앞으로의 흐름</h4>`;
     futureCards.forEach(c=>{
-      html += `<p>${c.db?.future || c.db?.core}</p>`;
-    });
+  html += `<p>🃏 ${formatCardName(c.key)}</p>`;
+  html += `<p>${c.db?.future || c.db?.core}</p>`;
+});
   }
 
   /* =====================
@@ -605,13 +643,12 @@ async function buildReadingHTML(pickedCards){
      조언 카드
   ===================== */
   const adviceCard = cards.find(c=>c.db?.advice);
-  if(adviceCard){
-    html += `<div class="reading-advice">`;
-    html += `<h4>💡 조언</h4>`;
-    html += `<p>${adviceCard.db.advice}</p>`;
-    html += `</div>`;
-  }
 
+if(adviceCard){
+  html += `<div class="reading-advice">`;
+  html += `<h4>💡 조언</h4>`;
+  html += `<p>🃏 ${formatCardName(adviceCard.key)}</p>`;
+  html += `<p>${adviceCard.db.advice}</p>`;
   html += `</div>`;
   return html;
 }
