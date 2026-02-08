@@ -544,13 +544,14 @@ async function buildReadingHTML(pickedCards){
   const slots = getActiveSlots();
 
   const cards = pickedCards.map((id,i)=>{
-    const key = normalizeCardKey(id);
-    return {
-      slot: slots[i],
-      key,
-      db: tarotDB[key]
-    };
-  });
+  const key = normalizeCardKey(id);
+
+  return {
+    slot: slots[i] ?? slots[0],
+    key,
+    db: tarotDB[key]
+  };
+});
 
   const category = selectedCategory;
   const timeKey = selectedTime;
