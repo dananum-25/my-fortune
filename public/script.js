@@ -171,10 +171,20 @@ document.getElementById("goCard").onclick = ()=>{
 
 function applySlotVisibility(){
   const active = getActiveSlots();
+
   bigCards.forEach(c=>{
     const s = Number(c.className.match(/slot-(\d)/)?.[1]);
     c.classList.toggle("hidden", !active.includes(s));
-    c.style.backgroundImage = "url('/assets/tarot/back.png')";
+
+    /* 이미 앞면이 있으면 유지 */
+    if(c.dataset.front){
+      c.style.backgroundImage =
+        `url('/assets/tarot/${c.dataset.front}.png')`;
+    }else{
+      c.style.backgroundImage =
+        "url('/assets/tarot/back.png')";
+    }
+
     c.classList.remove("burning","smoking");
   });
 }
