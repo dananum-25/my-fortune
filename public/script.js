@@ -284,16 +284,14 @@ reorderCards.forEach(c=>{
 await showAdOverlay();
 
 /* 카드 앞면 복구 (확실한 방식) */
-const active = getActiveSlots();
-
 active.forEach((slot,i)=>{
+
   const card = document.querySelector(`.big-card.slot-${slot}`);
   const img = pickedCards[i % pickedCards.length];
 
   if(card){
     card.style.backgroundImage =
       `url('/assets/tarot/${img}.png')`;
-  }
 });
 
 document.body.classList.remove("lock-scroll");
