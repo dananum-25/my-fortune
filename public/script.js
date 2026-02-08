@@ -579,6 +579,7 @@ async function buildReadingHTML(pickedCards){
       html += `<p>🃏 ${formatCardName(c.key)}</p>`;
   html += `<p>${c.db?.past || c.db?.core}</p>`;
 });
+}
 
   /* =====================
      현재
