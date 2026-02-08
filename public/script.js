@@ -272,6 +272,9 @@ await wait(500);
   // ✅ 파이어볼: “재정렬 카드 → 빅카드” 로 동시에 발사 (핵심)
   await fireToBigCardsFromReorder(pickedCards);
 
+  // 광고 표시
+  await showAdOverlay();
+  
   // ✅ 모든 카드 앞면 + 연출 끝난 후 topbar 다시 표시
   document.querySelector(".topbar")?.classList.remove("hidden");
 
@@ -387,6 +390,27 @@ function flyFireballBetween(startEl, targetEl, duration){
     }
 
     requestAnimationFrame(anim);
+  });
+}
+
+function showAdOverlay(){
+  return new Promise(resolve=>{
+    const overlay = document.getElementById("adOverlay");
+    const btn = document.getElementById("skipAd");
+
+    overlay.classList.remove("hidden");
+    btn.disabled = true;
+    btn.textContent = "광고 시청 중...";
+
+    setTimeout(()=>{
+      btn.disabled = false;
+      btn.textContent = "건너뛰기";
+    },5000);
+
+    btn.onclick = ()=>{
+      overlay.classList.add("hidden");
+      resolve();
+    };
   });
 }
 
