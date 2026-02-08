@@ -262,48 +262,34 @@ reorderCards.forEach(c=>{
   document.getElementById("stageWrapper")
   .scrollIntoView({ behavior:"smooth", block:"start" });
 
-  await wait(300);
+await wait(500);
   // ✅ 선택 카드 -> 재정렬로 이동
   await movePickedToReorderFixed(selected);
 
-  
   // ✅ 재정렬에서 0.8초 멈춤
   await wait(800);
 
   // ✅ 파이어볼: “재정렬 카드 → 빅카드” 로 동시에 발사 (핵심)
   await fireToBigCardsFromReorder(pickedCards);
 
-    // ✅ 선택된 스프레드 카드 “완전 제거”
-  selected.forEach(el=>el.remove());
-  selected = [];
+  // 광고 표시
+  await showAdOverlay();
+
+  document.body.classList.remove("lock-scroll"); // ⭐ 여기 먼저
+  // ✅ 모든 카드 앞면 + 연출 끝난 후 topbar 다시 표시
+  document.querySelector(".topbar")?.classList.remove("hidden");
 
   // ✅ 발사 직후 재정렬 숨김
   reorderStage.classList.add("hidden");
 
-// 광고 표시
-await showAdOverlay();
+  // ✅ 선택된 스프레드 카드 “완전 제거”
+  selected.forEach(el=>el.remove());
+  selected = [];
 
-/* 카드 앞면 복구 (확실한 방식) */
-active.forEach((slot,i)=>{
+  chat.classList.remove("hidden");
 
-  const card = document.querySelector(`.big-card.slot-${slot}`);
-  const img = pickedCards[i % pickedCards.length];
-
-  if(card){
-    card.style.backgroundImage =
-      `url('/assets/tarot/${img}.png')`;    
-});
-
-document.body.classList.remove("lock-scroll");
-
-// 상단바 복구
-document.querySelector(".topbar")?.classList.remove("hidden");
-
-// 리딩 표시
-chat.classList.remove("hidden");
-
-const readingHTML = await buildReadingHTML(pickedCards);
-
+const readingHTML = await 
+  buildReadingHTML(pickedCards);
 // 리딩 영역으로 이동
 chat.scrollIntoView({ behavior:"smooth", block:"start" });
 
@@ -328,16 +314,13 @@ async function fireToBigCardsFromReorder(pickedCards){
   // ✅ 발사 후 빅카드 앞면 오픈 + 불타는 효과
 active.forEach((slot,i)=>{
   const card = document.querySelector(`.big-card.slot-${slot}`);
+
   const img = pickedCards[i % pickedCards.length];
 
   card.classList.add("burning");
-
-card.dataset.front = img;
-
-card.style.backgroundImage =
-  `url('/assets/tarot/${img}.png')`;
-);
-}
+  card.style.backgroundImage =
+    `url('/assets/tarot/${img}.png')`;
+});
 
   play(sReveal);
   await wait(1200);
