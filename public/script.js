@@ -283,11 +283,16 @@ reorderCards.forEach(c=>{
 // 광고 표시
 await showAdOverlay();
 
-/* 카드 앞면 복구 */
-document.querySelectorAll(".big-card").forEach(card=>{
-  if(card.dataset.front){
+/* 카드 앞면 복구 (확실한 방식) */
+const active = getActiveSlots();
+
+active.forEach((slot,i)=>{
+  const card = document.querySelector(`.big-card.slot-${slot}`);
+  const img = pickedCards[i % pickedCards.length];
+
+  if(card){
     card.style.backgroundImage =
-      `url('/assets/tarot/${card.dataset.front}.png')`;
+      `url('/assets/tarot/${img}.png')`;
   }
 });
 
