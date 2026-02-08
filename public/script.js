@@ -651,5 +651,8 @@ if(adviceCard){
   html += `<p>🃏 ${formatCardName(adviceCard.key)}</p>`;
   html += `<p>${adviceCard.db.advice}</p>`;
   html += `</div>`;
-  return html;
+}
+
+html += `</div>`;
+return html;
 }
