@@ -262,41 +262,51 @@ reorderCards.forEach(c=>{
   document.getElementById("stageWrapper")
   .scrollIntoView({ behavior:"smooth", block:"start" });
 
-await wait(500);
+
   // ✅ 선택 카드 -> 재정렬로 이동
   await movePickedToReorderFixed(selected);
-
+  await wait(3000);
+  
   // ✅ 재정렬에서 0.8초 멈춤
   await wait(800);
 
   // ✅ 파이어볼: “재정렬 카드 → 빅카드” 로 동시에 발사 (핵심)
   await fireToBigCardsFromReorder(pickedCards);
 
-  // 광고 표시
-  await showAdOverlay();
-
-  document.body.classList.remove("lock-scroll"); // ⭐ 여기 먼저
-  // ✅ 모든 카드 앞면 + 연출 끝난 후 topbar 다시 표시
-  document.querySelector(".topbar")?.classList.remove("hidden");
+    // ✅ 선택된 스프레드 카드 “완전 제거”
+  selected.forEach(el=>el.remove());
+  selected = [];
 
   // ✅ 발사 직후 재정렬 숨김
   reorderStage.classList.add("hidden");
 
-  // ✅ 선택된 스프레드 카드 “완전 제거”
-  selected.forEach(el=>el.remove());
-  selected = [];
+// 광고 표시
+await showAdOverlay();
 
-  chat.classList.remove("hidden");
+/* 카드 앞면 복구 */
+document.querySelectorAll(".big-card").forEach(card=>{
+  if(card.dataset.front){
+    card.style.backgroundImage =
+      `url('/assets/tarot/${card.dataset.front}.png')`;
+  }
+});
 
-const readingHTML = await 
-  buildReadingHTML(pickedCards);
+document.body.classList.remove("lock-scroll");
+
+// 상단바 복구
+document.querySelector(".topbar")?.classList.remove("hidden");
+
+// 리딩 표시
+chat.classList.remove("hidden");
+
+const readingHTML = await buildReadingHTML(pickedCards);
+
 // 리딩 영역으로 이동
 chat.scrollIntoView({ behavior:"smooth", block:"start" });
 
 await wait(400);
 await typeHTML(chat, readingHTML, 16);
 }
-
 /* =====================================================
 8. FIRE: REORDER → BIG
 ===================================================== */
@@ -318,16 +328,10 @@ active.forEach((slot,i)=>{
 
   card.classList.add("burning");
 
-  card.style.setProperty(
-    "--front",
-    `url('/assets/tarot/${img}.png')`
-  );
+card.dataset.front = img;
 
-  card.style.backgroundImage = "none";
-
-  setTimeout(()=>{
-    card.classList.add("flip");
-  },400);
+card.style.backgroundImage =
+  `url('/assets/tarot/${img}.png')`;
 });
 
   play(sReveal);
@@ -727,4 +731,4 @@ if(adviceCard){
 
 html += `</div>`;
 return html;
-    }
+}
