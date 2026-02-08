@@ -326,6 +326,7 @@ active.forEach((slot,i)=>{
   const img = pickedCards[i % pickedCards.length];
 
   card.classList.add("burning");
+  card.dataset.front = img;   // ⭐ 이 줄 추가 (핵심)
   card.style.backgroundImage =
     `url('/assets/tarot/${img}.png')`;
 });
