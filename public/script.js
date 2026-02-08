@@ -274,8 +274,7 @@ await wait(500);
 
   // 광고 표시
   await showAdOverlay();
-
-  document.body.classList.remove("lock-scroll"); // ⭐ 여기 먼저
+  
   // ✅ 모든 카드 앞면 + 연출 끝난 후 topbar 다시 표시
   document.querySelector(".topbar")?.classList.remove("hidden");
 
@@ -290,11 +289,9 @@ await wait(500);
 
 const readingHTML = await 
   buildReadingHTML(pickedCards);
-// 리딩 영역으로 이동
-chat.scrollIntoView({ behavior:"smooth", block:"start" });
+await typeHTML(chat, readingHTML, 14);
 
-await wait(400);
-await typeHTML(chat, readingHTML, 16);
+  document.body.classList.remove("lock-scroll");
 }
 
 /* =====================================================
