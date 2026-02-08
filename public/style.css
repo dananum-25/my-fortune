@@ -335,3 +335,76 @@ body.lock-scroll{ overflow:hidden; }
   padding:10px 14px;
   font-weight:bold;
 }
+
+.reading{
+  max-width: 720px;
+  margin: 40px auto;
+  padding: 22px;
+  border-radius: 18px;
+  background: linear-gradient(180deg,#0c0f1c,#12152a);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  color:#f3f3f3;
+  line-height:1.6;
+}
+
+.reading h3{
+  text-align:center;
+  margin-bottom:18px;
+  font-size:20px;
+  letter-spacing:1px;
+}
+
+.reading-core{
+  background:#171a33;
+  padding:14px;
+  border-radius:12px;
+  margin-bottom:18px;
+}
+
+.reading h4{
+  margin-top:18px;
+  margin-bottom:8px;
+  color:#ffd56b;
+}
+
+/* 카드 흐름 영역 */
+.reading-flow p{
+  background:#14172b;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:10px;
+}
+
+/* 강조 메시지 */
+.reading-focus{
+  margin-top:20px;
+  padding:16px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#1d2145,#2b2f63);
+  border:1px solid rgba(255,213,107,0.3);
+}
+
+/* 상담 메시지 */
+.reading-category{
+  margin-top:16px;
+  padding:16px;
+  border-radius:14px;
+  background:#191c3a;
+}
+
+/* 조언 카드 */
+.reading-advice{
+  margin-top:20px;
+  padding:18px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#3b2b00,#5a4300);
+  color:#ffe08a;
+  font-weight:500;
+}
+
+/* 마무리 */
+.reading-end{
+  text-align:center;
+  margin-top:18px;
+  opacity:0.85;
+}
