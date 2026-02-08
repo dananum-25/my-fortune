@@ -337,7 +337,8 @@ card.dataset.front = img;
 
 card.style.backgroundImage =
   `url('/assets/tarot/${img}.png')`;
-});
+);
+}
 
   play(sReveal);
   await wait(1200);
