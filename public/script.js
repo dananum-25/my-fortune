@@ -240,57 +240,59 @@ document.getElementById("confirmPick").onclick = async ()=>{
 
 
 async function handleAfterConfirm(pickedCards){
-  // ✅ 재정렬 카드 보이기
-const active = getActiveSlots();
+  const active = getActiveSlots();
 
-reorderCards.forEach(c=>{
-  const s = Number(c.className.match(/slot-(\d)/)?.[1]);
+  reorderCards.forEach(c=>{
+    const s = Number(c.className.match(/slot-(\d)/)?.[1]);
 
-  if(active.includes(s)){
-    c.style.opacity = "1";
-    c.style.backgroundImage = "url('/assets/tarot/back.png')";
-  }else{
-    c.style.opacity = "0";
-  }
-});
+    if(active.includes(s)){
+      c.style.opacity = "1";
+      c.style.backgroundImage = "url('/assets/tarot/back.png')";
+    }else{
+      c.style.opacity = "0";
+    }
+  });
+
   reorderStage.classList.remove("hidden");
-
-  // ✅ layout 확정
   reorderStage.getBoundingClientRect();
   await wait(50);
- /* 🔥 화면 맨 위로 이동 */
+
   document.getElementById("stageWrapper")
-  .scrollIntoView({ behavior:"smooth", block:"start" });
+    .scrollIntoView({ behavior:"smooth", block:"start" });
 
-await wait(500);
-  // ✅ 선택 카드 -> 재정렬로 이동
+  await wait(500);
   await movePickedToReorderFixed(selected);
-
-  // ✅ 재정렬에서 0.8초 멈춤
   await wait(800);
 
-  // ✅ 파이어볼: “재정렬 카드 → 빅카드” 로 동시에 발사 (핵심)
   await fireToBigCardsFromReorder(pickedCards);
 
-  // 광고 표시
-  await showAdOverlay();
-  
-  // ✅ 모든 카드 앞면 + 연출 끝난 후 topbar 다시 표시
-  document.querySelector(".topbar")?.classList.remove("hidden");
-
-  // ✅ 발사 직후 재정렬 숨김
-  reorderStage.classList.add("hidden");
-
-  // ✅ 선택된 스프레드 카드 “완전 제거”
+  /* 선택 카드 제거 */
   selected.forEach(el=>el.remove());
   selected = [];
 
+  reorderStage.classList.add("hidden");
+
+  /* 광고 */
+  await showAdOverlay();
+
+  /* 광고 이후 카드 앞면 복구 (핵심) */
+  active.forEach((slot,i)=>{
+    const card = document.querySelector(`.big-card.slot-${slot}`);
+    const img = pickedCards[i % pickedCards.length];
+
+    if(card){
+      card.style.backgroundImage =
+        `url('/assets/tarot/${img}.png')`;
+    }
+  });
+
+  document.querySelector(".topbar")?.classList.remove("hidden");
+  document.body.classList.remove("lock-scroll");
+
   chat.classList.remove("hidden");
 
-const readingHTML = await buildReadingHTML(pickedCards);
-chat.innerHTML = readingHTML;
-
-  document.body.classList.remove("lock-scroll");
+  const readingHTML = await buildReadingHTML(pickedCards);
+  chat.innerHTML = readingHTML;
 }
 
 /* =====================================================
