@@ -262,10 +262,10 @@ reorderCards.forEach(c=>{
   document.getElementById("stageWrapper")
   .scrollIntoView({ behavior:"smooth", block:"start" });
 
-
+  await wait(300);
   // ✅ 선택 카드 -> 재정렬로 이동
   await movePickedToReorderFixed(selected);
-  await wait(3000);
+
   
   // ✅ 재정렬에서 0.8초 멈춤
   await wait(800);
