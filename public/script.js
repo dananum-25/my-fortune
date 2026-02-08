@@ -287,8 +287,9 @@ await wait(500);
 
   chat.classList.remove("hidden");
 
-const readingHTML = await buildReadingHTML(pickedCards);
-chat.innerHTML = readingHTML;
+const readingHTML = await 
+  buildReadingHTML(pickedCards);
+await typeHTML(chat, readingHTML, 14);
 
   document.body.classList.remove("lock-scroll");
 }
@@ -412,6 +413,33 @@ function showAdOverlay(){
       resolve();
     };
   });
+}
+
+async function typeHTML(container, html, speed=18){
+  container.innerHTML = "";
+  
+  const temp = document.createElement("div");
+  temp.innerHTML = html;
+
+  for(const node of temp.childNodes){
+    if(node.nodeType === Node.TEXT_NODE){
+      const span = document.createElement("span");
+      container.appendChild(span);
+
+      for(const ch of node.textContent){
+        span.textContent += ch;
+        await wait(speed);
+      }
+    }
+    else if(node.nodeType === Node.ELEMENT_NODE){
+      const el = node.cloneNode(false);
+      container.appendChild(el);
+
+      if(node.innerHTML){
+        await typeHTML(el, node.innerHTML, speed);
+      }
+    }
+  }
 }
 
 async function movePickedToReorderFixed(pickedEls){
