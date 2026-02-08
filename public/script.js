@@ -312,6 +312,7 @@ chat.scrollIntoView({ behavior:"smooth", block:"start" });
 await wait(400);
 await typeHTML(chat, readingHTML, 16);
 }
+}
 /* =====================================================
 8. FIRE: REORDER → BIG
 ===================================================== */
