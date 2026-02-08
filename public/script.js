@@ -593,7 +593,6 @@ async function buildReadingHTML(pickedCards){
     .join(" 그리고 ");
 
   html += `<p class="reading-core">${summary}</p>`;
-  html += `<div class="reading-flow">`;
   html += `<div class="reading-intro">`;
   html += `<p>지금 선택한 카드들은 당신이 고민하고 있는 흐름을 분명하게 보여주고 있어요.</p>`;
   html += `<p>카드들은 서로 연결되어 하나의 메시지를 전달하고 있습니다.</p>`;
@@ -633,7 +632,7 @@ async function buildReadingHTML(pickedCards){
   html += `<p>${c.db?.future || c.db?.core}</p>`;
 });
   }
-  html += `</div>`;
+
   /* =====================
      질문2 포커스 강조
   ===================== */
