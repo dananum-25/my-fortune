@@ -262,10 +262,11 @@ reorderCards.forEach(c=>{
   document.getElementById("stageWrapper")
   .scrollIntoView({ behavior:"smooth", block:"start" });
 
-await wait(3000);
+
   // ✅ 선택 카드 -> 재정렬로 이동
   await movePickedToReorderFixed(selected);
-
+  await wait(3000);
+  
   // ✅ 재정렬에서 0.8초 멈춤
   await wait(800);
 
@@ -279,29 +280,33 @@ await wait(3000);
   // ✅ 발사 직후 재정렬 숨김
   reorderStage.classList.add("hidden");
 
-  // 광고 표시
-  await showAdOverlay();
+// 광고 표시
+await showAdOverlay();
 
-  document.body.classList.remove("lock-scroll"); // ⭐ 여기 먼저
-  // ✅ 모든 카드 앞면 + 연출 끝난 후 topbar 다시 표시
-  document.querySelector(".topbar")?.classList.remove("hidden");
+/* 카드 앞면 복구 */
+document.querySelectorAll(".big-card").forEach(card=>{
+  if(card.dataset.front){
+    card.style.backgroundImage =
+      `url('/assets/tarot/${card.dataset.front}.png')`;
+  }
+});
 
-  chat.classList.remove("hidden");
+document.body.classList.remove("lock-scroll");
 
-const readingHTML = await 
-  buildReadingHTML(pickedCards);
+// 상단바 복구
+document.querySelector(".topbar")?.classList.remove("hidden");
+
+// 리딩 표시
+chat.classList.remove("hidden");
+
+const readingHTML = await buildReadingHTML(pickedCards);
+
 // 리딩 영역으로 이동
 chat.scrollIntoView({ behavior:"smooth", block:"start" });
 
 await wait(400);
 await typeHTML(chat, readingHTML, 16);
 }
-
-document.querySelectorAll(".big-card").forEach(card=>{
-  if(card.dataset.front){
-    card.style.backgroundImage =
-      `url('/assets/tarot/${card.dataset.front}.png')`;
-  }
 }
 
 /* =====================================================
