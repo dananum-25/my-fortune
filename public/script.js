@@ -291,8 +291,7 @@ active.forEach((slot,i)=>{
 
   if(card){
     card.style.backgroundImage =
-      `url('/assets/tarot/${img}.png')`;
-  }    
+      `url('/assets/tarot/${img}.png')`;    
 });
 
 document.body.classList.remove("lock-scroll");
