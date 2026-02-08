@@ -590,13 +590,10 @@ async function buildReadingHTML(pickedCards){
     .map(c=>c.db?.core)
     .filter(Boolean)
     .slice(0,3)
-    .join(" 그리고 ");
+    .join(" ");
 
   html += `<p class="reading-core">${summary}</p>`;
-  html += `<div class="reading-intro">`;
-  html += `<p>지금 선택한 카드들은 당신이 고민하고 있는 흐름을 분명하게 보여주고 있어요.</p>`;
-  html += `<p>카드들은 서로 연결되어 하나의 메시지를 전달하고 있습니다.</p>`;
-  html += `</div>`;
+
   /* =====================
      과거
   ===================== */
@@ -679,12 +676,8 @@ if(adviceCard){
   html += `<p>🃏 ${formatCardName(adviceCard.key)}</p>`;
   html += `<p>${adviceCard.db.advice}</p>`;
   html += `</div>`;
-  html += `<p class="reading-end">`
-  html += `카드들은 지금 당신이 올바른 방향으로 가고 있다는 것을 말해주고 있어요.`
-  html += `조금만 더 자신을 믿고 흐름을 따라가 보세요.`
-  html += `</p>`;
 }
 
 html += `</div>`;
 return html;
-}
+  }
