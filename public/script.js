@@ -314,12 +314,20 @@ async function fireToBigCardsFromReorder(pickedCards){
   // ✅ 발사 후 빅카드 앞면 오픈 + 불타는 효과
 active.forEach((slot,i)=>{
   const card = document.querySelector(`.big-card.slot-${slot}`);
-
   const img = pickedCards[i % pickedCards.length];
 
   card.classList.add("burning");
-  card.style.backgroundImage =
-    `url('/assets/tarot/${img}.png')`;
+
+  card.style.setProperty(
+    "--front",
+    `url('/assets/tarot/${img}.png')`
+  );
+
+  card.style.backgroundImage = "none";
+
+  setTimeout(()=>{
+    card.classList.add("flip");
+  },400);
 });
 
   play(sReveal);
