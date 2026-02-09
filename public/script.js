@@ -590,9 +590,29 @@ function getSlotMeaning(slot){
 function formatCardName(key){
   if(!key) return "";
 
-  return key
-    .replace(/_/g," ")
-    .replace(/\b\w/g, l=>l.toUpperCase());
+  // Major Arcana
+  if(/^\d{2}_/.test(key)){
+    return key
+      .replace(/^\d{2}_/, "")
+      .replace(/_/g," ")
+      .replace(/\b\w/g, l=>l.toUpperCase());
+  }
+
+  // Minor Arcana
+  if(key.includes("_")){
+    const [suit, rank] = key.split("_");
+
+    const suitMap = {
+      cups: "Cups",
+      wands: "Wands",
+      swords: "Swords",
+      pentacles: "Pentacles"
+    };
+
+    return `${rank.charAt(0).toUpperCase()+rank.slice(1)} of ${suitMap[suit]}`;
+  }
+
+  return key;
 }
 
 async function buildReadingHTML(pickedCards){
