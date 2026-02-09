@@ -179,7 +179,7 @@ function applySlotVisibility(){
     /* 이미 앞면이 있으면 유지 */
 if(c.dataset.front){
   c.style.backgroundImage = `url('${c.dataset.front}')`;
-
+};
 }else{
   c.style.backgroundImage =
     "url('/assets/tarot/back.png')";
