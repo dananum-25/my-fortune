@@ -614,7 +614,33 @@ async function buildReadingHTML(pickedCards){
   const timeKey = selectedTime;
 
   let html = `<div class="reading">`;
-  html += `<h3>🔮 AI 고양이 타로 리딩</h3>`;
+html += `<h3>🔮 AI 고양이 타로 리딩</h3>`;
+
+/* =====================
+   V1 전용 리딩
+===================== */
+if(readingVersion === "V1"){
+  const c = cards[0];
+
+  html += `<p class="reading-core">${c.db?.core || ""}</p>`;
+
+  if(timeKey && c.db?.[timeKey]){
+    html += `<div class="reading-focus">`;
+    html += `<h4>🔎 집중 메시지</h4>`;
+    html += `<p>${c.db[timeKey]}</p>`;
+    html += `</div>`;
+  }
+
+  if(c.db?.advice){
+    html += `<div class="reading-advice">`;
+    html += `<h4>💡 조언</h4>`;
+    html += `<p>${c.db.advice}</p>`;
+    html += `</div>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
 
   /* =====================
      전체 흐름 요약
