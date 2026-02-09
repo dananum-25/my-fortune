@@ -564,6 +564,7 @@ function getCardDisplayName(key){
 
 /* 카드 키 정규화 (메이저 + 마이너 대응) */
 function normalizeCardKey(cardId){
+
   if(cardId.includes("majors")){
     return cardId.split("/").pop().replace(".png","");
   }
@@ -571,7 +572,11 @@ function normalizeCardKey(cardId){
   if(cardId.includes("minors")){
     const parts = cardId.split("/");
     const suit = parts[1];
-    const name = parts[2].split("_")[1].replace(".png","");
+    const raw = parts[2].replace(".png","");
+    
+    // "01_ace" → "ace"
+    const name = raw.split("_").slice(1).join("_");
+
     return `${suit}_${name}`;
   }
 
