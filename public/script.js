@@ -288,7 +288,7 @@ async function handleAfterConfirm(pickedCards){
   /* 광고 이후 카드 앞면 복구 (핵심) */
   active.forEach((slot,i)=>{
     const card = document.querySelector(`.big-card.slot-${slot}`);
-    const img = pickedCards[i % pickedCards.length];
+    const img = pickedCards[i];
 
     if(card){
       card.style.backgroundImage =
