@@ -286,17 +286,24 @@ async function handleAfterConfirm(pickedCards){
   await showAdOverlay();
 
   /* 광고 이후 카드 앞면 복구 (핵심) */
+/* 광고 이후 카드 앞면 복구 (핵심) */
 active.forEach((slot,i)=>{
   const card = document.querySelector(`.big-card.slot-${slot}`);
   const img = pickedCards[i];
 
   if(!card || !img) return;
 
-  card.classList.add("burning");
   card.dataset.front = img;
   card.style.backgroundImage =
     `url('${getCardImagePath(img)}')`;
 });
+
+/* 🔥 광고 후 burn 효과 자연스럽게 제거 */
+setTimeout(()=>{
+  document.querySelectorAll(".big-card").forEach(c=>{
+    c.classList.remove("burning","smoking");
+  });
+}, 600);
 
   document.querySelector(".topbar")?.classList.remove("hidden");
   document.body.classList.remove("lock-scroll");
