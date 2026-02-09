@@ -170,20 +170,18 @@ document.getElementById("goCard").onclick = ()=>{
 };
 
 function applySlotVisibility(){
+function applySlotVisibility(){
   const active = getActiveSlots();
 
   bigCards.forEach(c=>{
     const s = Number(c.className.match(/slot-(\d)/)?.[1]);
     c.classList.toggle("hidden", !active.includes(s));
 
-    /* 이미 앞면이 있으면 유지 */
-if(c.dataset.front){
-  c.style.backgroundImage = `url('${c.dataset.front}')`;
-});
-}else{
-  c.style.backgroundImage =
-    "url('/assets/tarot/back.png')";
-}
+    if(c.dataset.front){
+      c.style.backgroundImage = `url('${c.dataset.front}')`;
+    }else{
+      c.style.backgroundImage = "url('/assets/tarot/back.png')";
+    }
 
     c.classList.remove("burning","smoking");
   });
