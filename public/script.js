@@ -760,7 +760,7 @@ if(readingVersion === "V1"){
 if(adviceCard && adviceCard.db?.advice){
   html += `<div class="reading-advice">`;
   html += `<h4>💡 조언</h4>`;
-  html += `<p class="card-name">🃏 ${formatCardName(c.key)}</p>`;
+  html += `<p class="card-name">🃏 ${formatCardName(adviceCard.key)}</p>`;
   html += `<p>${adviceCard.db.advice}</p>`;
   html += `</div>`;
 }
