@@ -22,16 +22,13 @@ const sReveal = new Audio("/sounds/tarot/reveal.mp3");
 
 let muted = true;
 const soundBtn = document.getElementById("soundToggle");
-soundBtn.onclick = () => {
-  muted = !muted;
-  soundBtn.textContent = muted ? "사운드 🔇" : "사운드 🔊";
-  muted ? bgm.pause() : bgm.play().catch(()=>{});
-};
-function play(sound){
-  if(!muted){
-    sound.currentTime = 0;
-    sound.play().catch(()=>{});
-  }
+
+if(soundBtn){
+  soundBtn.onclick = () => {
+    muted = !muted;
+    soundBtn.textContent = muted ? "사운드 🔇" : "사운드 🔊";
+    muted ? bgm.pause() : bgm.play().catch(()=>{});
+  };
 }
 
 /* =====================================================
@@ -74,6 +71,7 @@ function renderQ(){
 
   qArea.innerHTML = "";
   const q = QUESTIONS[step];
+if(!q) return;
   catTextEl.textContent = q.text;
 
   q.options.forEach(o=>{
@@ -170,11 +168,12 @@ document.getElementById("goCard").onclick = ()=>{
 };
 
 function applySlotVisibility(){
-function applySlotVisibility(){
   const active = getActiveSlots();
 
   bigCards.forEach(c=>{
-    const s = Number(c.className.match(/slot-(\d)/)?.[1]);
+    const match = c.className.match(/slot-(\d)/);
+    const s = match ? Number(match[1]) : null;
+
     c.classList.toggle("hidden", !active.includes(s));
 
     if(c.dataset.front){
