@@ -237,9 +237,11 @@ confirmBtn.onclick = async ()=>{
   document.body.classList.add("lock-scroll");
 
   const deck = build78Deck();
-  const pickedCards = selected.map(()=>{
-    return deck.splice(Math.random()*deck.length|0,1)[0].replace(".png","");
-  });
+const pickedCards = selected.map(()=>{
+  return deck.splice(Math.random()*deck.length|0,1)[0].replace(".png","");
+});
+
+const selectedCopy = [...selected];
 
   /* 광고 먼저 */
   await showAdOverlay();
