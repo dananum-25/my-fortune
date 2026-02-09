@@ -183,9 +183,9 @@ function applySlotVisibility(){
 
     c.classList.toggle("hidden", !active.includes(s));
 
-    if(revealedCards[String(s)]){
+if(revealedCards[String(s)]){
   c.style.backgroundImage = `url('${revealedCards[String(s)]}')`;
-}else{
+}else if(!c.dataset.opened){
   c.style.backgroundImage = "url('/assets/tarot/back.png')";
 }
 
@@ -348,6 +348,7 @@ active.forEach((slot,i)=>{
   const path = getCardImagePath(img);
 revealedCards[String(slot)] = path;
 card.style.backgroundImage = `url('${path}')`;
+card.dataset.opened = "true";
 });
   play(sReveal);
   await wait(1200);
