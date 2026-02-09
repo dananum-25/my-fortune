@@ -178,8 +178,8 @@ function applySlotVisibility(){
 
     /* 이미 앞면이 있으면 유지 */
 if(c.dataset.front){
-  c.style.backgroundImage =
-    `url('${getCardImagePath(c.dataset.front)}')`;
+  c.style.backgroundImage = `url('${c.dataset.front}')`;
+}
 }else{
   c.style.backgroundImage =
     "url('/assets/tarot/back.png')";
@@ -294,9 +294,10 @@ active.forEach((slot,i)=>{
   if(!card || !img) return;
 
   /* 상태 강제 고정 */
-  card.dataset.front = img;
-  card.style.backgroundImage =
-    `url('${getCardImagePath(img)}')`;
+  const path = getCardImagePath(img);
+
+card.dataset.front = path;
+card.style.backgroundImage = `url('${path}')`;
 });
 
 /* ⭐ 안전 복구 — 한 번 더 보장 */
@@ -341,7 +342,7 @@ active.forEach((slot,i)=>{
 
   if(!card || !img) return;
 
-  card.dataset.front = img;
+  card.dataset.front = getCardImagePath(img);
   card.style.backgroundImage =
     `url('${getCardImagePath(img)}')`;
 });
