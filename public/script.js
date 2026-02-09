@@ -286,15 +286,16 @@ async function handleAfterConfirm(pickedCards){
   await showAdOverlay();
 
   /* 광고 이후 카드 앞면 복구 (핵심) */
-  active.forEach((slot,i)=>{
-    const card = document.querySelector(`.big-card.slot-${slot}`);
-    const img = pickedCards[i];
+active.forEach((slot,i)=>{
+  const card = document.querySelector(`.big-card.slot-${slot}`);
+  const img = pickedCards[i];
 
-    if(card){
-      card.style.backgroundImage =
-        `url('/assets/tarot/${img}.png')`;
-    }
-  });
+  if(!card || !img) return;
+
+  card.dataset.front = img;   // ✅ 반드시 다시 저장 (핵심)
+  card.style.backgroundImage =
+    `url('/assets/tarot/${img}.png')`;
+});
 
   document.querySelector(".topbar")?.classList.remove("hidden");
   document.body.classList.remove("lock-scroll");
@@ -322,11 +323,12 @@ async function fireToBigCardsFromReorder(pickedCards){
   // ✅ 발사 후 빅카드 앞면 오픈 + 불타는 효과
 active.forEach((slot,i)=>{
   const card = document.querySelector(`.big-card.slot-${slot}`);
+  const img = pickedCards[i];              // ✅ 모듈로 제거
 
-  const img = pickedCards[i % pickedCards.length];
+  if(!card || !img) return;
 
   card.classList.add("burning");
-  card.dataset.front = img;   // ⭐ 이 줄 추가 (핵심)
+  card.dataset.front = img;                // ✅ 저장 (핵심)
   card.style.backgroundImage =
     `url('/assets/tarot/${img}.png')`;
 });
