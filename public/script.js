@@ -302,8 +302,6 @@ async function handleAfterConfirm(pickedCards){
 
   reorderStage.classList.add("hidden");
 
-  /* 광고 */
-  await showAdOverlay();
 
   /* 광고 이후 카드 앞면 복구 (핵심) */
 /* 광고 이후 카드 앞면 복구 (핵심) */
