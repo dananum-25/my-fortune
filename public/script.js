@@ -255,7 +255,7 @@ const selectedCopy = [...selected];
   });
 
   /* 이후 기존 흐름 */
-  await handleAfterConfirm(pickedCards);
+  await handleAfterConfirm(pickedCards, selectedCopy);
 };
 
 
@@ -272,7 +272,7 @@ retryBtn.onclick = ()=>{
 ===================================================== */
 
 
-async function handleAfterConfirm(pickedCards){
+async function handleAfterConfirm(pickedCards, selectedCopy){
   const active = getActiveSlots();
 
   reorderCards.forEach(c=>{
@@ -294,7 +294,7 @@ async function handleAfterConfirm(pickedCards){
     .scrollIntoView({ behavior:"smooth", block:"start" });
 
   await wait(500);
-  await movePickedToReorderFixed(selected);
+  await movePickedToReorderFixed(selectedCopy);
   await wait(800);
 
   await fireToBigCardsFromReorder(pickedCards);
