@@ -9,6 +9,7 @@ let maxPickCount = 3;
 
 let selectedTime = null;
 let selectedCategory = null;
+let revealedCards = {};
 /* =====================================================
 1. SOUND
 ===================================================== */
@@ -182,11 +183,11 @@ function applySlotVisibility(){
 
     c.classList.toggle("hidden", !active.includes(s));
 
-    if(c.dataset.front){
-      c.style.backgroundImage = `url('${c.dataset.front}')`;
-    }else{
-      c.style.backgroundImage = "url('/assets/tarot/back.png')";
-    }
+    if(revealedCards[s]){
+  c.style.backgroundImage = `url('${revealedCards[s]}')`;
+}else{
+  c.style.backgroundImage = "url('/assets/tarot/back.png')";
+}
 
     c.classList.remove("burning","smoking");
   });
@@ -302,34 +303,6 @@ async function handleAfterConfirm(pickedCards){
 
   reorderStage.classList.add("hidden");
 
-
-  /* 광고 이후 카드 앞면 복구 (핵심) */
-/* 광고 이후 카드 앞면 복구 (핵심) */
-active.forEach((slot,i)=>{
-  const card = document.querySelector(`.big-card.slot-${slot}`);
-  const img = pickedCards[i];
-
-  if(!card || !img) return;
-
-  /* 상태 강제 고정 */
-  const path = getCardImagePath(img);
-
-card.dataset.front = path;
-card.style.backgroundImage = `url('${path}')`;
-});
-
-/* ⭐ 안전 복구 — 한 번 더 보장 */
-setTimeout(()=>{
-  active.forEach((slot,i)=>{
-    const card = document.querySelector(`.big-card.slot-${slot}`);
-    const img = pickedCards[i];
-    if(card && img){
-      card.style.backgroundImage =
-        `url('${getCardImagePath(img)}')`;
-    }
-  });
-}, 50);
-
   document.querySelector(".topbar")?.classList.remove("hidden");
   document.body.classList.remove("lock-scroll");
 
@@ -360,9 +333,9 @@ active.forEach((slot,i)=>{
 
   if(!card || !img) return;
 
-  card.dataset.front = getCardImagePath(img);
-  card.style.backgroundImage =
-    `url('${getCardImagePath(img)}')`;
+  const path = getCardImagePath(img);
+revealedCards[slot] = path;
+card.style.backgroundImage = `url('${path}')`;
 });
   play(sReveal);
   await wait(1200);
