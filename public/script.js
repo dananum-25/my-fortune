@@ -701,9 +701,9 @@ async function buildReadingHTML(pickedCards){
   /* =====================
      조언 카드
   ===================== */
-  const adviceCard = cards.find(c=>c.db?.advice);
+  const adviceCard = cards.find(c => getSlotMeaning(c.slot) === "advice");
 
-if(adviceCard){
+if(adviceCard && adviceCard.db?.advice){
   html += `<div class="reading-advice">`;
   html += `<h4>💡 조언</h4>`;
   html += `<p>🃏 ${formatCardName(adviceCard.key)}</p>`;
