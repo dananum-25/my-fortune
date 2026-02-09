@@ -624,6 +624,9 @@ if(readingVersion === "V1"){
 
   html += `<p class="reading-core">${c.db?.core || ""}</p>`;
 
+  // 카드 이름 추가
+  html += `<p>🃏 ${formatCardName(c.key)}</p>`;
+
   if(timeKey && c.db?.[timeKey]){
     html += `<div class="reading-focus">`;
     html += `<h4>🔎 집중 메시지</h4>`;
