@@ -437,3 +437,22 @@ body.lock-scroll{ overflow:hidden; }
   background-size:cover;
   background-position:center;
 }
+
+#confirmModal button{
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  font-size:16px;
+  margin-top:12px;
+}
+
+#confirmPick{
+  background:#fff;
+  color:#111;
+  font-weight:600;
+}
+
+#retryPick{
+  background:#2a2a2f;
+  color:#fff;
+}
