@@ -226,12 +226,24 @@ function pick(c){
 /* =====================================================
 7. CONFIRM FLOW
 ===================================================== */
-document.getElementById("confirmPick").onclick = async ()=>{
+const confirmBtn = document.getElementById("confirmPick");
+const retryBtn   = document.getElementById("retryPick");
+
+/* 1️⃣ 이대로 진행 */
+confirmBtn.onclick = async ()=>{
   modal.classList.add("hidden");
-  pickerTitle.classList.add("hidden");   // ← 추가
+  pickerTitle.classList.add("hidden");
   document.body.classList.add("lock-scroll");
 
-  // ✅ 선택 안 된 카드들은 사라지게
+  const deck = build78Deck();
+  const pickedCards = selected.map(()=>{
+    return deck.splice(Math.random()*deck.length|0,1)[0].replace(".png","");
+  });
+
+  /* 광고 먼저 */
+  await showAdOverlay();
+
+  /* 선택 안 된 카드 제거 */
   document.querySelectorAll(".pick").forEach(p=>{
     if(!p.classList.contains("sel")){
       p.style.opacity="0";
@@ -239,12 +251,17 @@ document.getElementById("confirmPick").onclick = async ()=>{
     }
   });
 
-  const deck = build78Deck();
-  const pickedCards = selected.map(()=>{
-    return deck.splice(Math.random()*deck.length|0,1)[0].replace(".png","");
-  });
-
+  /* 이후 기존 흐름 */
   await handleAfterConfirm(pickedCards);
+};
+
+
+/* 2️⃣ 다시 선택하기 */
+retryBtn.onclick = ()=>{
+  modal.classList.add("hidden");
+
+  selected.forEach(c=>c.classList.remove("sel"));
+  selected = [];
 };
 
 /* =====================================================
