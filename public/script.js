@@ -309,6 +309,16 @@ async function handleAfterConfirm(pickedCards){
   chat.classList.remove("hidden");
 
   const readingHTML = await buildReadingHTML(pickedCards);
+
+  const activeSlots = getActiveSlots();
+
+activeSlots.forEach((slot,i)=>{
+  const card = document.querySelector(`.big-card.slot-${slot}`);
+  if(card && revealedCards[slot]){
+    card.style.backgroundImage = `url('${revealedCards[slot]}')`;
+  }
+});
+  
   chat.innerHTML = readingHTML;
 }
 
