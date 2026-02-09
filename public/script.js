@@ -645,7 +645,7 @@ if(readingVersion === "V1"){
   html += `<p class="reading-core">${c.db?.core || ""}</p>`;
 
   // 카드 이름 추가
-  html += `<p>🃏 ${formatCardName(c.key)}</p>`;
+  html += `<p class="card-name">🃏 ${formatCardName(c.key)}</p>`;
 
   if(timeKey && c.db?.[timeKey]){
     html += `<div class="reading-focus">`;
@@ -683,7 +683,7 @@ if(readingVersion === "V1"){
   if(pastCards.length){
     html += `<h4>과거의 흐름</h4>`;
     pastCards.forEach(c=>{
-      html += `<p>🃏 ${formatCardName(c.key)}</p>`;
+      html += `<p class="card-name">🃏 ${formatCardName(c.key)}</p>`;
   html += `<p>${c.db?.past || c.db?.core}</p>`;
 });
 }
@@ -695,7 +695,7 @@ if(readingVersion === "V1"){
   if(presentCards.length){
     html += `<h4>현재의 흐름</h4>`;
     presentCards.forEach(c=>{
-  html += `<p>🃏 ${formatCardName(c.key)}</p>`;
+  html += `<p class="card-name">🃏 ${formatCardName(c.key)}</p>`;
   html += `<p>${c.db?.present || c.db?.core}</p>`;
 });
   }
@@ -707,7 +707,7 @@ if(readingVersion === "V1"){
   if(futureCards.length){
     html += `<h4>앞으로의 흐름</h4>`;
     futureCards.forEach(c=>{
-  html += `<p>🃏 ${formatCardName(c.key)}</p>`;
+  html += `<p class="card-name">🃏 ${formatCardName(c.key)}</p>`;
   html += `<p>${c.db?.future || c.db?.core}</p>`;
 });
   }
@@ -755,7 +755,7 @@ if(readingVersion === "V1"){
 if(adviceCard && adviceCard.db?.advice){
   html += `<div class="reading-advice">`;
   html += `<h4>💡 조언</h4>`;
-  html += `<p>🃏 ${formatCardName(adviceCard.key)}</p>`;
+  html += `<p class="card-name">🃏 ${formatCardName(c.key)}</p>`;
   html += `<p>${adviceCard.db.advice}</p>`;
   html += `</div>`;
 }
