@@ -427,3 +427,10 @@ body.lock-scroll{ overflow:hidden; }
   background:#2a2a2f;
   color:#fff;
 }
+
+.card-name{
+  color:#ffd56b;
+  font-weight:800;
+  letter-spacing:0.5px;
+  text-shadow:0 0 8px rgba(255,213,107,0.4);
+}
