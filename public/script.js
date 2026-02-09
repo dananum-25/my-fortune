@@ -31,6 +31,12 @@ if(soundBtn){
   };
 }
 
+function play(sound){
+  if(!muted){
+    sound.currentTime = 0;
+    sound.play().catch(()=>{});
+  }
+}
 /* =====================================================
 2. QUESTION
 ===================================================== */
