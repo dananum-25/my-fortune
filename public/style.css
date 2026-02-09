@@ -409,35 +409,6 @@ body.lock-scroll{ overflow:hidden; }
   opacity:0.85;
 }
 
-.big-card{
-  transform-style: preserve-3d;
-  transition: transform 0.8s ease;
-}
-
-.big-card.flip{
-  transform: rotateY(180deg);
-}
-
-.big-card::before,
-.big-card::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:14px;
-  backface-visibility:hidden;
-}
-
-.big-card::before{
-  background:url("/assets/tarot/back.png") center / cover no-repeat;
-}
-
-.big-card::after{
-  transform:rotateY(180deg);
-  background-image: var(--front);
-  background-size:cover;
-  background-position:center;
-}
-
 #confirmModal button{
   width:100%;
   padding:14px;
