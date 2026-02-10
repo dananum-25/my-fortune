@@ -513,7 +513,6 @@ window.addEventListener("load", () => {
     chat?.classList.add("hidden");
 
     renderQ();
-    updateLoginBar();
     renderUserBar();
   } catch (e) {
     console.error("[INIT FAIL]", e);
@@ -909,48 +908,7 @@ AUTO LOGIN INIT
 window.addEventListener("load", ()=>{
   loadLoginState();
 });
-/* =====================================================
-LOGIN BAR
-===================================================== */
-async function updateLoginBar(){
-  const bar = document.getElementById("userPointBar");
-  if(!bar) return;
 
-  const phone = localStorage.getItem("phone");
-
-  if(!phone){
-    bar.innerHTML = `<button id="loginBtn">로그인</button>`;
-    document.getElementById("loginBtn").onclick = ()=>{
-      alert("리딩 후 회원가입 또는 로그인 가능합니다.");
-    };
-    return;
-  }
-
-  const res = await fetch(API_URL,{
-    method:"POST",
-    body:JSON.stringify({
-      action:"getUser",
-      phone
-    })
-  }).then(r=>r.json());
-
-  if(res.status === "ok"){
-    bar.innerHTML = `
-      👤 ${res.name}님 | 💰 ${res.points}P
-      <button id="logoutBtn">로그아웃</button>
-      <button id="inviteBtn">친구초대</button>
-    `;
-
-    document.getElementById("logoutBtn").onclick = ()=>{
-      localStorage.removeItem("phone");
-      location.reload();
-    };
-
-    document.getElementById("inviteBtn").onclick = ()=>{
-      showInvite(res.inviteCode);
-    };
-  }
-}
 function showInvite(code){
   const url = location.origin + "?invite=" + code;
 
