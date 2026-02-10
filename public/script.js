@@ -898,3 +898,70 @@ async function registerUser(name, phone){
   alert("회원등록 실패");
   return false;
 }
+/* =====================================================
+APPTECH HEADER + LOGIN STATE
+===================================================== */
+
+async function loadLoginState(){
+  const phone = localStorage.getItem("phone");
+  if(!phone) return;
+
+  const res = await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"getUser",
+      phone
+    })
+  }).then(r=>r.json());
+
+  if(res.status !== "ok") return;
+
+  const topbar = document.querySelector(".topbar");
+
+  if(!topbar) return;
+
+  let info = document.getElementById("userPointBar");
+
+  if(!info){
+    info = document.createElement("div");
+    info.id = "userPointBar";
+    info.style.fontSize = "13px";
+    info.style.marginTop = "4px";
+    info.style.opacity = "0.85";
+    topbar.appendChild(info);
+  }
+
+  info.innerHTML =
+    `👤 ${res.name}님 | 💰 ${res.points}P`;
+}
+
+/* =====================================================
+FIRST SCREEN APPTECH GUIDE
+щ
+===================================================== */
+
+function renderAppTechGuide(){
+  const topbar = document.querySelector(".topbar");
+  if(!topbar) return;
+
+  const guide = document.createElement("div");
+
+  guide.style.fontSize = "12px";
+  guide.style.opacity = "0.85";
+  guide.style.marginTop = "6px";
+  guide.innerHTML = `
+    🎁 출석체크로 포인트 적립<br>
+    1점 = 1원 / 5000점부터 출금 가능
+  `;
+
+  topbar.appendChild(guide);
+}
+
+/* =====================================================
+AUTO LOGIN INIT
+===================================================== */
+
+window.addEventListener("load", ()=>{
+  renderAppTechGuide();
+  loadLoginState();
+});
