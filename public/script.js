@@ -941,7 +941,6 @@ AUTO LOGIN INIT
 ===================================================== */
 
 window.addEventListener("load", ()=>{
-  renderAppTechGuide();
   loadLoginState();
 });
 /* =====================================================
