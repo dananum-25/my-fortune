@@ -806,19 +806,6 @@ function renderCheckinUI(){
 
   const ui = `
   <div class="reading-category">
-    <h4>👤 회원 등록</h4>
-    <input id="nameInput" placeholder="이름" style="width:100%;margin:6px 0;padding:10px;border-radius:8px;border:none;">
-    <input 
-      id="phoneInput"
-      placeholder="전화번호 (010xxxxxxxx)"
-      inputmode="numeric"
-      maxlength="11"
-      style="width:100%;margin:6px 0;padding:10px;border-radius:8px;border:none;"
-    >
-    <button id="registerBtn">회원가입</button>
-  </div>
-
-  <div class="reading-category">
     <h4>🎁 출석 체크</h4>
     <p>포인트: <b>${user.points}</b>점</p>
     <p>연속 출석: ${user.streak}일</p>
