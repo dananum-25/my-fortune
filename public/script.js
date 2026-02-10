@@ -820,6 +820,7 @@ function renderCheckinUI(){
 
   chat.innerHTML += ui;
 
+  document.getElementById("registerBtn").onclick = async ()=>{
   const name = document.getElementById("nameInput").value.trim();
   let phone = document.getElementById("phoneInput").value.trim();
 
@@ -1018,4 +1019,4 @@ async function renderUserBar(){
     navigator.clipboard.writeText(link);
     alert("초대 링크가 복사되었습니다!");
   };
-}
+  }
