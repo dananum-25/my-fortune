@@ -514,6 +514,7 @@ window.addEventListener("load", () => {
 
     renderQ();
     updateLoginBar();
+    renderUserBar();
   } catch (e) {
     console.error("[INIT FAIL]", e);
 
@@ -999,4 +1000,36 @@ ${url}`
   );
 
   navigator.clipboard.writeText(url);
+}
+async function renderUserBar(){
+  const phone = localStorage.getItem("phone");
+  if(!phone) return;
+
+  const res = await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"getUser",
+      phone
+    })
+  }).then(r=>r.json());
+
+  if(res.status !== "ok") return;
+
+  const bar = document.getElementById("userBar");
+  const info = document.getElementById("userInfo");
+
+  info.textContent = `${res.name}님 | ${res.points}P`;
+
+  bar.classList.remove("hidden");
+
+  document.getElementById("logoutBtn").onclick = ()=>{
+    localStorage.removeItem("phone");
+    location.reload();
+  };
+
+  document.getElementById("inviteBtn").onclick = ()=>{
+    const link = location.origin + "?invite=" + res.inviteCode;
+    navigator.clipboard.writeText(link);
+    alert("초대 링크가 복사되었습니다!");
+  };
 }
