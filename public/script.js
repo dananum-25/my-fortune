@@ -790,14 +790,17 @@ function saveUser(u){
   localStorage.setItem("tarot_user", JSON.stringify(u));
 }
 
-function doCheckin(){
-  const today = getToday();
-  const user = loadUser();
+async function doCheckin(){
+  const phone = localStorage.getItem("phone");
 
-  if(user.lastCheckin === today){
-    alert("오늘은 이미 출석했어요!");
-    return;
+  const res = await checkinServer(phone);
+
+  if(res.status === "already"){
+    alert("오늘 출석 완료!");
+  }else{
+    alert(`출석 완료! 포인트:${res.points}`);
   }
+}
 
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate()-1);
@@ -859,4 +862,26 @@ function renderCheckinUI(){
       alert("링크가 복사되었어요!");
     }
   };
+}
+const API_URL = "https://script.google.com/macros/s/AKfycbxmXckcA3VUO1888XufiUs1pdMRECxdTaKX_p15XnFNOfhIqgqSi8pZN3eNEFZNxU90/exec";
+
+function registerUser(name, phone){
+  return fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"register",
+      name,
+      phone
+    })
+  });
+}
+
+function checkinServer(phone){
+  return fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"checkin",
+      phone
+    })
+  }).then(r=>r.json());
 }
