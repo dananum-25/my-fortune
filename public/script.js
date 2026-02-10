@@ -861,7 +861,7 @@ function renderCheckinUI(){
   };
 
   document.getElementById("checkinBtn").onclick = doCheckin;
-  
+}
   document.getElementById("restartBtn").onclick = ()=>{
     location.reload();
   };
