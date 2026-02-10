@@ -772,7 +772,7 @@ function loadUser(){
 CHECKIN SYSTEM (SERVER)
 ===================================================== */
 
-const API_URL = "https://script.google.com/macros/s/AKfycbzOQFunv0Aq1VbS5ORYXnZb-5PstUfAIrIjfBTTgG4lulqV4y6ltYpN-0nMpb3j6MdL/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwB-JgpZKc2NG7ikdxDi5vu5biyK41mBle9X_rs_ix5XUqQmqsAmj0zslOQ28DrgEdg/exec";
 
 async function doCheckin(){
   const phone = localStorage.getItem("phone");
