@@ -825,11 +825,20 @@ const ui = `
 
   chat.innerHTML += ui;
   document.getElementById("registerBtn").onclick = async ()=>{
-  const name = document.getElementById("nameInput").value;
-  const phone = document.getElementById("phoneInput").value;
+  const name = document.getElementById("nameInput").value.trim();
+  let phone = document.getElementById("phoneInput").value.trim();
 
   if(!name || !phone){
     alert("이름과 전화번호를 입력해주세요");
+    return;
+  }
+
+  // 숫자만 남기기
+  phone = phone.replace(/[^0-9]/g,"");
+
+  // 11자리 검사
+  if(phone.length !== 11){
+    alert("전화번호는 010xxxxxxxx 형식의 11자리 숫자로 입력해주세요.");
     return;
   }
 
