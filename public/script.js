@@ -621,59 +621,59 @@ function formatCardName(key){
   return key;
 }
 
+.filter(Boolean)
 async function buildReadingHTML(pickedCards){
   await loadTarotDB();
 
   const slots = getActiveSlots();
 
   const cards = pickedCards.map((id,i)=>{
-  const key = normalizeCardKey(id);
-
-  return {
-    slot: slots[i] ?? slots[0],
-    key,
-    db: tarotDB[key]
-  };
-});
+    const key = normalizeCardKey(id);
+    return {
+      slot: slots[i] ?? slots[0],
+      key,
+      db: tarotDB[key]
+    };
+  });
 
   const category = selectedCategory;
   const timeKey = selectedTime;
 
   let html = `<div class="reading">`;
-html += `<h3>🔮 AI 고양이 타로 리딩</h3>`;
-
-/* =====================
-   V1 전용 리딩
-===================== */
-if(readingVersion === "V1"){
-  const c = cards[0];
-
-  html += `<p class="reading-core">${c.db?.core || ""}</p>`;
-
-  // 카드 이름 추가
-  html += `<p class="card-name">🃏 ${formatCardName(c.key)}</p>`;
-
-  if(timeKey && c.db?.[timeKey]){
-    html += `<div class="reading-focus">`;
-    html += `<h4>🔎 집중 메시지</h4>`;
-    html += `<p>${c.db[timeKey]}</p>`;
-    html += `</div>`;
-  }
-
-  if(c.db?.advice){
-    html += `<div class="reading-advice">`;
-    html += `<h4>💡 조언</h4>`;
-    html += `<p>${c.db.advice}</p>`;
-    html += `</div>`;
-  }
-
-  html += `</div>`;
-setTimeout(renderCheckinUI, 50);  
-return html;
+  html += `<h3>🔮 AI 고양이 타로 리딩</h3>`;
 
   /* =====================
-     전체 흐름 요약
+     V1 전용 리딩
   ===================== */
+  if(readingVersion === "V1"){
+    const c = cards[0];
+
+    html += `<p class="reading-core">${c.db?.core || ""}</p>`;
+    html += `<p class="card-name">🃏 ${formatCardName(c.key)}</p>`;
+
+    if(timeKey && c.db?.[timeKey]){
+      html += `<div class="reading-focus">`;
+      html += `<h4>🔎 집중 메시지</h4>`;
+      html += `<p>${c.db[timeKey]}</p>`;
+      html += `</div>`;
+    }
+
+    if(c.db?.advice){
+      html += `<div class="reading-advice">`;
+      html += `<h4>💡 조언</h4>`;
+      html += `<p>${c.db.advice}</p>`;
+      html += `</div>`;
+    }
+
+    html += `</div>`;
+    return html; // ✅ V1은 여기서 끝
+  }
+
+  /* =====================
+     V3 / V5 / V7 공통 리딩
+  ===================== */
+
+  // 전체 요약
   const summary = cards
     .map(c=>c.db?.core)
     .filter(Boolean)
@@ -682,45 +682,37 @@ return html;
 
   html += `<p class="reading-core">${summary}</p>`;
 
-  /* =====================
-     과거
-  ===================== */
+  // 과거
   const pastCards = cards.filter(c=>getSlotMeaning(c.slot)==="past");
   if(pastCards.length){
     html += `<h4>과거의 흐름</h4>`;
     pastCards.forEach(c=>{
       html += `<p class="card-name">🃏 ${formatCardName(c.key)}</p>`;
-  html += `<p>${c.db?.past || c.db?.core}</p>`;
-});
-}
+      html += `<p>${c.db?.past || c.db?.core || ""}</p>`;
+    });
+  }
 
-  /* =====================
-     현재
-  ===================== */
+  // 현재
   const presentCards = cards.filter(c=>getSlotMeaning(c.slot)==="present");
   if(presentCards.length){
     html += `<h4>현재의 흐름</h4>`;
     presentCards.forEach(c=>{
-  html += `<p class="card-name">🃏 ${formatCardName(c.key)}</p>`;
-  html += `<p>${c.db?.present || c.db?.core}</p>`;
-});
+      html += `<p class="card-name">🃏 ${formatCardName(c.key)}</p>`;
+      html += `<p>${c.db?.present || c.db?.core || ""}</p>`;
+    });
   }
 
-  /* =====================
-     미래
-  ===================== */
+  // 미래
   const futureCards = cards.filter(c=>getSlotMeaning(c.slot)==="future");
   if(futureCards.length){
     html += `<h4>앞으로의 흐름</h4>`;
     futureCards.forEach(c=>{
-  html += `<p class="card-name">🃏 ${formatCardName(c.key)}</p>`;
-  html += `<p>${c.db?.future || c.db?.core}</p>`;
-});
+      html += `<p class="card-name">🃏 ${formatCardName(c.key)}</p>`;
+      html += `<p>${c.db?.future || c.db?.core || ""}</p>`;
+    });
   }
 
-  /* =====================
-     질문2 포커스 강조
-  ===================== */
+  // 질문2 포커스(과거/현재/미래)
   if(timeKey){
     const focusText = cards
       .map(c=>c.db?.[timeKey])
@@ -735,9 +727,7 @@ return html;
     }
   }
 
-  /* =====================
-     질문1 상담 메시지
-  ===================== */
+  // 질문1 카테고리(연애/직업/금전/관계)
   if(category){
     const catText = cards
       .map(c=>c.db?.[category])
@@ -753,24 +743,28 @@ return html;
     }
   }
 
-  /* =====================
-     조언 카드
-  ===================== */
+  // 조언 카드
   const adviceCard = cards.find(c => getSlotMeaning(c.slot) === "advice");
-
-if(adviceCard && adviceCard.db?.advice){
-  html += `<div class="reading-advice">`;
-  html += `<h4>💡 조언</h4>`;
-  html += `<p class="card-name">🃏 ${formatCardName(adviceCard.key)}</p>`;
-  html += `<p>${adviceCard.db.advice}</p>`;
-  html += `</div>`;
-}
-
-html += `</div>`;
-setTimeout(renderCheckinUI, 50);  
-return html;
+  if(adviceCard && adviceCard.db?.advice){
+    html += `<div class="reading-advice">`;
+    html += `<h4>💡 조언</h4>`;
+    html += `<p class="card-name">🃏 ${formatCardName(adviceCard.key)}</p>`;
+    html += `<p>${adviceCard.db.advice}</p>`;
+    html += `</div>`;
   }
 
+  html += `</div>`;
+  return html;
+}
+
+function loadUser(){
+  const u = localStorage.getItem("tarot_user");
+  return u ? JSON.parse(u) : {
+    points:0,
+    lastCheckin:null,
+    streak:0
+  };
+}
 /* =====================================================
 CHECKIN SYSTEM (SERVER)
 ===================================================== */
