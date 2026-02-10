@@ -22,18 +22,25 @@
   TOPBAR
   ===================================================== -->
   <header class="topbar">
-    <div class="brand">🐾 AI 고양이 타로 상담</div>
-    <button id="soundToggle">사운드 🔇</button>
 
-    <!-- 로그인 상태 표시 -->
-    <div id="userPointBar" style="font-size:13px;margin-top:4px;opacity:.85;"></div>
+  <div class="top-title">
+    🐾 AI 고양이 타로 상담
+  </div>
 
-    <!-- 앱테크 안내 -->
-    <div style="font-size:12px;margin-top:6px;opacity:.85;">
-      🎁 출석체크로 포인트 적립<br>
-      1점 = 1원 / 5000점부터 출금 가능
-    </div>
-  </header>
+  <div id="userBar" class="user-bar hidden">
+    <span id="userInfo"></span>
+    <button id="logoutBtn">로그아웃</button>
+    <button id="inviteBtn">친구초대</button>
+  </div>
+
+  <div class="apptool-guide">
+    🎁 출석체크 · 친구초대로 포인트 적립<br>
+    1점 = 1원 / 5000점부터 출금 가능
+  </div>
+
+  <button id="soundToggle">사운드 🔇</button>
+
+</header>
 
   <!-- =====================================================
   CAT AREA
