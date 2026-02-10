@@ -820,7 +820,6 @@ function renderCheckinUI(){
 
   chat.innerHTML += ui;
 
-  document.getElementById("registerBtn").onclick = async ()=>{
   const name = document.getElementById("nameInput").value.trim();
   let phone = document.getElementById("phoneInput").value.trim();
 
