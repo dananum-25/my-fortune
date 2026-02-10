@@ -434,3 +434,37 @@ body.lock-scroll{ overflow:hidden; }
   letter-spacing:0.5px;
   text-shadow:0 0 8px rgba(255,213,107,0.4);
 }
+/* 상단 UI 리디자인 */
+.topbar{
+  padding:14px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+
+.top-title{
+  font-size:20px;
+  font-weight:900;
+  margin-bottom:6px;
+}
+
+.user-bar{
+  display:flex;
+  gap:6px;
+  align-items:center;
+  margin-bottom:6px;
+  flex-wrap:wrap;
+}
+
+.user-bar button{
+  padding:6px 10px;
+  border-radius:8px;
+  border:none;
+  background:#2a2a3a;
+  color:white;
+  font-size:12px;
+}
+
+.apptool-guide{
+  font-size:12px;
+  opacity:0.75;
+  line-height:1.4;
+}
