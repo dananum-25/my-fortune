@@ -323,6 +323,7 @@ activeSlots.forEach((slot,i)=>{
   
   chat.innerHTML = readingHTML;
 }
+renderCheckinUI();
 
 /* =====================================================
 8. FIRE: REORDER → BIG
@@ -667,8 +668,8 @@ if(readingVersion === "V1"){
   }
 
   html += `</div>`;
-  return html;
-}
+setTimeout(renderCheckinUI, 50);  
+return html;
 
   /* =====================
      전체 흐름 요약
@@ -806,22 +807,42 @@ async function doCheckin(){
 function renderCheckinUI(){
   const user = loadUser();
 
-  const ui = `
-    <div class="reading-category">
-      <h4>🎁 출석 체크</h4>
-      <p>포인트: <b>${user.points}</b>점</p>
-      <p>연속 출석: ${user.streak}일</p>
-      <button id="checkinBtn">오늘 출석하기 (+10)</button>
-    </div>
+const ui = `
+  <div class="reading-category">
+    <h4>👤 회원 등록</h4>
+    <input id="nameInput" placeholder="이름" style="width:100%;margin:6px 0;padding:10px;border-radius:8px;border:none;">
+    <input id="phoneInput" placeholder="전화번호" style="width:100%;margin:6px 0;padding:10px;border-radius:8px;border:none;">
+    <button id="registerBtn">회원가입</button>
+  </div>
 
-    <div class="reading-end">
-      <button id="restartBtn">처음부터 다시하기</button>
-      <button id="shareBtn">친구 공유하기</button>
-    </div>
-  `;
+  <div class="reading-category">
+    <h4>🎁 출석 체크</h4>
+    <p>포인트: <b>${user.points}</b>점</p>
+    <p>연속 출석: ${user.streak}일</p>
+    <button id="checkinBtn">오늘 출석하기 (+10)</button>
+  </div>
+
+  <div class="reading-end">
+    <button id="restartBtn">처음부터 다시하기</button>
+    <button id="shareBtn">친구 공유하기</button>
+  </div>
+`;
 
   chat.innerHTML += ui;
+  document.getElementById("registerBtn").onclick = async ()=>{
+  const name = document.getElementById("nameInput").value;
+  const phone = document.getElementById("phoneInput").value;
 
+  if(!name || !phone){
+    alert("이름과 전화번호를 입력해주세요");
+    return;
+  }
+
+  localStorage.setItem("phone", phone);
+
+  await registerUser(name, phone);
+  alert("회원 등록 완료");
+};
   document.getElementById("checkinBtn").onclick = doCheckin;
 
   document.getElementById("restartBtn").onclick = ()=>{
