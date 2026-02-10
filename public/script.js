@@ -322,6 +322,10 @@ activeSlots.forEach((slot,i)=>{
 });
   
   chat.innerHTML = readingHTML;
+
+setTimeout(()=>{
+  renderCheckinUI();
+}, 50);
 }
 
 
@@ -621,7 +625,6 @@ function formatCardName(key){
   return key;
 }
 
-.filter(Boolean)
 async function buildReadingHTML(pickedCards){
   await loadTarotDB();
 
