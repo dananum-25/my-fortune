@@ -769,58 +769,36 @@ html += `</div>`;
 setTimeout(renderCheckinUI, 50);  
 return html;
   }
+
 /* =====================================================
-CHECKIN SYSTEM (LOCAL STORAGE)
+CHECKIN SYSTEM (SERVER)
 ===================================================== */
 
-function getToday(){
-  return new Date().toISOString().slice(0,10);
-}
-
-function loadUser(){
-  const u = localStorage.getItem("tarot_user");
-  return u ? JSON.parse(u) : {
-    points:0,
-    lastCheckin:null,
-    streak:0
-  };
-}
-
-function saveUser(u){
-  localStorage.setItem("tarot_user", JSON.stringify(u));
-}
+const API_URL = "https://script.google.com/macros/s/AKfycbxmXckcA3VUO1888XufiUs1pdMRECxdTaKX_p15XnFNOfhIqgqSi8pZN3eNEFZNxU90/exec";
 
 async function doCheckin(){
   const phone = localStorage.getItem("phone");
 
-  const res = await checkinServer(phone);
+  if(!phone){
+    alert("회원가입이 필요합니다.");
+    return;
+  }
+
+  const res = await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"checkin",
+      phone
+    })
+  }).then(r=>r.json());
 
   if(res.status === "already"){
     alert("오늘 출석 완료!");
-  }else{
+  }else if(res.status === "ok"){
     alert(`출석 완료! 포인트:${res.points}`);
-  }
-}
-
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate()-1);
-  const y = yesterday.toISOString().slice(0,10);
-
-  if(user.lastCheckin === y){
-    user.streak += 1;
   }else{
-    user.streak = 1;
+    alert("사용자 없음");
   }
-
-  user.points += 10;
-
-  if(user.streak % 7 === 0){
-    user.points += 20;
-    alert("🎉 7일 연속 출석 보너스 +20점!");
-  }
-
-  user.lastCheckin = today;
-  saveUser(user);
 
   renderCheckinUI();
 }
@@ -863,9 +841,10 @@ function renderCheckinUI(){
     }
   };
 }
-const API_URL = "https://script.google.com/macros/s/AKfycbxmXckcA3VUO1888XufiUs1pdMRECxdTaKX_p15XnFNOfhIqgqSi8pZN3eNEFZNxU90/exec";
 
 function registerUser(name, phone){
+  localStorage.setItem("phone", phone);
+
   return fetch(API_URL,{
     method:"POST",
     body:JSON.stringify({
@@ -874,14 +853,4 @@ function registerUser(name, phone){
       phone
     })
   });
-}
-
-function checkinServer(phone){
-  return fetch(API_URL,{
-    method:"POST",
-    body:JSON.stringify({
-      action:"checkin",
-      phone
-    })
-  }).then(r=>r.json());
 }
