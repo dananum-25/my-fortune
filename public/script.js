@@ -799,20 +799,21 @@ async function doCheckin(){
   }
 }
 
+010xxxxxxxx 형식의 11자리 숫자로 입력해주세요.");
 function renderCheckinUI(){
   const user = loadUser();
 
-const ui = `
+  const ui = `
   <div class="reading-category">
     <h4>👤 회원 등록</h4>
     <input id="nameInput" placeholder="이름" style="width:100%;margin:6px 0;padding:10px;border-radius:8px;border:none;">
     <input 
-  id="phoneInput"
-  placeholder="전화번호 (010xxxxxxxx)"
-  inputmode="numeric"
-  maxlength="11"
-  style="width:100%;margin:6px 0;padding:10px;border-radius:8px;border:none;"
->
+      id="phoneInput"
+      placeholder="전화번호 (010xxxxxxxx)"
+      inputmode="numeric"
+      maxlength="11"
+      style="width:100%;margin:6px 0;padding:10px;border-radius:8px;border:none;"
+    >
     <button id="registerBtn">회원가입</button>
   </div>
 
@@ -827,36 +828,40 @@ const ui = `
     <button id="restartBtn">처음부터 다시하기</button>
     <button id="shareBtn">친구 공유하기</button>
   </div>
-`;
+  `;
 
   chat.innerHTML += ui;
+
   document.getElementById("registerBtn").onclick = async ()=>{
-  const name = document.getElementById("nameInput").value.trim();
-  let phone = document.getElementById("phoneInput").value.trim();
+    const name = document.getElementById("nameInput").value.trim();
+    let phone = document.getElementById("phoneInput").value.trim();
 
-  if(!name || !phone){
-    alert("이름과 전화번호를 입력해주세요");
-    return;
-  }
+    if(!name || !phone){
+      alert("이름과 전화번호를 입력해주세요");
+      return;
+    }
 
-  // 숫자만 남기기
-  phone = phone.replace(/[^0-9]/g,"");
+    phone = phone.replace(/[^0-9]/g,"");
 
-  // 11자리 검사
-  if(phone.length !== 11){
-    alert("전화번호는 010xxxxxxxx 형식의 11자리 숫자로 입력해주세요.");
-    return;
-  }
+    if(phone.length !== 11){
+      alert("전화번호는 010xxxxxxxx 형식의 11자리 숫자로 입력해주세요.");
+      return;
+    }
 
-  localStorage.setItem("phone", phone);
+    localStorage.setItem("phone", phone);
 
-  const ok = await registerUser(name, phone);
-if(ok){
-  alert("회원 등록 완료");
-}
-};
+    const res = await registerUser(name, phone);
+    const result = await res.json();
+
+    if(result.status === "exists"){
+      alert("이미 가입된 전화번호입니다.");
+    }else{
+      alert("회원 등록 완료");
+    }
+  };
+
   document.getElementById("checkinBtn").onclick = doCheckin;
-
+  
   document.getElementById("restartBtn").onclick = ()=>{
     location.reload();
   };
