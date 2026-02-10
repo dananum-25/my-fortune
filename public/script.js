@@ -513,6 +513,7 @@ window.addEventListener("load", () => {
     chat?.classList.add("hidden");
 
     renderQ();
+    updateLoginBar();
   } catch (e) {
     console.error("[INIT FAIL]", e);
 
@@ -965,3 +966,60 @@ window.addEventListener("load", ()=>{
   renderAppTechGuide();
   loadLoginState();
 });
+/* =====================================================
+LOGIN BAR
+===================================================== */
+async function updateLoginBar(){
+  const bar = document.getElementById("userPointBar");
+  if(!bar) return;
+
+  const phone = localStorage.getItem("phone");
+
+  if(!phone){
+    bar.innerHTML = `<button id="loginBtn">로그인</button>`;
+    document.getElementById("loginBtn").onclick = ()=>{
+      alert("리딩 후 회원가입 또는 로그인 가능합니다.");
+    };
+    return;
+  }
+
+  const res = await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"getUser",
+      phone
+    })
+  }).then(r=>r.json());
+
+  if(res.status === "ok"){
+    bar.innerHTML = `
+      👤 ${res.name}님 | 💰 ${res.points}P
+      <button id="logoutBtn">로그아웃</button>
+      <button id="inviteBtn">친구초대</button>
+    `;
+
+    document.getElementById("logoutBtn").onclick = ()=>{
+      localStorage.removeItem("phone");
+      location.reload();
+    };
+
+    document.getElementById("inviteBtn").onclick = ()=>{
+      showInvite(res.inviteCode);
+    };
+  }
+}
+function showInvite(code){
+  const url = location.origin + "?invite=" + code;
+
+  alert(
+`친구초대 코드: ${code}
+
+친구가 가입하면
+둘 다 50포인트 지급 🎁
+
+공유링크:
+${url}`
+  );
+
+  navigator.clipboard.writeText(url);
+}
