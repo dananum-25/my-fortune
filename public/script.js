@@ -800,8 +800,6 @@ async function doCheckin(){
   }else{
     alert("사용자 없음");
   }
-
-  renderCheckinUI();
 }
 
 function renderCheckinUI(){
