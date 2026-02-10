@@ -799,7 +799,6 @@ async function doCheckin(){
   }
 }
 
-010xxxxxxxx 형식의 11자리 숫자로 입력해주세요.");
 function renderCheckinUI(){
   const user = loadUser();
 
@@ -861,7 +860,7 @@ function renderCheckinUI(){
   };
 
   document.getElementById("checkinBtn").onclick = doCheckin;
-}
+
   document.getElementById("restartBtn").onclick = ()=>{
     location.reload();
   };
