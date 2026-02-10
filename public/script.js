@@ -850,8 +850,10 @@ const ui = `
 
   localStorage.setItem("phone", phone);
 
-  await registerUser(name, phone);
+  const ok = await registerUser(name, phone);
+if(ok){
   alert("회원 등록 완료");
+}
 };
   document.getElementById("checkinBtn").onclick = doCheckin;
 
@@ -873,15 +875,27 @@ const ui = `
   };
 }
 
-function registerUser(name, phone){
-  localStorage.setItem("phone", phone);
+async function registerUser(name, phone){
 
-  return fetch(API_URL,{
+  const res = await fetch(API_URL,{
     method:"POST",
     body:JSON.stringify({
       action:"register",
       name,
       phone
     })
-  });
+  }).then(r=>r.json());
+
+  if(res.status === "exists"){
+    alert("이미 등록된 전화번호입니다.");
+    return false;
+  }
+
+  if(res.status === "ok"){
+    localStorage.setItem("phone", phone);
+    return true;
+  }
+
+  alert("회원등록 실패");
+  return false;
 }
