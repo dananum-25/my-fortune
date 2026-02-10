@@ -937,28 +937,6 @@ async function loadLoginState(){
 }
 
 /* =====================================================
-FIRST SCREEN APPTECH GUIDE
-щ
-===================================================== */
-
-function renderAppTechGuide(){
-  const topbar = document.querySelector(".topbar");
-  if(!topbar) return;
-
-  const guide = document.createElement("div");
-
-  guide.style.fontSize = "12px";
-  guide.style.opacity = "0.85";
-  guide.style.marginTop = "6px";
-  guide.innerHTML = `
-    🎁 출석체크로 포인트 적립<br>
-    1점 = 1원 / 5000점부터 출금 가능
-  `;
-
-  topbar.appendChild(guide);
-}
-
-/* =====================================================
 AUTO LOGIN INIT
 ===================================================== */
 
