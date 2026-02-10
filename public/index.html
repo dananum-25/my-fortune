@@ -18,11 +18,26 @@
 
 <body>
 
+  <!-- =====================================================
+  TOPBAR
+  ===================================================== -->
   <header class="topbar">
     <div class="brand">🐾 AI 고양이 타로 상담</div>
     <button id="soundToggle">사운드 🔇</button>
+
+    <!-- 로그인 상태 표시 -->
+    <div id="userPointBar" style="font-size:13px;margin-top:4px;opacity:.85;"></div>
+
+    <!-- 앱테크 안내 -->
+    <div style="font-size:12px;margin-top:6px;opacity:.85;">
+      🎁 출석체크로 포인트 적립<br>
+      1점 = 1원 / 5000점부터 출금 가능
+    </div>
   </header>
 
+  <!-- =====================================================
+  CAT AREA
+  ===================================================== -->
   <section id="catArea" class="cat-area">
     <img src="/assets/cat_ai.webp" alt="AI 고양이 타로 상담사" class="cat-image" />
     <div id="catText"></div>
@@ -34,77 +49,69 @@
     <button id="goCard">카드 고르기</button>
   </section>
 
-  <!-- ✅ BIG CARD STAGE (reorderStage를 "안"에 넣어야 absolute가 빅카드 기준으로 고정됨) -->
-<section id="stageWrapper">
+  <!-- =====================================================
+  CARD STAGE
+  ===================================================== -->
+  <section id="stageWrapper">
 
-  <section id="bigCardStage" class="tarot-stage hidden">
-    <div class="big-cards v7-layout">
-      <div class="big-card slot-2"></div>
-      <div class="big-card slot-1"></div>
-      <div class="big-card slot-3"></div>
-      <div class="big-card slot-6"></div>
-      <div class="big-card slot-4"></div>
-      <div class="big-card slot-7"></div>
-      <div class="big-card slot-5"></div>
-    </div>
-  </section>
+    <section id="bigCardStage" class="tarot-stage hidden">
+      <div class="big-cards v7-layout">
+        <div class="big-card slot-2"></div>
+        <div class="big-card slot-1"></div>
+        <div class="big-card slot-3"></div>
+        <div class="big-card slot-6"></div>
+        <div class="big-card slot-4"></div>
+        <div class="big-card slot-7"></div>
+        <div class="big-card slot-5"></div>
+      </div>
+    </section>
 
-  <!-- reorder는 반드시 wrapper 안 -->
-  <section id="reorderStage" class="reorder-stage hidden">
-    <div class="reorder-cards">
-      <div class="reorder-card slot-2"></div>
-      <div class="reorder-card slot-1"></div>
-      <div class="reorder-card slot-3"></div>
-      <div class="reorder-card slot-6"></div>
-      <div class="reorder-card slot-4"></div>
-      <div class="reorder-card slot-7"></div>
-      <div class="reorder-card slot-5"></div>
-    </div>
-  </section>
-
-</section>
-
-<section id="chatContainer" class="chat hidden"></section>
-
-<div class="picker-title hidden" id="pickerTitle">
-  마음이 가는 카드를 골라주세요
-</div>
-
-    <!-- ✅ REORDER STAGE: bigCardStage 내부로 이동 (핵심) -->
     <section id="reorderStage" class="reorder-stage hidden">
       <div class="reorder-cards">
         <div class="reorder-card slot-2"></div>
         <div class="reorder-card slot-1"></div>
         <div class="reorder-card slot-3"></div>
-
         <div class="reorder-card slot-6"></div>
-
         <div class="reorder-card slot-4"></div>
         <div class="reorder-card slot-7"></div>
         <div class="reorder-card slot-5"></div>
       </div>
     </section>
-   </section>
+
   </section>
-  
+
+  <!-- =====================================================
+  CHAT
+  ===================================================== -->
+  <section id="chatContainer" class="chat hidden"></section>
+
+  <div class="picker-title hidden" id="pickerTitle">
+    마음이 가는 카드를 골라주세요
+  </div>
 
   <section id="spreadSection" class="picker hidden">
-  <div id="grid78" class="grid78"></div>
+    <div id="grid78" class="grid78"></div>
   </section>
 
+  <!-- =====================================================
+  MODAL
+  ===================================================== -->
   <div id="confirmModal" class="modal hidden">
     <div class="modal-card">
       <p>선택한 카드로 진행할까요?</p>
       <button id="confirmPick">이대로 진행 (광고 5초)</button>
-<button id="retryPick">다시 선택하기</button>
+      <button id="retryPick">다시 선택하기</button>
     </div>
   </div>
-    
- <div id="adOverlay" class="hidden">
-  <iframe src="https://capable-kataifi-46f1ad.netlify.app/"></iframe>
-  <button id="skipAd" disabled>광고 시청 중...</button>
- </div>
-    
+
+  <!-- =====================================================
+  AD
+  ===================================================== -->
+  <div id="adOverlay" class="hidden">
+    <iframe src="https://capable-kataifi-46f1ad.netlify.app/"></iframe>
+    <button id="skipAd" disabled>광고 시청 중...</button>
+  </div>
+
   <script src="./script.js"></script>
 </body>
 </html>
