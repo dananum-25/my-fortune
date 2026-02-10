@@ -323,7 +323,7 @@ activeSlots.forEach((slot,i)=>{
   
   chat.innerHTML = readingHTML;
 }
-renderCheckinUI();
+
 
 /* =====================================================
 8. FIRE: REORDER → BIG
