@@ -832,32 +832,27 @@ function renderCheckinUI(){
   chat.innerHTML += ui;
 
   document.getElementById("registerBtn").onclick = async ()=>{
-    const name = document.getElementById("nameInput").value.trim();
-    let phone = document.getElementById("phoneInput").value.trim();
+  const name = document.getElementById("nameInput").value.trim();
+  let phone = document.getElementById("phoneInput").value.trim();
 
-    if(!name || !phone){
-      alert("이름과 전화번호를 입력해주세요");
-      return;
-    }
+  if(!name || !phone){
+    alert("이름과 전화번호를 입력해주세요");
+    return;
+  }
 
-    phone = phone.replace(/[^0-9]/g,"");
+  phone = phone.replace(/[^0-9]/g,"");
 
-    if(phone.length !== 11){
-      alert("전화번호는 010xxxxxxxx 형식의 11자리 숫자로 입력해주세요.");
-      return;
-    }
+  if(phone.length !== 11){
+    alert("전화번호는 010xxxxxxxx 형식의 11자리 숫자로 입력해주세요.");
+    return;
+  }
 
-    localStorage.setItem("phone", phone);
+  const ok = await registerUser(name, phone);
 
-    const res = await registerUser(name, phone);
-    const result = await res.json();
-
-    if(result.status === "exists"){
-      alert("이미 가입된 전화번호입니다.");
-    }else{
-      alert("회원 등록 완료");
-    }
-  };
+  if(ok){
+    alert("회원 등록 완료");
+  }
+};
 
   document.getElementById("checkinBtn").onclick = doCheckin;
 
