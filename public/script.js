@@ -766,5 +766,97 @@ if(adviceCard && adviceCard.db?.advice){
 }
 
 html += `</div>`;
+setTimeout(renderCheckinUI, 50);  
 return html;
   }
+/* =====================================================
+CHECKIN SYSTEM (LOCAL STORAGE)
+===================================================== */
+
+function getToday(){
+  return new Date().toISOString().slice(0,10);
+}
+
+function loadUser(){
+  const u = localStorage.getItem("tarot_user");
+  return u ? JSON.parse(u) : {
+    points:0,
+    lastCheckin:null,
+    streak:0
+  };
+}
+
+function saveUser(u){
+  localStorage.setItem("tarot_user", JSON.stringify(u));
+}
+
+function doCheckin(){
+  const today = getToday();
+  const user = loadUser();
+
+  if(user.lastCheckin === today){
+    alert("오늘은 이미 출석했어요!");
+    return;
+  }
+
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate()-1);
+  const y = yesterday.toISOString().slice(0,10);
+
+  if(user.lastCheckin === y){
+    user.streak += 1;
+  }else{
+    user.streak = 1;
+  }
+
+  user.points += 10;
+
+  if(user.streak % 7 === 0){
+    user.points += 20;
+    alert("🎉 7일 연속 출석 보너스 +20점!");
+  }
+
+  user.lastCheckin = today;
+  saveUser(user);
+
+  renderCheckinUI();
+}
+
+function renderCheckinUI(){
+  const user = loadUser();
+
+  const ui = `
+    <div class="reading-category">
+      <h4>🎁 출석 체크</h4>
+      <p>포인트: <b>${user.points}</b>점</p>
+      <p>연속 출석: ${user.streak}일</p>
+      <button id="checkinBtn">오늘 출석하기 (+10)</button>
+    </div>
+
+    <div class="reading-end">
+      <button id="restartBtn">처음부터 다시하기</button>
+      <button id="shareBtn">친구 공유하기</button>
+    </div>
+  `;
+
+  chat.innerHTML += ui;
+
+  document.getElementById("checkinBtn").onclick = doCheckin;
+
+  document.getElementById("restartBtn").onclick = ()=>{
+    location.reload();
+  };
+
+  document.getElementById("shareBtn").onclick = ()=>{
+    if(navigator.share){
+      navigator.share({
+        title:"AI 고양이 타로",
+        text:"AI 고양이 타로 상담 해보기",
+        url:location.href
+      });
+    }else{
+      navigator.clipboard.writeText(location.href);
+      alert("링크가 복사되었어요!");
+    }
+  };
+}
