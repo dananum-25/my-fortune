@@ -926,7 +926,16 @@ ${url}`
 }
 async function renderUserBar(){
   const phone = localStorage.getItem("phone");
-  if(!phone) return;
+  if(!phone){
+  const bar = document.getElementById("userBar");
+  bar.classList.remove("hidden");
+
+  const info = document.getElementById("userInfo");
+  info.innerHTML = `<button id="loginBtn">로그인</button>`;
+
+  document.getElementById("loginBtn").onclick = openLoginModal;
+  return;
+}
 
   const res = await fetch(API_URL,{
     method:"POST",
