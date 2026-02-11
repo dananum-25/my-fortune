@@ -956,3 +956,52 @@ async function renderUserBar(){
     alert("초대 링크가 복사되었습니다!");
   };
   }
+
+/* =====================================================
+LOGIN MODAL
+===================================================== */
+
+function openLoginModal(){
+  document.getElementById("loginModal").classList.remove("hidden");
+}
+
+function closeLoginModal(){
+  document.getElementById("loginModal").classList.add("hidden");
+}
+
+document.addEventListener("click",(e)=>{
+  if(e.target.id === "loginClose"){
+    closeLoginModal();
+  }
+});
+
+document.addEventListener("click",(e)=>{
+  if(e.target.id === "loginSubmit"){
+    submitLogin();
+  }
+});
+
+async function submitLogin(){
+  const name = document.getElementById("loginName").value.trim();
+  let phone = document.getElementById("loginPhone").value.trim();
+
+  if(!name || !phone){
+    alert("이름과 전화번호를 입력해주세요");
+    return;
+  }
+
+  phone = phone.replace(/[^0-9]/g,"");
+
+  if(phone.length !== 11){
+    alert("전화번호는 11자리 숫자로 입력해주세요.");
+    return;
+  }
+
+  const ok = await registerUser(name, phone);
+
+  if(ok){
+    closeLoginModal();
+    renderUserBar();
+    alert("로그인 완료!");
+  }
+}
